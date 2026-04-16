@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — IOA Ribeirao Preto</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f1f5f9; color: #1e293b; }
+        .header { background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); color: white; padding: 28px 40px; }
+        .header h1 { font-size: 26px; font-weight: 700; }
+        .header .sub { font-size: 14px; opacity: 0.8; margin-top: 6px; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 28px 32px; }
+        .section-title { font-size: 14px; font-weight: 700; color: #374151; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+        .card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+        .card .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px; color: #9ca3af; margin-bottom: 8px; }
+        .card .value { font-size: 28px; font-weight: 800; line-height: 1; }
+        .card .compare { font-size: 12px; color: #9ca3af; margin-top: 6px; }
+        .section { background: white; border-radius: 12px; padding: 22px 24px; margin-bottom: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { text-align: left; padding: 10px 12px; background: #f8fafc; color: #6b7280; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        td { padding: 10px 12px; border-top: 1px solid #f1f5f9; }
+        tr:hover td { background: #f8fafc; }
+        .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+        .period-card { background: white; border-radius: 12px; padding: 20px 24px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+        .period-card h3 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px; }
+        .period-card.current h3 { color: #2563eb; }
+        .period-card.previous h3 { color: #9ca3af; }
+        .metric-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f1f5f9; }
+        .metric-row:last-child { border-bottom: none; }
+        .metric-label { font-size: 13px; color: #6b7280; }
+        .metric-value { font-size: 15px; font-weight: 700; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .period-label { font-size: 11px; color: #9ca3af; margin-bottom: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .footer { text-align: center; color: #9ca3af; font-size: 11px; padding: 20px; }
+        @media (max-width: 900px) {
+            .cards { grid-template-columns: 1fr 1fr; }
+            .compare-grid, .grid-2 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📊 IOA Ribeirao Preto</h1>
+        <div class="sub">Relatório Comparativo Semanal · Gerado em 16/04/2026 15:36</div>
+    </div>
+
+    <div class="container">
+
+        <div class="period-label">Semana Atual — 2026-04-09 → 2026-04-16</div>
+        <div class="cards">
+            <div class="card">
+                <div class="label">Investimento</div>
+                <div class="value">R$1,392<span style="font-size:12px;color:#10b981;margin-left:6px">▼ 19.6%</span></div>
+                <div class="compare">Ant.: R$1,731.87</div>
+            </div>
+            <div class="card">
+                <div class="label">Leads Gerados</div>
+                <div class="value" style="color:#2563eb">33<span style="font-size:12px;color:#10b981;margin-left:6px">▲ 57.1%</span></div>
+                <div class="compare">Ant.: 21</div>
+            </div>
+            <div class="card">
+                <div class="label">CPL Médio</div>
+                <div class="value" style="color:#f59e0b">R$42.17<span style="font-size:12px;color:#10b981;margin-left:6px">▼ 48.9%</span></div>
+                <div class="compare">Ant.: R$82.47</div>
+            </div>
+            <div class="card">
+                <div class="label">CTR Médio</div>
+                <div class="value">0.81%<span style="font-size:12px;color:#ef4444;margin-left:6px">▼ 12.0%</span></div>
+                <div class="compare">Ant.: 0.92%</div>
+            </div>
+        </div>
+
+        <div class="compare-grid">
+            <div class="period-card current">
+                <h3>📅 Semana Atual · 2026-04-09 → 2026-04-16</h3>
+                <div class="metric-row">
+                    <span class="metric-label">Investimento</span>
+                    <span class="metric-value">R$1,391.57</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Leads</span>
+                    <span class="metric-value" style="color:#2563eb">33</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">CPL Médio</span>
+                    <span class="metric-value" style="color:#f59e0b">R$42.17</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">CTR Médio</span>
+                    <span class="metric-value">0.81%</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Campanhas</span>
+                    <span class="metric-value">3</span>
+                </div>
+            </div>
+            <div class="period-card previous">
+                <h3>📅 Semana Anterior · 2026-04-02 → 2026-04-09</h3>
+                <div class="metric-row">
+                    <span class="metric-label">Investimento</span>
+                    <span class="metric-value">R$1,731.87</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Leads</span>
+                    <span class="metric-value">21</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">CPL Médio</span>
+                    <span class="metric-value" style="color:#ef4444">R$82.47</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">CTR Médio</span>
+                    <span class="metric-value">0.92%</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Campanhas</span>
+                    <span class="metric-value">5</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <div class="section">
+                <div class="section-title">⚠️ Alertas da Semana Atual</div>
+                <div style="padding:8px 12px;margin:4px 0;border-radius:6px;background:#fef2f2;border-left:3px solid #ef4444">🔴 Fadiga de criativo: "<b>[U] [LEADS] [IOA RP] [ENDODONTIA]</b>" — Frequência 3.8</div><div style="padding:8px 12px;margin:4px 0;border-radius:6px;background:#fef2f2;border-left:3px solid #ef4444">🔴 Fadiga de criativo: "<b>[U] [LEADS] [IOA RP] [DENTÍSTICA E PRÓTESE]</b>" — Frequência 3.7</div><div style="padding:8px 12px;margin:4px 0;border-radius:6px;background:#fef2f2;border-left:3px solid #ef4444">🔴 CPL alto: "<b>[U] [LEADS] [MATRÍCULAS 2026]</b>" — R$58.19</div>
+            </div>
+            <div class="section">
+                <div class="section-title">💡 Análise de Performance</div>
+                <div style="font-size:14px;line-height:1.8;color:#374151">
+                    📈 Leads <b>subiram 57%</b>: 21 → 33.<br><br>✅ CPL <b>melhorou 49%</b>: R$82.47 → R$42.17.<br><br>💰 Investimento reduziu 20%: R$1,731.87 → R$1,391.57.
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">🔵 Campanhas — Semana Atual (2026-04-09 → 2026-04-16)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Campanha</th><th>Investimento</th><th>Leads</th>
+                        <th>CPL</th><th>CTR</th><th>Freq.</th><th>Status</th>
+                    </tr>
+                </thead>
+                <tbody><tr>
+            <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="[U] [LEADS] [IOA RP] [DENTÍSTICA E PRÓTESE]">[U] [LEADS] [IOA RP] [DENTÍSTICA E PRÓTESE]</td>
+            <td>R$470.53</td>
+            <td style="font-weight:700">17</td>
+            <td style="color:#f59e0b;font-weight:700">R$27.68</td>
+            <td style="color:#ef4444">0.87%</td>
+            <td style="color:#ef4444">3.7</td>
+            <td>🔴</td>
+        </tr>
+<tr>
+            <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="[U] [LEADS] [IOA RP] [ENDODONTIA]">[U] [LEADS] [IOA RP] [ENDODONTIA]</td>
+            <td>R$513.72</td>
+            <td style="font-weight:700">9</td>
+            <td style="color:#ef4444;font-weight:700">R$57.08</td>
+            <td style="color:#ef4444">0.72%</td>
+            <td style="color:#ef4444">3.8</td>
+            <td>🔴</td>
+        </tr>
+<tr>
+            <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="[U] [LEADS] [MATRÍCULAS 2026]">[U] [LEADS] [MATRÍCULAS 2026]</td>
+            <td>R$407.32</td>
+            <td style="font-weight:700">7</td>
+            <td style="color:#ef4444;font-weight:700">R$58.19</td>
+            <td style="color:#ef4444">0.87%</td>
+            <td style="color:#10b981">2.4</td>
+            <td>🔴</td>
+        </tr></tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <div class="section-title">📋 Campanhas — Semana Anterior (2026-04-02 → 2026-04-09)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Campanha</th><th>Investimento</th><th>Leads</th>
+                        <th>CPL</th><th>CTR</th><th>Freq.</th><th>Status</th>
+                    </tr>
+                </thead>
+                <tbody><tr>
+            <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="[U] [LEADS] [MATRÍCULAS 2026]">[U] [LEADS] [MATRÍCULAS 2026]</td>
+            <td>R$704.84</td>
+            <td style="font-weight:700">7</td>
+            <td style="color:#ef4444;font-weight:700">R$100.69</td>
+            <td style="color:#ef4444">0.79%</td>
+            <td style="color:#f59e0b">2.8</td>
+            <td>🔴</td>
+        </tr>
+<tr>
+            <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="[U] [LEADS] [IOA RP] [ODONTOPEDIATRIA]">[U] [LEADS] [IOA RP] [ODONTOPEDIATRIA]</td>
+            <td>R$616.65</td>
+            <td style="font-weight:700">6</td>
+            <td style="color:#ef4444;font-weight:700">R$102.77</td>
+            <td style="color:#ef4444">1.00%</td>
+            <td style="color:#10b981">1.8</td>
+            <td>🔴</td>
+        </tr>
+<tr>
+            <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="[U] [LEADS] [IOA RP] [ENDODONTIA]">[U] [LEADS] [IOA RP] [ENDODONTIA]</td>
+            <td>R$222.86</td>
+            <td style="font-weight:700">4</td>
+            <td style="color:#ef4444;font-weight:700">R$55.72</td>
+            <td style="color:#ef4444">0.71%</td>
+            <td style="color:#10b981">2.4</td>
+            <td>🔴</td>
+        </tr>
+<tr>
+            <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="[U] [LEADS] [IOA RP] [DENTÍSTICA E PRÓTESE]">[U] [LEADS] [IOA RP] [DENTÍSTICA E PRÓTESE]</td>
+            <td>R$187.52</td>
+            <td style="font-weight:700">3</td>
+            <td style="color:#ef4444;font-weight:700">R$62.51</td>
+            <td style="color:#f59e0b">1.14%</td>
+            <td style="color:#10b981">2.3</td>
+            <td>🔴</td>
+        </tr>
+<tr>
+            <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="[U] [FORM INST.] [MATRÍCULAS 2026]">[U] [FORM INST.] [MATRÍCULAS 2026]</td>
+            <td>R$0.00</td>
+            <td style="font-weight:700">1</td>
+            <td style="color:#6b7280;font-weight:700">—</td>
+            <td style="color:#ef4444">0.00%</td>
+            <td style="color:#10b981">0.0</td>
+            <td>🟢</td>
+        </tr></tbody>
+            </table>
+        </div>
+
+    </div>
+    <div class="footer">Gerado automaticamente · Gestor de Tráfego Meio Comunica · 16/04/2026 15:36</div>
+</body>
+</html>

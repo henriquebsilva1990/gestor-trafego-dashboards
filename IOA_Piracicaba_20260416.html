@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — IOA Piracicaba</title>
+    <style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f1f5f9; color: #1e293b; }
+.header { padding: 28px 40px; color: white; }
+.header h1 { font-size: 26px; font-weight: 700; }
+.header .sub { font-size: 14px; opacity: 0.8; margin-top: 6px; }
+.container { max-width: 1200px; margin: 0 auto; padding: 28px 32px; }
+.st { font-size: 12px; font-weight: 700; color: #374151; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+.cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
+.card { background: white; border-radius: 12px; padding: 18px 20px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+.card .lbl { font-size: 10px; text-transform: uppercase; letter-spacing: .6px; color: #9ca3af; margin-bottom: 6px; }
+.card .val { font-size: 26px; font-weight: 800; line-height: 1; }
+.card .cmp { font-size: 11px; color: #9ca3af; margin-top: 5px; }
+.section { background: white; border-radius: 12px; padding: 20px 22px; margin-bottom: 18px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+.platform-block { border-radius: 10px; padding: 16px 18px; margin-bottom: 16px; }
+.meta-block { background: #eff6ff; border-left: 4px solid #2563eb; }
+.google-block { background: #f0fdf4; border-left: 4px solid #16a34a; }
+.platform-title { font-size: 13px; font-weight: 700; margin-bottom: 12px; }
+.meta-title { color: #1d4ed8; }
+.google-title { color: #15803d; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { text-align: left; padding: 8px 10px; background: #f8fafc; color: #6b7280; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; }
+td { padding: 8px 10px; border-top: 1px solid #f1f5f9; }
+tr:hover td { background: #f8fafc; }
+.cmp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px; }
+.period-card { background: white; border-radius: 12px; padding: 18px 22px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+.period-card h3 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 12px; }
+.pc-curr h3 { color: #2563eb; }
+.pc-prev h3 { color: #9ca3af; }
+.mrow { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid #f1f5f9; }
+.mrow:last-child { border-bottom: none; }
+.ml { font-size: 13px; color: #6b7280; }
+.mv { font-size: 14px; font-weight: 700; }
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.footer { text-align: center; color: #9ca3af; font-size: 11px; padding: 20px; }
+@media (max-width: 900px) { .cards,.cmp-grid,.g2 { grid-template-columns: 1fr 1fr; } }
+</style>
+</head>
+<body>
+    <div class="header" style="background:linear-gradient(135deg,#7f1d1d,#dc2626)">
+        <h1>📊 IOA Piracicaba</h1>
+        <div class="sub">Relatório Comparativo Semanal · 16/04/2026 16:42</div>
+    </div>
+    <div class="container">
+
+        <div style="font-size:11px;color:#9ca3af;margin-bottom:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px">
+            Consolidado — Semana Atual · 2026-04-09 → 2026-04-15
+        </div>
+        <div class="cards">
+            <div class="card">
+                <div class="lbl">Investimento Total</div>
+                <div class="val">R$0</div>
+                <div class="cmp">Ant.: R$0.00</div>
+            </div>
+            <div class="card">
+                <div class="lbl">Conversões Totais</div>
+                <div class="val" style="color:#2563eb">0</div>
+                <div class="cmp">Ant.: 0</div>
+                <div style="font-size:10px;color:#9ca3af;margin-top:4px">Leads e contatos gerados pelas campanhas no período</div>
+            </div>
+            <div class="card">
+                <div class="lbl">CPL Médio</div>
+                <div class="val" style="color:#6b7280">—</div>
+                <div class="cmp">Ant.: —</div>
+                <div style="font-size:10px;color:#9ca3af;margin-top:4px">Custo por Lead — quanto foi gasto para cada contato gerado</div>
+            </div>
+            <div class="card">
+                <div class="lbl">Meta / Google</div>
+                <div class="val" style="font-size:18px">
+                    <span style="color:#2563eb">0</span>
+                    <span style="color:#9ca3af;font-size:14px;font-weight:400"> / </span>
+                    <span style="color:#16a34a">0</span>
+                </div>
+                <div class="cmp">leads Meta · conv. Google</div>
+            </div>
+        </div>
+
+        <div class="cmp-grid">
+            <div class="period-card pc-curr">
+                <h3>📅 Semana Atual · 2026-04-09 → 2026-04-15</h3>
+                <div class="mrow"><span class="ml">Investimento</span><span class="mv">R$0.00</span></div>
+                <div class="mrow"><span class="ml">Conversões totais</span><span class="mv" style="color:#2563eb">0</span></div>
+                <div class="mrow"><span class="ml">CPL médio</span><span class="mv" style="color:#6b7280">—</span></div>
+                <div class="mrow"><span class="ml">Meta leads</span><span class="mv">0</span></div>
+                <div class="mrow"><span class="ml">Google conv.</span><span class="mv">0</span></div>
+                <div class="mrow"><span class="ml">Meta CPL</span><span class="mv">—</span></div>
+                <div class="mrow"><span class="ml">Google CPL</span><span class="mv">—</span></div>
+            </div>
+            <div class="period-card pc-prev">
+                <h3>📅 Semana Anterior · 2026-04-02 → 2026-04-08</h3>
+                <div class="mrow"><span class="ml">Investimento</span><span class="mv">R$0.00</span></div>
+                <div class="mrow"><span class="ml">Conversões totais</span><span class="mv">0</span></div>
+                <div class="mrow"><span class="ml">CPL médio</span><span class="mv" style="color:#6b7280">—</span></div>
+                <div class="mrow"><span class="ml">Meta leads</span><span class="mv">0</span></div>
+                <div class="mrow"><span class="ml">Google conv.</span><span class="mv">0</span></div>
+                <div class="mrow"><span class="ml">Meta CPL</span><span class="mv">—</span></div>
+                <div class="mrow"><span class="ml">Google CPL</span><span class="mv">—</span></div>
+            </div>
+        </div>
+
+        <div class="g2">
+            <div class="section">
+                <div class="st">⚠️ Alertas</div>
+                <div style="color:#10b981;padding:8px">✅ Nenhum alerta crítico</div>
+            </div>
+            <div class="section">
+                <div class="st">💡 Análise de Performance</div>
+                <div style="font-size:14px;line-height:1.8;color:#374151">
+                    Nenhuma conversão registrada nos dois períodos.
+                </div>
+            </div>
+        </div>
+
+        
+        
+        
+
+    </div>
+    <div class="footer">Gestor de Tráfego · Meio Comunica · 16/04/2026 16:42</div>
+</body>
+</html>

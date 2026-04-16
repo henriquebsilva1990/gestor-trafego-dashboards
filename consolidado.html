@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consolidado — Meio Comunica</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f1f5f9; color: #1e293b; }
+        .header { background: linear-gradient(135deg, #0f172a, #1e3a8a); color: white; padding: 24px 40px; display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { font-size: 22px; font-weight: 700; }
+        .header .meta { font-size: 13px; opacity: 0.7; margin-top: 4px; }
+        .header .updated { font-size: 12px; opacity: 0.6; text-align: right; }
+        .container { max-width: 1300px; margin: 0 auto; padding: 24px 32px; }
+        .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 22px; }
+        .kpi { background: white; border-radius: 12px; padding: 18px 20px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+        .kpi .lbl { font-size: 10px; text-transform: uppercase; letter-spacing: .6px; color: #9ca3af; margin-bottom: 6px; }
+        .kpi .val { font-size: 26px; font-weight: 800; }
+        .kpi .sub { font-size: 11px; color: #9ca3af; margin-top: 4px; }
+        .grid2 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 20px; }
+        .section { background: white; border-radius: 12px; padding: 20px 22px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+        .st { font-size: 12px; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: .5px; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px; margin-bottom: 14px; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { text-align: left; padding: 9px 10px; background: #f8fafc; color: #6b7280; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; }
+        th .sub { font-weight: 400; font-size: 9px; color: #9ca3af; text-transform: none; letter-spacing: 0; display: block; margin-top: 2px; }
+        td { padding: 10px 10px; border-top: 1px solid #f1f5f9; vertical-align: middle; }
+        tr:hover td { background: #f8fafc; }
+        .footer { text-align: center; color: #9ca3af; font-size: 11px; padding: 20px; }
+
+        /* Modal */
+        #modal-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(15,23,42,.55); backdrop-filter: blur(2px);
+            z-index: 1000; align-items: center; justify-content: center;
+        }
+        #modal-overlay.open { display: flex; }
+        #modal-box {
+            background: white; border-radius: 16px; padding: 28px 32px;
+            max-width: 520px; width: 90%; max-height: 80vh; overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,.25);
+        }
+        #modal-header {
+            display: flex; justify-content: space-between; align-items: flex-start;
+            margin-bottom: 18px;
+        }
+        #modal-title { font-size: 16px; font-weight: 700; color: #0f172a; }
+        #modal-subtitle { font-size: 12px; color: #9ca3af; margin-top: 3px; }
+        #modal-close {
+            background: #f1f5f9; border: none; border-radius: 8px; width: 32px; height: 32px;
+            font-size: 16px; cursor: pointer; display: flex; align-items: center;
+            justify-content: center; flex-shrink: 0; color: #64748b;
+        }
+        #modal-close:hover { background: #e2e8f0; }
+    </style>
+</head>
+<body>
+
+<!-- Modal de alertas -->
+<div id="modal-overlay" onclick="if(event.target===this)closeModal()">
+    <div id="modal-box">
+        <div id="modal-header">
+            <div>
+                <div id="modal-title">Alertas</div>
+                <div id="modal-subtitle"></div>
+            </div>
+            <button id="modal-close" onclick="closeModal()">✕</button>
+        </div>
+        <div id="modal-body"></div>
+    </div>
+</div>
+
+<script>
+const ALERTS = {"IOA Campinas - Alunos": [{"type": "critical", "msg": "🔴 Sem leads: \"ortodontia_VID_001\" — R$81 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"dentistica_protese_VID_001\" — R$82 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"IMG001_cirur_estet_orofacial\" — R$254 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"IMG002_cirur_estet_orofacial\" — R$135 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"buco_fevereiro_2026\" — R$243 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"implant_perio_fev_2026\" — R$230 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"campinas_hof_mar_2026\" — R$150 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"odontoped_janeiro_2026_001\" — R$110 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"odontoped_marco_2026\" — R$96 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"hof_VID_003\" — R$74 investidos"}], "IOA Campinas - Pacientes": [{"type": "critical", "msg": "🔴 Sem leads: \"pacientes_hof002_ioa_campinas\" — R$141 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"pacientes_ortodontia_ioa_campinas\" — R$63 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"pacientes_implante_ioa_campinas\" — R$94 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"pacientes_VID_001\" — R$74 investidos"}], "IOA Ribeirao Preto": [{"type": "critical", "msg": "🔴 Sem leads: \"VID_endodontia_005\" — R$64 investidos"}, {"type": "warning", "msg": "🟡 Frequência alta: \"dent_prot_002\" — freq 3.2"}], "Faculdade IOA": [{"type": "critical", "msg": "🔴 Sem leads: \"Post do Instagram: A mesma graduação pod\" — R$79 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"Post do Instagram: Quando a experiência \" — R$61 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"Post do Instagram: Estar matriculado não\" — R$54 investidos"}], "IOA Piracicaba": [], "Mikro Metais": [], "Endotec": [], "Baby Center": []};
+
+function showAlerts(client) {
+    const alerts = ALERTS[client] || [];
+    document.getElementById('modal-title').textContent = client;
+    document.getElementById('modal-subtitle').textContent = alerts.length + ' alerta(s) encontrado(s)';
+    const body = document.getElementById('modal-body');
+    if (alerts.length === 0) {
+        body.innerHTML = '<div style="color:#10b981;font-size:14px;padding:12px 0">✅ Nenhum alerta</div>';
+    } else {
+        const sections = { critical: [], warning: [] };
+        alerts.forEach(a => sections[a.type].push(a));
+        let html = '';
+        if (sections.critical.length) {
+            html += '<div style="font-size:10px;font-weight:700;color:#ef4444;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">🔴 Ação Imediata — Pausar agora</div>';
+            sections.critical.forEach(a => {
+                html += `<div style="padding:10px 14px;margin:5px 0;border-radius:8px;background:#fef2f2;border-left:3px solid #ef4444;font-size:13px;line-height:1.5">${a.msg}</div>`;
+            });
+        }
+        if (sections.warning.length) {
+            html += '<div style="font-size:10px;font-weight:700;color:#d97706;text-transform:uppercase;letter-spacing:.5px;margin:14px 0 8px">🟡 Monitorar — Preparar substituto</div>';
+            sections.warning.forEach(a => {
+                html += `<div style="padding:10px 14px;margin:5px 0;border-radius:8px;background:#fffbeb;border-left:3px solid #f59e0b;font-size:13px;line-height:1.5">${a.msg}</div>`;
+            });
+        }
+        body.innerHTML = html;
+    }
+    document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('open');
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
+
+    <div class="header">
+        <div>
+            <h1>📊 Consolidado — Meio Comunica</h1>
+            <div class="meta">Todos os clientes · Meta Ads + Google Ads</div>
+        </div>
+        <div class="updated">
+            Atualizado em<br><b>16/04/2026 16:42</b>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <div class="kpis">
+            <div class="kpi">
+                <div class="lbl">Invest. Ontem</div>
+                <div class="val">R$370</div>
+                <div class="sub">2026-04-15</div>
+            </div>
+            <div class="kpi">
+                <div class="lbl">Invest. Semana Atual</div>
+                <div class="val">R$3,819<span style="font-size:10px;color:#ef4444"> ▲8%</span></div>
+                <div class="sub">Ant.: R$3,540.45</div>
+            </div>
+            <div class="kpi">
+                <div class="lbl">Conv. Semana Atual</div>
+                <div class="val" style="color:#2563eb">30<span style="font-size:10px;color:#10b981"> ▲88%</span></div>
+                <div class="sub">Ontem: 7 · Ant.: 16</div>
+            </div>
+            <div class="kpi">
+                <div class="lbl">CPL Médio Semana</div>
+                <div class="val" style="color:#ef4444">R$127.30</div>
+                <div class="sub">Custo por lead/conversão</div>
+            </div>
+        </div>
+
+        <div class="grid2">
+            <div class="section">
+                <div class="st">📋 Desempenho por Cliente</div>
+                <table>
+                    <thead><tr>
+                        <th>Cliente<span class="sub">Clique para ver detalhes</span></th>
+                        <th>Invest.<span class="sub">Ontem</span></th>
+                        <th>Invest.<span class="sub">Semana atual</span></th>
+                        <th>Invest.<span class="sub">Semana ant.</span></th>
+                        <th>Conv.<span class="sub">Ontem</span></th>
+                        <th>Conv.<span class="sub">Semana atual</span></th>
+                        <th>Conv.<span class="sub">Semana ant.</span></th>
+                        <th>CPL<span class="sub">Semana atual</span></th>
+                        <th>Alertas<span class="sub">Clique p/ ver</span></th>
+                    </tr></thead>
+                    <tbody><tr>
+            <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                    <div style="width:8px;height:8px;border-radius:50%;background:#2563eb;flex-shrink:0"></div>
+                    <a href="IOA_Campinas__Alunos_latest.html" style="font-weight:600;font-size:13px;color:#1e293b;text-decoration:none"
+                       onmouseover="this.style.color='#2563eb'" onmouseout="this.style.color='#1e293b'">IOA Campinas - Alunos</a>
+                </div>
+            </td>
+            <td style="font-weight:700">R$63.30</td>
+            <td>R$1,866.30<span style="font-size:10px;color:#ef4444"> ▲19%</span></td>
+            <td style="color:#9ca3af">R$1,574.66</td>
+            <td style="font-weight:700;color:#2563eb">—</td>
+            <td style="font-weight:700">—</td>
+            <td style="color:#9ca3af">—</td>
+            <td style="color:#6b7280;font-weight:700">—</td>
+            <td><span onclick="showAlerts('IOA Campinas - Alunos')" style="background:#ef4444;color:white;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:700;cursor:pointer;user-select:none" title="Ver alertas">10 ⚠️</span></td>
+        </tr><tr>
+            <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                    <div style="width:8px;height:8px;border-radius:50%;background:#059669;flex-shrink:0"></div>
+                    <a href="IOA_Campinas__Pacientes_latest.html" style="font-weight:600;font-size:13px;color:#1e293b;text-decoration:none"
+                       onmouseover="this.style.color='#059669'" onmouseout="this.style.color='#1e293b'">IOA Campinas - Pacientes</a>
+                </div>
+            </td>
+            <td style="font-weight:700">R$71.04</td>
+            <td>R$452.53<span style="font-size:10px;color:#ef4444"> ▲35%</span></td>
+            <td style="color:#9ca3af">R$335.05</td>
+            <td style="font-weight:700;color:#2563eb">—</td>
+            <td style="font-weight:700">—</td>
+            <td style="color:#9ca3af">—</td>
+            <td style="color:#6b7280;font-weight:700">—</td>
+            <td><span onclick="showAlerts('IOA Campinas - Pacientes')" style="background:#ef4444;color:white;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:700;cursor:pointer;user-select:none" title="Ver alertas">4 ⚠️</span></td>
+        </tr><tr>
+            <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                    <div style="width:8px;height:8px;border-radius:50%;background:#7c3aed;flex-shrink:0"></div>
+                    <a href="IOA_Ribeirao_Preto_latest.html" style="font-weight:600;font-size:13px;color:#1e293b;text-decoration:none"
+                       onmouseover="this.style.color='#7c3aed'" onmouseout="this.style.color='#1e293b'">IOA Ribeirao Preto</a>
+                </div>
+            </td>
+            <td style="font-weight:700">R$199.20</td>
+            <td>R$1,306.92<span style="font-size:10px;color:#10b981"> ▼17%</span></td>
+            <td style="color:#9ca3af">R$1,582.44</td>
+            <td style="font-weight:700;color:#2563eb">7</td>
+            <td style="font-weight:700">30<span style="font-size:10px;color:#10b981"> ▲88%</span></td>
+            <td style="color:#9ca3af">16</td>
+            <td style="color:#f59e0b;font-weight:700">R$43.56</td>
+            <td><span onclick="showAlerts('IOA Ribeirao Preto')" style="background:#ef4444;color:white;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:700;cursor:pointer;user-select:none" title="Ver alertas">2 ⚠️</span></td>
+        </tr><tr>
+            <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                    <div style="width:8px;height:8px;border-radius:50%;background:#0ea5e9;flex-shrink:0"></div>
+                    <a href="Faculdade_IOA_latest.html" style="font-weight:600;font-size:13px;color:#1e293b;text-decoration:none"
+                       onmouseover="this.style.color='#0ea5e9'" onmouseout="this.style.color='#1e293b'">Faculdade IOA</a>
+                </div>
+            </td>
+            <td style="font-weight:700">R$36.82</td>
+            <td>R$193.30<span style="font-size:10px;color:#ef4444"> ▲300%</span></td>
+            <td style="color:#9ca3af">R$48.30</td>
+            <td style="font-weight:700;color:#2563eb">—</td>
+            <td style="font-weight:700">—</td>
+            <td style="color:#9ca3af">—</td>
+            <td style="color:#6b7280;font-weight:700">—</td>
+            <td><span onclick="showAlerts('Faculdade IOA')" style="background:#ef4444;color:white;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:700;cursor:pointer;user-select:none" title="Ver alertas">3 ⚠️</span></td>
+        </tr><tr>
+            <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                    <div style="width:8px;height:8px;border-radius:50%;background:#dc2626;flex-shrink:0"></div>
+                    <a href="IOA_Piracicaba_latest.html" style="font-weight:600;font-size:13px;color:#1e293b;text-decoration:none"
+                       onmouseover="this.style.color='#dc2626'" onmouseout="this.style.color='#1e293b'">IOA Piracicaba</a>
+                </div>
+            </td>
+            <td style="font-weight:700">—</td>
+            <td>—</td>
+            <td style="color:#9ca3af">—</td>
+            <td style="font-weight:700;color:#2563eb">—</td>
+            <td style="font-weight:700">—</td>
+            <td style="color:#9ca3af">—</td>
+            <td style="color:#6b7280;font-weight:700">—</td>
+            <td><span style="color:#10b981;font-size:12px">✅</span></td>
+        </tr><tr>
+            <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                    <div style="width:8px;height:8px;border-radius:50%;background:#d97706;flex-shrink:0"></div>
+                    <a href="Mikro_Metais_latest.html" style="font-weight:600;font-size:13px;color:#1e293b;text-decoration:none"
+                       onmouseover="this.style.color='#d97706'" onmouseout="this.style.color='#1e293b'">Mikro Metais</a>
+                </div>
+            </td>
+            <td style="font-weight:700">—</td>
+            <td>—</td>
+            <td style="color:#9ca3af">—</td>
+            <td style="font-weight:700;color:#2563eb">—</td>
+            <td style="font-weight:700">—</td>
+            <td style="color:#9ca3af">—</td>
+            <td style="color:#6b7280;font-weight:700">—</td>
+            <td><span style="color:#10b981;font-size:12px">✅</span></td>
+        </tr><tr>
+            <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                    <div style="width:8px;height:8px;border-radius:50%;background:#0891b2;flex-shrink:0"></div>
+                    <a href="Endotec_latest.html" style="font-weight:600;font-size:13px;color:#1e293b;text-decoration:none"
+                       onmouseover="this.style.color='#0891b2'" onmouseout="this.style.color='#1e293b'">Endotec</a>
+                </div>
+            </td>
+            <td style="font-weight:700">—</td>
+            <td>—</td>
+            <td style="color:#9ca3af">—</td>
+            <td style="font-weight:700;color:#2563eb">—</td>
+            <td style="font-weight:700">—</td>
+            <td style="color:#9ca3af">—</td>
+            <td style="color:#6b7280;font-weight:700">—</td>
+            <td><span style="color:#10b981;font-size:12px">✅</span></td>
+        </tr><tr>
+            <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                    <div style="width:8px;height:8px;border-radius:50%;background:#db2777;flex-shrink:0"></div>
+                    <a href="Baby_Center_latest.html" style="font-weight:600;font-size:13px;color:#1e293b;text-decoration:none"
+                       onmouseover="this.style.color='#db2777'" onmouseout="this.style.color='#1e293b'">Baby Center</a>
+                </div>
+            </td>
+            <td style="font-weight:700">—</td>
+            <td>—</td>
+            <td style="color:#9ca3af">—</td>
+            <td style="font-weight:700;color:#2563eb">—</td>
+            <td style="font-weight:700">—</td>
+            <td style="color:#9ca3af">—</td>
+            <td style="color:#6b7280;font-weight:700">—</td>
+            <td><span style="color:#10b981;font-size:12px">✅</span></td>
+        </tr></tbody>
+                </table>
+                <div style="font-size:10px;color:#9ca3af;margin-top:10px">
+                    Semana atual: 2026-04-09 → 2026-04-15 &nbsp;·&nbsp;
+                    Semana anterior: 2026-04-02 → 2026-04-08
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="st">⚠️ Alertas do Dia</div>
+                <div style="margin-bottom:8px"><div style="font-size:11px;font-weight:700;color:#ef4444;margin-bottom:6px;text-transform:uppercase">🔴 Ação Imediata</div><div style="padding:6px 10px;margin:3px 0;background:#fef2f2;border-left:3px solid #ef4444;border-radius:4px;font-size:12px"><b>IOA Campinas - Alunos</b> — 🔴 Sem leads: "ortodontia_VID_001" — R$81 investidos</div><div style="padding:6px 10px;margin:3px 0;background:#fef2f2;border-left:3px solid #ef4444;border-radius:4px;font-size:12px"><b>IOA Campinas - Alunos</b> — 🔴 Sem leads: "dentistica_protese_VID_001" — R$82 investidos</div><div style="padding:6px 10px;margin:3px 0;background:#fef2f2;border-left:3px solid #ef4444;border-radius:4px;font-size:12px"><b>IOA Campinas - Alunos</b> — 🔴 Sem leads: "IMG001_cirur_estet_orofacial" — R$254 investidos</div><div style="padding:6px 10px;margin:3px 0;background:#fef2f2;border-left:3px solid #ef4444;border-radius:4px;font-size:12px"><b>IOA Campinas - Alunos</b> — 🔴 Sem leads: "IMG002_cirur_estet_orofacial" — R$135 investidos</div><div style="padding:6px 10px;margin:3px 0;background:#fef2f2;border-left:3px solid #ef4444;border-radius:4px;font-size:12px"><b>IOA Campinas - Alunos</b> — 🔴 Sem leads: "buco_fevereiro_2026" — R$243 investidos</div><div style="padding:6px 10px;margin:3px 0;background:#fef2f2;border-left:3px solid #ef4444;border-radius:4px;font-size:12px"><b>IOA Campinas - Alunos</b> — 🔴 Sem leads: "implant_perio_fev_2026" — R$230 investidos</div></div><div><div style="font-size:11px;font-weight:700;color:#d97706;margin-bottom:6px;text-transform:uppercase">🟡 Monitorar</div><div style="padding:6px 10px;margin:3px 0;background:#fffbeb;border-left:3px solid #f59e0b;border-radius:4px;font-size:12px"><b>IOA Ribeirao Preto</b> — 🟡 Frequência alta: "dent_prot_002" — freq 3.2</div></div>
+            </div>
+        </div>
+
+    </div>
+    <div class="footer">Gestor de Tráfego · Meio Comunica · 16/04/2026 16:42</div>
+</body>
+</html>
