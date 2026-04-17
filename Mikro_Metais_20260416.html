@@ -3,79 +3,310 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard — Mikro Metais</title>
+    <title>Mikro Metais — Relatório</title>
     <style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap');
+
+:root {
+  --bg: #070d19;
+  --surface: #0f1a2e;
+  --surface-2: #162037;
+  --border: rgba(148,163,184,0.09);
+  --border-bright: rgba(148,163,184,0.18);
+  --text: #e2e8f0;
+  --text-muted: #64748b;
+  --text-subtle: #94a3b8;
+  --meta: #3b82f6;
+  --meta-dim: rgba(59,130,246,0.12);
+  --meta-border: rgba(59,130,246,0.28);
+  --google: #10b981;
+  --google-dim: rgba(16,185,129,0.12);
+  --google-border: rgba(16,185,129,0.28);
+  --warn: #f59e0b;
+  --warn-dim: rgba(245,158,11,0.12);
+  --danger: #f87171;
+  --danger-dim: rgba(248,113,113,0.12);
+  --success: #4ade80;
+  --success-dim: rgba(74,222,128,0.12);
+  --r: 14px;
+}
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f1f5f9; color: #1e293b; }
-.header { padding: 28px 40px; color: white; }
-.header h1 { font-size: 26px; font-weight: 700; }
-.header .sub { font-size: 14px; opacity: 0.8; margin-top: 6px; }
-.container { max-width: 1200px; margin: 0 auto; padding: 28px 32px; }
-.st { font-size: 12px; font-weight: 700; color: #374151; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
-.cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
-.card { background: white; border-radius: 12px; padding: 18px 20px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
-.card .lbl { font-size: 10px; text-transform: uppercase; letter-spacing: .6px; color: #9ca3af; margin-bottom: 6px; }
-.card .val { font-size: 26px; font-weight: 800; line-height: 1; }
-.card .cmp { font-size: 11px; color: #9ca3af; margin-top: 5px; }
-.section { background: white; border-radius: 12px; padding: 20px 22px; margin-bottom: 18px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
-.platform-block { border-radius: 10px; padding: 16px 18px; margin-bottom: 16px; }
-.meta-block { background: #eff6ff; border-left: 4px solid #2563eb; }
-.google-block { background: #f0fdf4; border-left: 4px solid #16a34a; }
-.platform-title { font-size: 13px; font-weight: 700; margin-bottom: 12px; }
-.meta-title { color: #1d4ed8; }
-.google-title { color: #15803d; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(rgba(148,163,184,0.045) 1px, transparent 1px);
+  background-size: 26px 26px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── HEADER ─────────────────────────── */
+.header {
+  position: relative;
+  z-index: 1;
+  padding: 36px 44px 32px;
+  overflow: hidden;
+}
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 50%;
+  background: linear-gradient(to bottom, transparent, var(--bg));
+  pointer-events: none;
+}
+.header h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: #fff;
+  position: relative;
+  z-index: 1;
+}
+.header .sub {
+  font-size: 12px;
+  color: rgba(255,255,255,0.5);
+  margin-top: 7px;
+  letter-spacing: 0.4px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── CONTAINER ──────────────────────── */
+.container {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 36px 40px;
+}
+
+/* ─── SECTION TITLE ──────────────────── */
+.st {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 10px;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+}
+
+/* ─── KPI CARDS ──────────────────────── */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 20px 22px;
+  transition: border-color 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--meta) 0%, transparent 100%);
+  opacity: 0.4;
+}
+.card:hover { border-color: var(--border-bright); }
+.card .lbl {
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+.card .val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 25px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--text);
+}
+.card .cmp {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 9px;
+}
+
+/* ─── SECTIONS ───────────────────────── */
+.section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 20px 24px;
+  margin-bottom: 14px;
+}
+
+/* ─── PLATFORM BLOCKS ────────────────── */
+.platform-block {
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 14px;
+  border: 1px solid;
+}
+.meta-block {
+  background: var(--meta-dim);
+  border-color: var(--meta-border);
+}
+.google-block {
+  background: var(--google-dim);
+  border-color: var(--google-border);
+}
+.platform-title { font-size: 13px; font-weight: 600; }
+.meta-title { color: #93c5fd; }
+.google-title { color: #6ee7b7; }
+
+/* ─── TABLE ──────────────────────────── */
 table { width: 100%; border-collapse: collapse; font-size: 13px; }
-th { text-align: left; padding: 8px 10px; background: #f8fafc; color: #6b7280; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; }
-td { padding: 8px 10px; border-top: 1px solid #f1f5f9; }
-tr:hover td { background: #f8fafc; }
-.cmp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px; }
-.period-card { background: white; border-radius: 12px; padding: 18px 22px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
-.period-card h3 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 12px; }
-.pc-curr h3 { color: #2563eb; }
-.pc-prev h3 { color: #9ca3af; }
-.mrow { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid #f1f5f9; }
+th {
+  text-align: left;
+  padding: 8px 10px;
+  color: var(--text-muted);
+  font-size: 9.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+td {
+  padding: 9px 10px;
+  border-bottom: 1px solid rgba(148,163,184,0.05);
+  color: var(--text-subtle);
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(148,163,184,0.04); color: var(--text); }
+
+/* ─── COMPARISON GRID ────────────────── */
+.cmp-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.period-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 18px 22px;
+}
+.period-card h3 {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 14px;
+}
+.pc-curr h3 { color: #93c5fd; }
+.pc-prev h3 { color: var(--text-muted); }
+.mrow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(148,163,184,0.05);
+}
 .mrow:last-child { border-bottom: none; }
-.ml { font-size: 13px; color: #6b7280; }
-.mv { font-size: 14px; font-weight: 700; }
-.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.footer { text-align: center; color: #9ca3af; font-size: 11px; padding: 20px; }
-@media (max-width: 900px) { .cards,.cmp-grid,.g2 { grid-template-columns: 1fr 1fr; } }
+.ml { font-size: 12px; color: var(--text-muted); }
+.mv {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* ─── 2 COL GRID ─────────────────────── */
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* ─── FOOTER ─────────────────────────── */
+.footer {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 11px;
+  padding: 28px 20px 36px;
+  position: relative;
+  z-index: 1;
+  border-top: 1px solid var(--border);
+  margin-top: 8px;
+}
+
+/* ─── STATUS DOTS ────────────────────── */
+.dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; vertical-align: middle; margin-right: 4px; }
+.dot-green { background: var(--success); box-shadow: 0 0 6px rgba(74,222,128,.5); }
+.dot-yellow { background: var(--warn); box-shadow: 0 0 6px rgba(245,158,11,.5); }
+.dot-red { background: var(--danger); box-shadow: 0 0 6px rgba(248,113,113,.5); }
+.dot-gray { background: var(--text-muted); }
+
+/* ─── BUTTONS ────────────────────────── */
+.btn { border: none; border-radius: 8px; cursor: pointer; font-family: 'Inter', sans-serif; transition: opacity 0.15s; }
+.btn:hover { opacity: 0.85; }
+.btn-primary { background: var(--meta); color: white; font-weight: 600; }
+.btn-danger { background: var(--danger); color: white; font-weight: 700; }
+.btn-warn { background: var(--warn); color: #1a1a1a; font-weight: 700; }
+.btn-ghost { background: var(--surface-2); color: var(--text-subtle); }
+
+/* ─── RESPONSIVE ─────────────────────── */
+@media (max-width: 900px) { .cards, .cmp-grid, .g2 { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 600px) { .cmp-grid, .g2 { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
     <div class="header" style="background:linear-gradient(135deg,#78350f,#d97706)">
-        <h1>📊 Mikro Metais</h1>
-        <div class="sub">Relatório Comparativo Semanal · 16/04/2026 16:42</div>
+        <h1>Mikro Metais</h1>
+        <div class="sub">Relatório Semanal · 16/04/2026 18:40</div>
     </div>
     <div class="container">
 
-        <div style="font-size:11px;color:#9ca3af;margin-bottom:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px">
-            Consolidado — Semana Atual · 2026-04-09 → 2026-04-15
+        <div style="font-size:9.5px;color:#64748b;margin-bottom:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px">
+            Consolidado · Semana Atual · <span style="color:#93c5fd">2026-04-09 → 2026-04-15</span>
         </div>
         <div class="cards">
-            <div class="card">
+            <div class="card" style="--card-accent:var(--meta)">
                 <div class="lbl">Investimento Total</div>
                 <div class="val">R$0</div>
-                <div class="cmp">Ant.: R$0.00</div>
+                <div class="cmp">Semana ant.: R$0.00</div>
             </div>
             <div class="card">
                 <div class="lbl">Conversões Totais</div>
-                <div class="val" style="color:#2563eb">0</div>
-                <div class="cmp">Ant.: 0</div>
-                <div style="font-size:10px;color:#9ca3af;margin-top:4px">Leads e contatos gerados pelas campanhas no período</div>
+                <div class="val" style="color:#93c5fd">0</div>
+                <div class="cmp">Semana ant.: 0</div>
             </div>
             <div class="card">
                 <div class="lbl">CPL Médio</div>
-                <div class="val" style="color:#6b7280">—</div>
-                <div class="cmp">Ant.: —</div>
-                <div style="font-size:10px;color:#9ca3af;margin-top:4px">Custo por Lead — quanto foi gasto para cada contato gerado</div>
+                <div class="val" style="color:#64748b">—</div>
+                <div class="cmp">Semana ant.: —</div>
             </div>
             <div class="card">
                 <div class="lbl">Meta / Google</div>
-                <div class="val" style="font-size:18px">
-                    <span style="color:#2563eb">0</span>
-                    <span style="color:#9ca3af;font-size:14px;font-weight:400"> / </span>
-                    <span style="color:#16a34a">0</span>
+                <div class="val" style="font-size:20px">
+                    <span style="color:#93c5fd">0</span>
+                    <span style="color:#334155;font-size:14px;font-weight:400"> · </span>
+                    <span style="color:#6ee7b7">0</span>
                 </div>
                 <div class="cmp">leads Meta · conv. Google</div>
             </div>
@@ -83,20 +314,20 @@ tr:hover td { background: #f8fafc; }
 
         <div class="cmp-grid">
             <div class="period-card pc-curr">
-                <h3>📅 Semana Atual · 2026-04-09 → 2026-04-15</h3>
+                <h3>Semana Atual · 2026-04-09 → 2026-04-15</h3>
                 <div class="mrow"><span class="ml">Investimento</span><span class="mv">R$0.00</span></div>
-                <div class="mrow"><span class="ml">Conversões totais</span><span class="mv" style="color:#2563eb">0</span></div>
-                <div class="mrow"><span class="ml">CPL médio</span><span class="mv" style="color:#6b7280">—</span></div>
+                <div class="mrow"><span class="ml">Conversões totais</span><span class="mv" style="color:#93c5fd">0</span></div>
+                <div class="mrow"><span class="ml">CPL médio</span><span class="mv" style="color:#64748b">—</span></div>
                 <div class="mrow"><span class="ml">Meta leads</span><span class="mv">0</span></div>
                 <div class="mrow"><span class="ml">Google conv.</span><span class="mv">0</span></div>
                 <div class="mrow"><span class="ml">Meta CPL</span><span class="mv">—</span></div>
                 <div class="mrow"><span class="ml">Google CPL</span><span class="mv">—</span></div>
             </div>
             <div class="period-card pc-prev">
-                <h3>📅 Semana Anterior · 2026-04-02 → 2026-04-08</h3>
+                <h3>Semana Anterior · 2026-04-02 → 2026-04-08</h3>
                 <div class="mrow"><span class="ml">Investimento</span><span class="mv">R$0.00</span></div>
                 <div class="mrow"><span class="ml">Conversões totais</span><span class="mv">0</span></div>
-                <div class="mrow"><span class="ml">CPL médio</span><span class="mv" style="color:#6b7280">—</span></div>
+                <div class="mrow"><span class="ml">CPL médio</span><span class="mv" style="color:#64748b">—</span></div>
                 <div class="mrow"><span class="ml">Meta leads</span><span class="mv">0</span></div>
                 <div class="mrow"><span class="ml">Google conv.</span><span class="mv">0</span></div>
                 <div class="mrow"><span class="ml">Meta CPL</span><span class="mv">—</span></div>
@@ -106,12 +337,12 @@ tr:hover td { background: #f8fafc; }
 
         <div class="g2">
             <div class="section">
-                <div class="st">⚠️ Alertas</div>
-                <div style="color:#10b981;padding:8px">✅ Nenhum alerta crítico</div>
+                <div class="st">Alertas</div>
+                <div style="color:#4ade80;padding:10px;font-size:13px">Nenhum alerta crítico esta semana</div>
             </div>
             <div class="section">
-                <div class="st">💡 Análise de Performance</div>
-                <div style="font-size:14px;line-height:1.8;color:#374151">
+                <div class="st">Análise de Performance</div>
+                <div style="font-size:13px;line-height:1.8;color:#94a3b8">
                     Nenhuma conversão registrada nos dois períodos.
                 </div>
             </div>
@@ -120,8 +351,392 @@ tr:hover td { background: #f8fafc; }
         
         
         
+        
+        
+        
 
     </div>
-    <div class="footer">Gestor de Tráfego · Meio Comunica · 16/04/2026 16:42</div>
+
+    <!-- Modal Upload de Criativo Substituto -->
+    <div id="upload-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:1001;align-items:center;justify-content:center">
+      <div style="background:#0f1a2e;border:1px solid rgba(148,163,184,0.15);border-radius:16px;padding:28px 32px;max-width:520px;width:92%;box-shadow:0 24px 80px rgba(0,0,0,.6)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+          <div>
+            <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:#e2e8f0">Subir Criativo Substituto</div>
+            <div id="upload-adset-label" style="font-size:11px;color:#64748b;margin-top:3px"></div>
+          </div>
+          <button onclick="closeUpload()" style="background:rgba(148,163,184,0.1);border:none;border-radius:8px;width:32px;height:32px;font-size:14px;cursor:pointer;color:#94a3b8">✕</button>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div>
+            <label style="font-size:11px;font-weight:600;color:#64748b;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.6px">Imagem do anúncio <span style="color:#475569;text-transform:none;letter-spacing:0">(JPG/PNG, 1080×1080)</span></label>
+            <input id="upload-file" type="file" accept="image/jpeg,image/png" style="width:100%;padding:9px 12px;background:#0f1a2e;border:1px solid rgba(148,163,184,0.15);border-radius:8px;font-size:13px;color:#e2e8f0;font-family:'Inter',sans-serif;outline:none;cursor:pointer">
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:600;color:#64748b;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.6px">Nome do anúncio</label>
+            <input id="upload-adname" type="text" placeholder="Ex: Substituto — Alunos — Maio" style="width:100%;padding:9px 12px;background:#0f1a2e;border:1px solid rgba(148,163,184,0.15);border-radius:8px;font-size:13px;color:#e2e8f0;font-family:'Inter',sans-serif;outline:none">
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:600;color:#64748b;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.6px">Texto principal</label>
+            <textarea id="upload-body" rows="2" placeholder="Texto que aparece acima da imagem..." style="width:100%;padding:9px 12px;background:#0f1a2e;border:1px solid rgba(148,163,184,0.15);border-radius:8px;font-size:13px;color:#e2e8f0;font-family:'Inter',sans-serif;outline:none;resize:vertical"></textarea>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div>
+              <label style="font-size:11px;font-weight:600;color:#64748b;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.6px">Headline</label>
+              <input id="upload-headline" type="text" placeholder="Título abaixo da imagem" style="width:100%;padding:9px 12px;background:#0f1a2e;border:1px solid rgba(148,163,184,0.15);border-radius:8px;font-size:13px;color:#e2e8f0;font-family:'Inter',sans-serif;outline:none">
+            </div>
+            <div>
+              <label style="font-size:11px;font-weight:600;color:#64748b;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.6px">URL de destino</label>
+              <input id="upload-url" type="url" placeholder="https://..." style="width:100%;padding:9px 12px;background:#0f1a2e;border:1px solid rgba(148,163,184,0.15);border-radius:8px;font-size:13px;color:#e2e8f0;font-family:'Inter',sans-serif;outline:none">
+            </div>
+          </div>
+          <div id="upload-status" style="font-size:12px;min-height:18px"></div>
+          <div style="display:flex;gap:10px">
+            <button onclick="closeUpload()" class="btn btn-ghost" style="flex:1;padding:10px;font-size:13px">Cancelar</button>
+            <button onclick="submitUpload()" class="btn btn-primary" style="flex:2;padding:10px;font-size:13px">Criar Anúncio (pausado)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Criar Novo Conjunto -->
+    <div id="wizard-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center">
+      <div style="background:#0f1a2e;border:1px solid rgba(148,163,184,0.15);border-radius:16px;padding:28px 32px;max-width:600px;width:92%;max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,.6)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+          <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:#e2e8f0">Novo Conjunto de Anúncios</div>
+          <button onclick="closeWizard()" style="background:rgba(148,163,184,0.1);border:none;border-radius:8px;width:32px;height:32px;font-size:14px;cursor:pointer;color:#94a3b8">✕</button>
+        </div>
+        <div id="wiz-source-label" style="font-size:11px;color:#64748b;margin-bottom:16px"></div>
+
+        <div id="wiz-diagnosis" style="background:rgba(148,163,184,0.05);border:1px solid rgba(148,163,184,0.12);border-radius:10px;padding:14px;margin-bottom:16px;font-size:13px;color:#94a3b8;line-height:1.6"></div>
+
+        <div style="margin-bottom:14px">
+          <div style="font-size:10px;font-weight:700;color:#64748b;margin-bottom:10px;text-transform:uppercase;letter-spacing:1px">O que você quer testar?</div>
+          <div style="display:flex;flex-direction:column;gap:6px" id="wiz-hypothesis-group">
+            <label id="hyp-audience" style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid rgba(148,163,184,0.15);border-radius:8px;cursor:pointer;background:rgba(148,163,184,0.03)">
+              <input type="radio" name="wiz-hyp" value="audience" style="margin-top:2px;accent-color:#3b82f6">
+              <div><div style="font-weight:600;font-size:13px;color:#e2e8f0">Novo público</div><div style="font-size:11.5px;color:#64748b">Lookalike diferente, interesse, broad ou retargeting</div></div>
+            </label>
+            <label id="hyp-creative" style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid rgba(148,163,184,0.15);border-radius:8px;cursor:pointer;background:rgba(148,163,184,0.03)">
+              <input type="radio" name="wiz-hyp" value="creative" style="margin-top:2px;accent-color:#3b82f6">
+              <div><div style="font-weight:600;font-size:13px;color:#e2e8f0">Novo criativo</div><div style="font-size:11.5px;color:#64748b">Mesmo público, testar outro hook, formato ou ângulo</div></div>
+            </label>
+            <label id="hyp-scale" style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid rgba(148,163,184,0.15);border-radius:8px;cursor:pointer;background:rgba(148,163,184,0.03)">
+              <input type="radio" name="wiz-hyp" value="scale" style="margin-top:2px;accent-color:#3b82f6">
+              <div><div style="font-weight:600;font-size:13px;color:#e2e8f0">Escalar</div><div style="font-size:11.5px;color:#64748b">Conjunto performando bem — isolar e aumentar budget</div></div>
+            </label>
+            <label id="hyp-placement" style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid rgba(148,163,184,0.15);border-radius:8px;cursor:pointer;background:rgba(148,163,184,0.03)">
+              <input type="radio" name="wiz-hyp" value="placement" style="margin-top:2px;accent-color:#3b82f6">
+              <div><div style="font-weight:600;font-size:13px;color:#e2e8f0">Posicionamento</div><div style="font-size:11.5px;color:#64748b">Testar Feed vs Reels vs Stories em separado</div></div>
+            </label>
+          </div>
+        </div>
+
+        <div id="wiz-suggestion" style="display:none;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:8px;padding:12px 14px;font-size:13px;color:#93c5fd;margin-bottom:14px;line-height:1.6"></div>
+
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div>
+            <label style="font-size:11px;font-weight:600;color:#64748b;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.6px">Nome do novo conjunto</label>
+            <input id="wiz-name" type="text" placeholder="Preencha após escolher a hipótese" style="width:100%;padding:9px 12px;background:#0f1a2e;border:1px solid rgba(148,163,184,0.15);border-radius:8px;font-size:13px;color:#e2e8f0;font-family:'Inter',sans-serif;outline:none">
+            <div id="wiz-name-hint" style="font-size:11px;color:#64748b;margin-top:4px"></div>
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:600;color:#64748b;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.6px">Orçamento diário (R$)</label>
+            <input id="wiz-budget" type="number" placeholder="50" style="width:100%;padding:9px 12px;background:#0f1a2e;border:1px solid rgba(148,163,184,0.15);border-radius:8px;font-size:13px;color:#e2e8f0;font-family:'Inter',sans-serif;outline:none">
+            <div id="wiz-budget-hint" style="font-size:11px;color:#64748b;margin-top:4px"></div>
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:600;color:#64748b;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.6px">Criativos para este conjunto</label>
+            <div id="wiz-creatives" style="font-size:12px;color:#64748b">Carregando...</div>
+          </div>
+          <div id="wiz-status" style="font-size:12px;min-height:20px"></div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <button onclick="closeWizard()" class="btn btn-ghost" style="flex:1;padding:10px;font-size:13px">Cancelar</button>
+            <button id="wiz-submit-btn" onclick="submitWizard()" class="btn btn-primary" style="flex:2;padding:10px;font-size:13px">Criar Conjunto (pausado)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+    const API = 'http://localhost:7070';
+    let wizAdsetId = null, wizAccountId = null, wizSelectedCreatives = [];
+
+    async function checkServer() {
+      try { await fetch(API + '/ping', {signal: AbortSignal.timeout(800)}); return true; }
+      catch { return false; }
+    }
+
+    async function pauseAd(adId, btn) {
+      if (!(await checkServer())) {
+        alert('Servidor de ações não está rodando.\nExecute no terminal:\n\npython3 ~/.claude/skills/gestor-trafego/scripts/actions_server.py');
+        return;
+      }
+      btn.disabled = true; btn.textContent = '⏳ Pausando...';
+      const r = await fetch(API + '/pause', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ad_id: adId})});
+      const d = await r.json();
+      if (d.success) { btn.textContent = 'Pausado'; btn.style.background = '#4b5563'; }
+      else { btn.textContent = '❌ Erro'; btn.disabled = false; alert('Erro: ' + d.error); }
+    }
+
+    let wizSourceName = '', wizSourceCpl = 0, wizSourceFreq = 0, wizSourceCtr = 0, wizSourceLeads = 0, wizSourceBudget = 0;
+
+    const WIZ_SUGGESTIONS = {
+      audience: {
+        title: '🎯 Hipótese: Novo Público',
+        tips: [
+          'Clone o público fonte, mas troque o tipo: se era LAL 1%, teste LAL 2–3% ou LAL 5%.',
+          'Se já usa lookalike, teste um conjunto baseado em interesses específicos do nicho.',
+          'Considere segmentar por cidade ou faixa etária diferente para descobrir novo bolsão.',
+          'Tente público Broad (sem restrição de interesse) — o algoritmo aprende sozinho com o pixel.'
+        ],
+        nameSuffix: '— Novo Público',
+        budgetRule: 'Orçamento de teste: mesmo valor do conjunto de origem (R${}).',
+      },
+      creative: {
+        title: '🎨 Hipótese: Novo Criativo',
+        tips: [
+          'Mantenha o mesmo público do conjunto de origem — o que muda é só o criativo.',
+          'Teste um formato diferente do que está rodando: se está com imagem, teste vídeo curto (15–30s).',
+          'Mude o hook: os primeiros 3 segundos/linha devem apresentar um problema diferente.',
+          'Experimente um ângulo de proposta de valor oposto: se o atual fala em "rapidez", teste "segurança".',
+          'Troque o CTA: de "Quero saber mais" para "Garanta sua vaga" ou "Fale com especialista".'
+        ],
+        nameSuffix: '— Novo Criativo',
+        budgetRule: 'Use o mesmo orçamento do conjunto original para isolar a variável criativo.',
+      },
+      scale: {
+        title: '📈 Hipótese: Escalar',
+        tips: [
+          'Isole este conjunto em uma campanha separada antes de aumentar o budget.',
+          'Aumente o orçamento em no máximo 20–30% por vez — saltos grandes reiniciam o aprendizado.',
+          'Duplique o conjunto com budget maior e deixe o original rodando em paralelo por 3–5 dias.',
+          'Monitore a frequência: acima de 2.5 o CPL começa a subir mesmo escalando.'
+        ],
+        nameSuffix: '— Escala',
+        budgetRule: 'Sugestão: 20–30% acima do orçamento atual (R${}).',
+      },
+      placement: {
+        title: '📐 Hipótese: Posicionamento',
+        tips: [
+          'Crie conjuntos separados para Feed, Reels e Stories — cada um com criativo nativo do formato.',
+          'Reels: vídeo vertical 9:16, até 60s, hook em texto na tela nos primeiros 3s.',
+          'Feed: imagem estática ou carrossel funciona melhor; copy mais longa é aceita.',
+          'Stories: urgência + CTA direto, duração ideal 15s.',
+          'Inicie com orçamento menor (50% do original) — posicionamentos únicos têm menos volume de leilão.'
+        ],
+        nameSuffix: '— Reels / Feed / Stories',
+        budgetRule: 'Inicie com metade do orçamento atual (R${}) para testar o volume disponível.',
+      },
+    };
+
+    function wizDiagnosis(cpl, freq, ctr, leads) {
+      const lines = [];
+      if (cpl > 55)  lines.push(`🔴 CPL R$${cpl.toFixed(2)} — acima do limite. Testar novo público ou criativo.`);
+      else if (cpl > 25) lines.push(`🟡 CPL R$${cpl.toFixed(2)} — monitorar. Margem para otimização.`);
+      else if (cpl > 0)  lines.push(`🟢 CPL R$${cpl.toFixed(2)} — bom desempenho.`);
+      if (freq > 3.5)  lines.push(`🔴 Frequência ${freq.toFixed(1)} — audiência saturada. Novo público urgente.`);
+      else if (freq > 2.5) lines.push(`🟡 Frequência ${freq.toFixed(1)} — atenção. Público começando a saturar.`);
+      if (ctr < 1.0 && ctr > 0) lines.push(`🟡 CTR ${ctr.toFixed(2)}% — criativo não está chamando atenção. Testar novo hook.`);
+      if (leads > 0) lines.push(`📊 ${leads} leads gerados — conjunto tem dados suficientes para teste.`);
+      return lines.length ? lines.join('<br>') : '📊 Sem dados suficientes para diagnóstico automático.';
+    }
+
+    function wizRecommendHypothesis(cpl, freq, ctr) {
+      if (freq > 3.5) return 'audience';
+      if (cpl > 55 && ctr < 1.5) return 'creative';
+      if (cpl > 55) return 'audience';
+      if (ctr < 1.0) return 'creative';
+      if (cpl > 0 && cpl <= 25) return 'scale';
+      return 'audience';
+    }
+
+    function wizUpdateSuggestion() {
+      const hyp = document.querySelector('input[name="wiz-hyp"]:checked');
+      const box = document.getElementById('wiz-suggestion');
+      const nameHint = document.getElementById('wiz-name-hint');
+      const budgetHint = document.getElementById('wiz-budget-hint');
+      if (!hyp) { box.style.display='none'; return; }
+      const s = WIZ_SUGGESTIONS[hyp.value];
+      box.style.display = 'block';
+      box.innerHTML = `<strong style="color:#93c5fd">${s.title}</strong><ul style="margin:8px 0 0 16px;padding:0;color:#7dd3fc">${s.tips.map(t=>`<li style="margin-bottom:5px">${t}</li>`).join('')}</ul>`;
+      nameHint.textContent = `Sugestão: "${wizSourceName} ${s.nameSuffix}"`;
+      const budgetForHint = (hyp.value === 'scale') ? (wizSourceBudget * 1.25).toFixed(0) : (hyp.value === 'placement') ? (wizSourceBudget * 0.5).toFixed(0) : wizSourceBudget.toFixed(0);
+      budgetHint.textContent = s.budgetRule.replace('${}', budgetForHint);
+      document.querySelectorAll('#wiz-hypothesis-group label').forEach(l => { l.style.border='1px solid rgba(148,163,184,0.15)'; l.style.background='rgba(148,163,184,0.03)'; });
+      hyp.closest('label').style.border = '1px solid rgba(59,130,246,0.5)';
+      hyp.closest('label').style.background = 'rgba(59,130,246,0.08)';
+    }
+
+    async function openCreateWizard(adsetId, adsetName, accountId, cpl=0, freq=0, ctr=0, leads=0, budget=0) {
+      if (!(await checkServer())) {
+        alert('Servidor de ações não está rodando.\nExecute no terminal:\n\npython3 ~/.claude/skills/gestor-trafego/scripts/actions_server.py');
+        return;
+      }
+      wizAdsetId = adsetId; wizAccountId = accountId; wizSelectedCreatives = [];
+      wizSourceName = adsetName; wizSourceCpl = cpl; wizSourceFreq = freq;
+      wizSourceCtr = ctr; wizSourceLeads = leads; wizSourceBudget = budget;
+
+      document.getElementById('wiz-source-label').textContent = 'Baseado em: ' + adsetName;
+      document.getElementById('wiz-name').value = '';
+      document.getElementById('wiz-budget').value = budget > 0 ? budget : '';
+      document.getElementById('wiz-status').textContent = '';
+      document.getElementById('wiz-suggestion').style.display = 'none';
+      document.getElementById('wiz-name-hint').textContent = '';
+      document.getElementById('wiz-budget-hint').textContent = '';
+      document.querySelectorAll('input[name="wiz-hyp"]').forEach(r => r.checked = false);
+      document.querySelectorAll('#wiz-hypothesis-group label').forEach(l => { l.style.border='1px solid rgba(148,163,184,0.15)'; l.style.background='rgba(148,163,184,0.03)'; });
+
+      document.getElementById('wiz-diagnosis').innerHTML = wizDiagnosis(cpl, freq, ctr, leads);
+
+      // auto-recommend
+      const rec = wizRecommendHypothesis(cpl, freq, ctr);
+      const recInput = document.querySelector(`input[name="wiz-hyp"][value="${rec}"]`);
+      if (recInput) {
+        recInput.checked = true;
+        const recLabel = recInput.closest('label');
+        recLabel.style.border = '1px solid rgba(251,191,36,0.4)';
+        recLabel.style.background = 'rgba(251,191,36,0.08)';
+        recLabel.querySelector('div div:first-child').insertAdjacentHTML('beforeend', ' <span style="font-size:9px;background:rgba(251,191,36,0.2);color:#fbbf24;padding:2px 7px;border-radius:10px;vertical-align:middle;font-weight:700;letter-spacing:.3px;border:1px solid rgba(251,191,36,0.3)">recomendado</span>');
+      }
+      // add listeners
+      document.querySelectorAll('input[name="wiz-hyp"]').forEach(r => r.addEventListener('change', wizUpdateSuggestion));
+      if (recInput) wizUpdateSuggestion();
+
+      document.getElementById('wizard-overlay').style.display = 'flex';
+
+      document.getElementById('wiz-creatives').innerHTML = 'Carregando criativos...';
+      const r = await fetch(API + '/creatives?account_id=' + accountId);
+      const d = await r.json();
+      if (d.creatives && d.creatives.length) {
+        document.getElementById('wiz-creatives').innerHTML = d.creatives.map(c => {
+          const thumb = c.thumb
+            ? `<img src="${c.thumb}" alt="preview"
+                style="width:44px;height:44px;object-fit:cover;border-radius:6px;border:1px solid rgba(148,163,184,0.2);cursor:pointer;flex-shrink:0;transition:opacity .15s"
+                onclick="event.stopPropagation();showThumb('${c.thumb}','${c.name.replace(/'/g,'')}')"
+                onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'">`
+            : `<div style="width:44px;height:44px;background:rgba(148,163,184,0.08);border-radius:6px;border:1px dashed rgba(148,163,184,0.2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px;color:#64748b">▣</div>`;
+          return `<label style="display:flex;align-items:center;gap:10px;padding:8px 6px;border-bottom:1px solid rgba(148,163,184,0.06);cursor:pointer;border-radius:6px;transition:background .1s" onmouseover="this.style.background='rgba(148,163,184,0.04)'" onmouseout="this.style.background=''">
+            <input type="checkbox" value="${c.id}" onchange="toggleCreative('${c.id}')" style="accent-color:#3b82f6">
+            ${thumb}
+            <span style="font-size:12px;line-height:1.4;color:#94a3b8">${c.name}</span>
+          </label>`;
+        }).join('');
+      } else {
+        document.getElementById('wiz-creatives').innerHTML = '<span style="color:#9ca3af">Nenhum criativo encontrado na conta</span>';
+      }
+    }
+
+    function toggleCreative(id) {
+      const idx = wizSelectedCreatives.indexOf(id);
+      if (idx >= 0) wizSelectedCreatives.splice(idx, 1); else wizSelectedCreatives.push(id);
+    }
+
+    async function submitWizard() {
+      const name = document.getElementById('wiz-name').value.trim();
+      const budget = parseFloat(document.getElementById('wiz-budget').value);
+      const status = document.getElementById('wiz-status');
+      if (!name) { status.textContent = '⚠️ Informe o nome do conjunto'; return; }
+      if (!budget || budget < 5) { status.textContent = '⚠️ Orçamento mínimo: R$5'; return; }
+      if (!wizSelectedCreatives.length) { status.textContent = '⚠️ Selecione ao menos um criativo'; return; }
+      status.innerHTML = '<span style="color:#2563eb">⏳ Criando conjunto na Meta...</span>';
+      const r = await fetch(API + '/create_adset', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({source_adset_id: wizAdsetId, account_id: wizAccountId, name, daily_budget: budget, creative_ids: wizSelectedCreatives})
+      });
+      const d = await r.json();
+      if (d.success) {
+        status.innerHTML = `<span style="color:#10b981">✅ Conjunto criado com ${d.ads_created.length} anúncio(s). ID: ${d.adset_id}</span>`;
+        setTimeout(closeWizard, 4000);
+      } else {
+        status.innerHTML = `<span style="color:#ef4444">❌ ${d.error}</span>`;
+      }
+    }
+
+    function closeWizard() {
+      document.getElementById('wizard-overlay').style.display = 'none';
+      // remove "recomendado" badge to avoid duplicating on reopen
+      document.querySelectorAll('#wiz-hypothesis-group span').forEach(s => { if(s.textContent.includes('recomendado')) s.remove(); });
+    }
+
+    // ── Preview de criativo (lightbox sem salvar em disco) ──────
+    function showThumb(url, name) {
+      let lb = document.getElementById('thumb-lightbox');
+      if (!lb) {
+        lb = document.createElement('div');
+        lb.id = 'thumb-lightbox';
+        lb.style.cssText = 'display:none;position:fixed;inset:0;background:rgba(15,23,42,.75);z-index:2000;align-items:center;justify-content:center;flex-direction:column;gap:12px';
+        lb.innerHTML = `
+          <div style="position:relative;max-width:90vw;max-height:80vh">
+            <img id="thumb-img" src="" style="max-width:90vw;max-height:75vh;object-fit:contain;border-radius:10px;box-shadow:0 8px 40px rgba(0,0,0,.5)">
+            <button onclick="document.getElementById('thumb-lightbox').style.display='none'"
+              style="position:absolute;top:-14px;right:-14px;width:30px;height:30px;background:#1e293b;color:white;border:none;border-radius:50%;font-size:16px;cursor:pointer;line-height:1">✕</button>
+          </div>
+          <div id="thumb-name" style="color:white;font-size:13px;max-width:80vw;text-align:center;opacity:.8"></div>
+          <div style="color:rgba(255,255,255,.5);font-size:11px">Clique fora para fechar · imagem não é salva no disco</div>`;
+        lb.addEventListener('click', e => { if (e.target === lb) lb.style.display = 'none'; });
+        document.body.appendChild(lb);
+      }
+      document.getElementById('thumb-img').src = url;
+      document.getElementById('thumb-name').textContent = name;
+      lb.style.display = 'flex';
+    }
+    document.getElementById('wizard-overlay').addEventListener('click', e => { if(e.target===e.currentTarget) closeWizard(); });
+
+    // ── Upload de criativo substituto ──────────────────────────
+    let uploadAdsetId = null;
+
+    async function openUploadWizard(adsetId, adName) {
+      if (!(await checkServer())) {
+        alert('Servidor de ações não está rodando.\nExecute no terminal:\n\npython3 ~/.claude/skills/gestor-trafego/scripts/actions_server.py');
+        return;
+      }
+      uploadAdsetId = adsetId;
+      document.getElementById('upload-adset-label').textContent = 'Substituto para: ' + adName;
+      document.getElementById('upload-file').value = '';
+      document.getElementById('upload-adname').value = '';
+      document.getElementById('upload-body').value = '';
+      document.getElementById('upload-headline').value = '';
+      document.getElementById('upload-url').value = '';
+      document.getElementById('upload-status').textContent = '';
+      document.getElementById('upload-overlay').style.display = 'flex';
+    }
+
+    async function submitUpload() {
+      const file = document.getElementById('upload-file').files[0];
+      const adName = document.getElementById('upload-adname').value.trim();
+      const body = document.getElementById('upload-body').value.trim();
+      const headline = document.getElementById('upload-headline').value.trim();
+      const url = document.getElementById('upload-url').value.trim();
+      const status = document.getElementById('upload-status');
+      if (!file) { status.innerHTML = '<span style="color:#ef4444">⚠️ Selecione uma imagem</span>'; return; }
+      if (!adName) { status.innerHTML = '<span style="color:#ef4444">⚠️ Informe o nome do anúncio</span>'; return; }
+      if (!url) { status.innerHTML = '<span style="color:#ef4444">⚠️ Informe a URL de destino</span>'; return; }
+
+      status.innerHTML = '<span style="color:#2563eb">⏳ Enviando imagem...</span>';
+      const formData = new FormData();
+      formData.append('image', file);
+      formData.append('adset_id', uploadAdsetId);
+      formData.append('ad_name', adName);
+      formData.append('body_text', body);
+      formData.append('headline', headline);
+      formData.append('link_url', url);
+
+      const r = await fetch(API + '/upload_creative', { method: 'POST', body: formData });
+      const d = await r.json();
+      if (d.success) {
+        status.innerHTML = `<span style="color:#10b981">✅ Anúncio criado! ID: ${d.ad_id} — aguardando revisão no Gerenciador</span>`;
+        setTimeout(closeUpload, 4000);
+      } else {
+        status.innerHTML = `<span style="color:#ef4444">❌ ${d.error}</span>`;
+      }
+    }
+
+    function closeUpload() { document.getElementById('upload-overlay').style.display = 'none'; }
+    document.getElementById('upload-overlay').addEventListener('click', e => { if(e.target===e.currentTarget) closeUpload(); });
+    document.addEventListener('keydown', e => { if(e.key==='Escape') { closeWizard(); closeUpload(); } });
+    </script>
+
+    <div class="footer">Gestor de Tráfego · Meio Comunica · 16/04/2026 18:40</div>
 </body>
 </html>
