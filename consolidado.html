@@ -73,6 +73,32 @@ function showAlerts(client) {
     }
     document.getElementById('modal-overlay').classList.add('open');
 }
+function showAllAlerts() {
+    const all = [];
+    Object.entries(ALERTS).forEach(([client, alerts]) => {
+        alerts.filter(a => a.type === 'critical').forEach(a => {
+            all.push({ client, msg: a.msg });
+        });
+    });
+    document.getElementById('modal-title').textContent = '🔴 Todos os alertas críticos';
+    document.getElementById('modal-subtitle').textContent = all.length + ' alerta(s) que exigem ação imediata';
+    const body = document.getElementById('modal-body');
+    if (!all.length) {
+        body.innerHTML = '<div style="color:#10b981;font-size:14px;padding:12px 0">✅ Nenhum alerta crítico</div>';
+    } else {
+        let lastClient = '';
+        let h = '';
+        all.forEach(a => {
+            if (a.client !== lastClient) {
+                h += `<div style="font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;margin:${lastClient ? '16px' : '0'} 0 6px">${a.client}</div>`;
+                lastClient = a.client;
+            }
+            h += `<div style="padding:9px 13px;margin:4px 0;border-radius:8px;background:#fef2f2;border-left:3px solid #ef4444;font-size:13px;line-height:1.5">${a.msg}</div>`;
+        });
+        body.innerHTML = h;
+    }
+    document.getElementById('modal-overlay').classList.add('open');
+}
 function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 </script>
@@ -84,7 +110,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal()
         </div>
         <div style="display:flex;align-items:center;gap:12px">
             <a href="painel_acoes.html" style="font-size:12px;color:white;opacity:.85;text-decoration:none;border:1px solid rgba(255,255,255,.4);padding:7px 16px;border-radius:20px">⚡ Painel de Ações</a>
-            <div class="updated">Atualizado em<br><b>18/04/2026 14:43</b></div>
+            <div class="updated">Atualizado em<br><b>18/04/2026 14:51</b></div>
         </div>
     </div>
 
@@ -98,7 +124,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal()
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;font-size:13px">
             <div>Portfólio: <b>R$3,792.58</b> investidos,
                  <b>28</b> leads, CPL médio <b>R$135.45</b></div>
-            <div style="color:#ef4444">Urgente: <b>15 alerta(s) crítico(s)</b></div>
+            <div style="color:#ef4444">Urgente: <b>15 alerta(s) crítico(s)</b> <button onclick="showAllAlerts()" style="margin-left:8px;padding:3px 10px;background:#ef4444;color:white;border:none;border-radius:12px;font-size:11px;font-weight:700;cursor:pointer">Ver todos</button></div>
             <div style="color:#374151">Melhor: <b>IOA Ribeirao Preto</b> CPL R$48.33
                  &nbsp;·&nbsp; Pior: <b>IOA Ribeirao Preto</b> CPL R$48.33</div>
         </div>
@@ -304,6 +330,6 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal()
         </div>
 
     </div>
-    <div class="footer">Gestor de Tráfego · Meio Comunica · 18/04/2026 14:43</div>
+    <div class="footer">Gestor de Tráfego · Meio Comunica · 18/04/2026 14:51</div>
 </body>
 </html>
