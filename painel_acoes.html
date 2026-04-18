@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Ações — Gestor de Tráfego</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f1f5f9; color: #1e293b; }
+        .header { background: linear-gradient(135deg, #0f172a, #1e3a8a); color: white; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { font-size: 20px; font-weight: 700; }
+        .header .sub { font-size: 12px; opacity: .7; margin-top: 3px; }
+        .back { font-size: 12px; color: white; opacity: .8; text-decoration: none; border: 1px solid rgba(255,255,255,.4); padding: 6px 14px; border-radius: 20px; }
+        .back:hover { background: rgba(255,255,255,.15); }
+        .status-bar { background: #1e293b; color: white; padding: 8px 40px; font-size: 12px; display: flex; align-items: center; gap: 10px; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; background: #ef4444; flex-shrink: 0; }
+        .dot.on { background: #10b981; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 28px 32px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .card { background: white; border-radius: 14px; padding: 24px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+        .card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 2px solid #f1f5f9; }
+        .card-icon { font-size: 22px; }
+        .card-title { font-size: 15px; font-weight: 700; color: #0f172a; }
+        .card-sub { font-size: 11px; color: #9ca3af; margin-top: 2px; }
+        label { display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 5px; margin-top: 12px; }
+        label:first-of-type { margin-top: 0; }
+        input, select, textarea { width: 100%; padding: 9px 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 13px; color: #1e293b; outline: none; transition: border .15s; }
+        input:focus, select:focus, textarea:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,.1); }
+        textarea { min-height: 80px; resize: vertical; }
+        .btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; transition: all .15s; }
+        .btn-primary { background: #1e40af; color: white; }
+        .btn-primary:hover { background: #1d4ed8; }
+        .btn-green { background: #059669; color: white; }
+        .btn-green:hover { background: #047857; }
+        .btn-orange { background: #d97706; color: white; }
+        .btn-orange:hover { background: #b45309; }
+        .btn-purple { background: #7c3aed; color: white; }
+        .btn-purple:hover { background: #6d28d9; }
+        .btn-row { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+        .result { margin-top: 12px; padding: 10px 14px; border-radius: 8px; font-size: 13px; display: none; }
+        .result.ok { background: #f0fdf4; border-left: 3px solid #10b981; color: #065f46; }
+        .result.err { background: #fef2f2; border-left: 3px solid #ef4444; color: #7f1d1d; }
+        .result.info { background: #eff6ff; border-left: 3px solid #3b82f6; color: #1e3a8a; }
+        .hint { font-size: 11px; color: #9ca3af; margin-top: 4px; }
+        .creative-options { display: none; margin-top: 10px; }
+        .creative-list { max-height: 180px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px; }
+        .creative-item { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 6px; cursor: pointer; }
+        .creative-item:hover { background: #f8fafc; }
+        .creative-item input[type=checkbox] { width: auto; }
+        .creative-item img { width: 36px; height: 36px; object-fit: cover; border-radius: 4px; background: #f1f5f9; }
+        .creative-item .cname { font-size: 12px; color: #374151; }
+        .section-full { grid-column: 1 / -1; }
+        .log-item { padding: 8px 12px; margin: 4px 0; border-radius: 6px; background: #f8fafc; font-size: 12px; border-left: 3px solid #e2e8f0; }
+        .log-item .ts { color: #9ca3af; font-size: 11px; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div>
+        <h1>⚡ Painel de Ações</h1>
+        <div class="sub">Criar campanha · Criar conjunto · Upload criativo · Sugestão de script</div>
+    </div>
+    <a class="back" href="consolidado.html">← Consolidado</a>
+</div>
+
+<div class="status-bar">
+    <div class="dot" id="srv-dot"></div>
+    <span id="srv-status">Verificando servidor de ações (porta 7070)...</span>
+    <span style="margin-left:auto;opacity:.5">Para iniciar: python3 ~/.claude/skills/gestor-trafego/scripts/actions_server.py</span>
+</div>
+
+<div class="container">
+    <div class="grid">
+
+        <!-- ── CRIAR CAMPANHA ─────────────────────────────────────── -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">🚀</div>
+                <div>
+                    <div class="card-title">Criar Nova Campanha</div>
+                    <div class="card-sub">Estrutura completa — Meta Ads ou Google Ads</div>
+                </div>
+            </div>
+
+            <label>Cliente</label>
+            <select id="cc-cliente">
+                <option value="">Selecione o cliente...</option>
+                <option>IOA Campinas - Alunos</option>
+                <option>IOA Campinas - Pacientes</option>
+                <option>IOA Ribeirao Preto</option>
+                <option>Faculdade IOA</option>
+                <option>IOA Piracicaba</option>
+                <option>Mikro Metais</option>
+                <option>Endotec</option>
+                <option>Baby Center</option>
+            </select>
+
+            <label>Plataforma</label>
+            <select id="cc-plataforma">
+                <option>Meta Ads</option>
+                <option>Google Ads</option>
+                <option>Ambas</option>
+            </select>
+
+            <label>Objetivo</label>
+            <select id="cc-objetivo">
+                <option>Leads via formulário</option>
+                <option>Leads via WhatsApp</option>
+                <option>Leads via landing page</option>
+                <option>Conversões (compra)</option>
+            </select>
+
+            <label>Orçamento diário (R$)</label>
+            <input type="number" id="cc-orcamento" placeholder="Ex: 50">
+
+            <label>Observações</label>
+            <textarea id="cc-obs" placeholder="Produto, público-alvo, diferencial, período..."></textarea>
+
+            <div class="btn-row">
+                <button class="btn btn-primary" onclick="gerarEstruturaCampanha()">📋 Gerar Estrutura</button>
+            </div>
+            <div class="result" id="cc-result"></div>
+        </div>
+
+        <!-- ── CRIAR CONJUNTO ─────────────────────────────────────── -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">📦</div>
+                <div>
+                    <div class="card-title">Criar Novo Conjunto de Anúncios</div>
+                    <div class="card-sub">Clona targeting de um conjunto existente</div>
+                </div>
+            </div>
+
+            <label>ID do Conjunto Fonte (copiar do Gerenciador)</label>
+            <input type="text" id="cj-source" placeholder="Ex: 120213842640...">
+            <div class="hint">O novo conjunto vai herdar público, objetivo e lance.</div>
+
+            <label>ID da Conta Meta</label>
+            <input type="text" id="cj-account" placeholder="Ex: act_123456789">
+
+            <label>Nome do Novo Conjunto</label>
+            <input type="text" id="cj-name" placeholder="Ex: IOA_Campinas_Alunos_TOF_ABR26_V2">
+
+            <label>Orçamento Diário (R$)</label>
+            <input type="number" id="cj-budget" placeholder="50" value="50">
+
+            <label>Criativos a incluir</label>
+            <button type="button" class="btn btn-orange" style="margin-top:6px" onclick="buscarCriativos()">🔍 Buscar Criativos da Conta</button>
+            <div class="creative-options" id="creative-options">
+                <div class="creative-list" id="creative-list"></div>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn btn-green" onclick="criarConjunto()">✅ Criar Conjunto (Pausado)</button>
+            </div>
+            <div class="result" id="cj-result"></div>
+        </div>
+
+        <!-- ── UPLOAD CRIATIVO ────────────────────────────────────── -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">🖼️</div>
+                <div>
+                    <div class="card-title">Upload de Novo Criativo</div>
+                    <div class="card-sub">Imagem + copy → cria anúncio no conjunto</div>
+                </div>
+            </div>
+
+            <label>ID do Conjunto de Anúncios</label>
+            <input type="text" id="up-adset" placeholder="Ex: 120213842640...">
+
+            <label>Nome do Anúncio</label>
+            <input type="text" id="up-adname" placeholder="Ex: IOA_Ribeirao_Alunos_IMG_ABR26_V3">
+
+            <label>Imagem (JPG/PNG)</label>
+            <input type="file" id="up-image" accept="image/*">
+
+            <label>Texto principal (copy)</label>
+            <textarea id="up-body" placeholder="Texto que aparece acima da imagem no feed..."></textarea>
+
+            <label>Headline</label>
+            <input type="text" id="up-headline" placeholder="Texto em destaque no card">
+
+            <label>URL de destino</label>
+            <input type="url" id="up-url" placeholder="https://...">
+
+            <div class="btn-row">
+                <button class="btn btn-primary" onclick="uploadCriativo()">⬆️ Enviar Criativo (Pausado)</button>
+            </div>
+            <div class="result" id="up-result"></div>
+        </div>
+
+        <!-- ── SUGESTÃO DE SCRIPT ─────────────────────────────────── -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">✍️</div>
+                <div>
+                    <div class="card-title">Sugestões de Script / Briefing</div>
+                    <div class="card-sub">Gera briefing com hooks, copies e CTAs para substituição</div>
+                </div>
+            </div>
+
+            <label>Cliente</label>
+            <select id="sc-cliente">
+                <option value="">Selecione o cliente...</option>
+                <option>IOA Campinas - Alunos</option>
+                <option>IOA Campinas - Pacientes</option>
+                <option>IOA Ribeirao Preto</option>
+                <option>Faculdade IOA</option>
+                <option>IOA Piracicaba</option>
+                <option>Mikro Metais</option>
+                <option>Endotec</option>
+                <option>Baby Center</option>
+            </select>
+
+            <label>Período de análise</label>
+            <select id="sc-period">
+                <option value="7d">Últimos 7 dias</option>
+                <option value="14d">Últimos 14 dias</option>
+                <option value="30d">Últimos 30 dias</option>
+            </select>
+
+            <div style="margin-top:14px;padding:12px;background:#f8fafc;border-radius:8px;font-size:12px;color:#374151">
+                <b>O que é gerado:</b><br>
+                • Identificação de criativos candidatos à troca<br>
+                • Para cada criativo: 2 ângulos alternativos de proposta<br>
+                • Hook (primeiros 3 segundos se vídeo)<br>
+                • Scripts completos prontos para designer/editor<br>
+                • CTAs testados por nicho
+            </div>
+
+            <div class="btn-row">
+                <button class="btn btn-purple" onclick="gerarBriefing()">📄 Gerar Briefing HTML</button>
+            </div>
+            <div class="result" id="sc-result"></div>
+        </div>
+
+        <!-- ── LOG DE AÇÕES RECENTES ──────────────────────────────── -->
+        <div class="card section-full">
+            <div class="card-header">
+                <div class="card-icon">📋</div>
+                <div>
+                    <div class="card-title">Histórico de Ações Recentes</div>
+                    <div class="card-sub">Últimas 10 ações registradas na conta</div>
+                </div>
+            </div>
+            <div id="log-list"><div style="color:#9ca3af;font-size:13px">Carregando log...</div></div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+const API = 'http://localhost:7070';
+
+// ── Verificar servidor ──────────────────────────────────────────────────────
+async function checkServer() {
+    try {
+        const r = await fetch(`${API}/ping`, { signal: AbortSignal.timeout(2000) });
+        const d = await r.json();
+        if (d.ok) {
+            document.getElementById('srv-dot').classList.add('on');
+            document.getElementById('srv-status').textContent = 'Servidor de ações online ✅';
+            return true;
+        }
+    } catch {}
+    document.getElementById('srv-status').textContent = 'Servidor offline ❌ — inicie com: python3 ~/.claude/skills/gestor-trafego/scripts/actions_server.py';
+    return false;
+}
+
+function showResult(id, msg, type='ok') {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.className = `result ${type}`;
+    el.style.display = 'block';
+}
+
+// ── CRIAR CAMPANHA (estrutura textual) ──────────────────────────────────────
+function gerarEstruturaCampanha() {
+    const cliente   = document.getElementById('cc-cliente').value;
+    const plataforma = document.getElementById('cc-plataforma').value;
+    const objetivo  = document.getElementById('cc-objetivo').value;
+    const orcamento = document.getElementById('cc-orcamento').value;
+    const obs       = document.getElementById('cc-obs').value;
+
+    if (!cliente) { showResult('cc-result', 'Selecione o cliente.', 'err'); return; }
+
+    const benchmarks = {
+        'IOA Campinas - Alunos':    { cpl: 30, freq_warn: 2.5, freq_crit: 3.5 },
+        'IOA Campinas - Pacientes': { cpl: 50, freq_warn: 2.0, freq_crit: 2.5 },
+        'IOA Ribeirao Preto':       { cpl: 30, freq_warn: 2.5, freq_crit: 3.5 },
+        'Faculdade IOA':            { cpl: 30, freq_warn: 2.5, freq_crit: 3.5 },
+        'IOA Piracicaba':           { cpl: 30, freq_warn: 2.5, freq_crit: 3.5 },
+        'Mikro Metais':             { cpl: 60, freq_warn: 2.5, freq_crit: 3.5 },
+        'Endotec':                  { cpl: 18, freq_warn: 2.5, freq_crit: 3.5 },
+        'Baby Center':              { cpl: 18, freq_warn: 2.5, freq_crit: 3.5 },
+    };
+    const bench = benchmarks[cliente] || { cpl: 30, freq_warn: 2.5, freq_crit: 3.5 };
+
+    const estrutura = `
+📋 ESTRUTURA DE CAMPANHA — ${cliente}
+Plataforma: ${plataforma} | Objetivo: ${objetivo}
+Orçamento diário: R$${orcamento || '?'}
+${obs ? 'Obs: ' + obs : ''}
+
+CAMPANHA
+• Tipo de compra: Leilão (AUCTION)
+• Estratégia de lance: Custo por resultado mais baixo
+• Meta de CPL: R$${bench.cpl}
+
+CONJUNTO 1 — Público Frio (Topo)
+• Interesse + Lookalike 1-5%
+• Orçamento: 60% do total
+• Limite freq: ${bench.freq_warn} (atenção) / ${bench.freq_crit} (pausar)
+
+CONJUNTO 2 — Remarketing (Fundo)
+• Visitantes site 30d + engajamento 60d
+• Orçamento: 40% do total
+
+ANÚNCIOS (por conjunto)
+• 3-4 criativos por conjunto (A/B implícito)
+• Formatos: feed quadrado 1:1 + story 9:16
+• Copy: testar 2 ângulos de proposta de valor
+• CTA: Saiba mais / Inscreva-se / Fale conosco
+
+⚠️ Checklist pré-publicação:
+☐ Pixel instalado e evento de lead configurado
+☐ Janela de atribuição: 7 dias clique / 1 dia visualização
+☐ UTMs nos links
+☐ Aprovação do criativo pela plataforma
+`.trim();
+
+    showResult('cc-result', estrutura, 'info');
+    document.getElementById('cc-result').style.whiteSpace = 'pre-line';
+}
+
+// ── BUSCAR CRIATIVOS ────────────────────────────────────────────────────────
+async function buscarCriativos() {
+    const account = document.getElementById('cj-account').value.trim();
+    if (!account) { alert('Informe o ID da conta antes de buscar criativos.'); return; }
+
+    if (!(await checkServer())) return;
+
+    try {
+        const r = await fetch(`${API}/creatives?account_id=${encodeURIComponent(account)}`);
+        const d = await r.json();
+        const list = document.getElementById('creative-list');
+        list.innerHTML = '';
+        const creatives = d.creatives || [];
+        if (!creatives.length) {
+            list.innerHTML = '<div style="color:#9ca3af;font-size:12px;padding:8px">Nenhum criativo encontrado.</div>';
+        } else {
+            creatives.forEach(c => {
+                const div = document.createElement('div');
+                div.className = 'creative-item';
+                div.innerHTML = `
+                    <input type="checkbox" value="${c.id}" id="cr-${c.id}">
+                    <img src="${c.thumb || ''}" onerror="this.src=''" alt="">
+                    <label class="cname" for="cr-${c.id}" style="margin:0;font-weight:400">${c.name}</label>
+                `;
+                list.appendChild(div);
+            });
+        }
+        document.getElementById('creative-options').style.display = 'block';
+    } catch(e) {
+        alert('Erro ao buscar criativos: ' + e.message);
+    }
+}
+
+// ── CRIAR CONJUNTO ──────────────────────────────────────────────────────────
+async function criarConjunto() {
+    if (!(await checkServer())) return;
+
+    const source  = document.getElementById('cj-source').value.trim();
+    const account = document.getElementById('cj-account').value.trim();
+    const name    = document.getElementById('cj-name').value.trim();
+    const budget  = parseFloat(document.getElementById('cj-budget').value) || 50;
+
+    if (!source || !account || !name) {
+        showResult('cj-result', 'Preencha ID do conjunto fonte, ID da conta e nome.', 'err');
+        return;
+    }
+
+    const selected = [...document.querySelectorAll('#creative-list input[type=checkbox]:checked')].map(i => i.value);
+
+    try {
+        const r = await fetch(`${API}/create_adset`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ source_adset_id: source, account_id: account, name, daily_budget: budget, creative_ids: selected })
+        });
+        const d = await r.json();
+        if (d.success) {
+            showResult('cj-result', `✅ Conjunto criado: ${d.adset_id}\n${d.ads_created.length} anúncio(s) criado(s) — status PAUSADO\nRevisione e ative no Gerenciador de Anúncios.`, 'ok');
+            document.getElementById('cj-result').style.whiteSpace = 'pre-line';
+        } else {
+            showResult('cj-result', '❌ Erro: ' + (d.error || JSON.stringify(d)), 'err');
+        }
+    } catch(e) {
+        showResult('cj-result', '❌ Falha na requisição: ' + e.message, 'err');
+    }
+}
+
+// ── UPLOAD CRIATIVO ─────────────────────────────────────────────────────────
+async function uploadCriativo() {
+    if (!(await checkServer())) return;
+
+    const adset  = document.getElementById('up-adset').value.trim();
+    const adname = document.getElementById('up-adname').value.trim();
+    const image  = document.getElementById('up-image').files[0];
+    const body   = document.getElementById('up-body').value.trim();
+    const headline = document.getElementById('up-headline').value.trim();
+    const url    = document.getElementById('up-url').value.trim();
+
+    if (!adset || !adname || !image || !url) {
+        showResult('up-result', 'Preencha conjunto, nome, imagem e URL.', 'err');
+        return;
+    }
+
+    const fd = new FormData();
+    fd.append('adset_id',  adset);
+    fd.append('ad_name',   adname);
+    fd.append('image',     image, image.name);
+    fd.append('body_text', body);
+    fd.append('headline',  headline);
+    fd.append('link_url',  url);
+
+    try {
+        showResult('up-result', '⏳ Enviando imagem e criando anúncio...', 'info');
+        const r = await fetch(`${API}/upload_creative`, { method: 'POST', body: fd });
+        const d = await r.json();
+        if (d.success) {
+            showResult('up-result', `✅ Anúncio criado: ${d.ad_id}\nCriativo ID: ${d.creative_id}\nStatus: PAUSADO — revise e ative no Gerenciador.`, 'ok');
+            document.getElementById('up-result').style.whiteSpace = 'pre-line';
+        } else {
+            showResult('up-result', '❌ Erro: ' + (d.error || JSON.stringify(d)), 'err');
+        }
+    } catch(e) {
+        showResult('up-result', '❌ Falha no upload: ' + e.message, 'err');
+    }
+}
+
+// ── GERAR BRIEFING ──────────────────────────────────────────────────────────
+async function gerarBriefing() {
+    const cliente = document.getElementById('sc-cliente').value;
+    const period  = document.getElementById('sc-period').value;
+
+    if (!cliente) { showResult('sc-result', 'Selecione o cliente.', 'err'); return; }
+
+    showResult('sc-result', '⏳ Gerando briefing... (pode levar alguns segundos)', 'info');
+
+    try {
+        const r = await fetch(`/run_briefing?client=${encodeURIComponent(cliente)}&period=${period}`);
+        if (r.ok) {
+            const d = await r.json();
+            showResult('sc-result', `✅ Briefing gerado: ${d.path}`, 'ok');
+            window.open(d.path, '_blank');
+        } else {
+            throw new Error('Servidor não suporta esta rota diretamente.');
+        }
+    } catch {
+        // Fallback: mostrar instrução para rodar via terminal
+        const safeName = cliente.replace(/ /g, '_').replace(/-/g, '-');
+        showResult('sc-result',
+            `Para gerar o briefing, execute no terminal:\n\npython3 ~/.claude/skills/gestor-trafego/scripts/generate_creative_pdf.py --client "${cliente}" --period ${period}\n\nO arquivo será salvo em:\n~/Documents/projetosclaude/Gestor de Trafego/dashboards/briefing_criativos_${safeName}_[data].html`,
+            'info'
+        );
+        document.getElementById('sc-result').style.whiteSpace = 'pre-line';
+    }
+}
+
+// ── LOG DE AÇÕES ────────────────────────────────────────────────────────────
+async function carregarLog() {
+    try {
+        const r = await fetch(`${API}/log?limit=10`, { signal: AbortSignal.timeout(2000) });
+        if (!r.ok) throw new Error();
+        const d = await r.json();
+        renderLog(d.records || []);
+    } catch {
+        // Tentar ler via fetch de arquivo local não funciona — mostrar mensagem
+        document.getElementById('log-list').innerHTML =
+            '<div style="color:#9ca3af;font-size:13px">Log disponível em: <code>~/.gestor-trafego/actions_log.jsonl</code></div>';
+    }
+}
+
+function renderLog(records) {
+    const el = document.getElementById('log-list');
+    if (!records.length) {
+        el.innerHTML = '<div style="color:#9ca3af;font-size:13px">Nenhuma ação registrada ainda.</div>';
+        return;
+    }
+    const icons = { meta: '🔵', google: '🟢', tiktok: '⚫' };
+    el.innerHTML = records.map(r => `
+        <div class="log-item">
+            <span class="ts">${r.ts?.slice(0,16).replace('T',' ')}</span>
+            &nbsp; ${icons[r.platform] || '⚪'} <b>${r.client}</b>
+            — ${r.action_label || r.action_type}: ${r.target}
+            <span style="color:#9ca3af"> — ${r.justification?.slice(0,60)}${r.justification?.length > 60 ? '…' : ''}</span>
+        </div>
+    `).join('');
+}
+
+// ── INIT ────────────────────────────────────────────────────────────────────
+checkServer();
+carregarLog();
+</script>
+</body>
+</html>
