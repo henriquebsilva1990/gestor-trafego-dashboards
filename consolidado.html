@@ -18,6 +18,7 @@
         .kpi .val { font-size: 26px; font-weight: 800; }
         .kpi .sub { font-size: 11px; color: #9ca3af; margin-top: 4px; }
         .grid2 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 20px; }
+        .grid3 { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 16px; margin-bottom: 20px; }
         .section { background: white; border-radius: 12px; padding: 20px 22px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
         .st { font-size: 12px; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: .5px; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px; margin-bottom: 14px; }
         table { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -26,43 +27,22 @@
         td { padding: 10px 10px; border-top: 1px solid #f1f5f9; vertical-align: middle; }
         tr:hover td { background: #f8fafc; }
         .footer { text-align: center; color: #9ca3af; font-size: 11px; padding: 20px; }
-
-        /* Modal */
-        #modal-overlay {
-            display: none; position: fixed; inset: 0;
-            background: rgba(15,23,42,.55); backdrop-filter: blur(2px);
-            z-index: 1000; align-items: center; justify-content: center;
-        }
+        #modal-overlay { display: none; position: fixed; inset: 0; background: rgba(15,23,42,.55); backdrop-filter: blur(2px); z-index: 1000; align-items: center; justify-content: center; }
         #modal-overlay.open { display: flex; }
-        #modal-box {
-            background: white; border-radius: 16px; padding: 28px 32px;
-            max-width: 520px; width: 90%; max-height: 80vh; overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0,0,0,.25);
-        }
-        #modal-header {
-            display: flex; justify-content: space-between; align-items: flex-start;
-            margin-bottom: 18px;
-        }
+        #modal-box { background: white; border-radius: 16px; padding: 28px 32px; max-width: 520px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,.25); }
+        #modal-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18px; }
         #modal-title { font-size: 16px; font-weight: 700; color: #0f172a; }
         #modal-subtitle { font-size: 12px; color: #9ca3af; margin-top: 3px; }
-        #modal-close {
-            background: #f1f5f9; border: none; border-radius: 8px; width: 32px; height: 32px;
-            font-size: 16px; cursor: pointer; display: flex; align-items: center;
-            justify-content: center; flex-shrink: 0; color: #64748b;
-        }
+        #modal-close { background: #f1f5f9; border: none; border-radius: 8px; width: 32px; height: 32px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #64748b; }
         #modal-close:hover { background: #e2e8f0; }
     </style>
 </head>
 <body>
 
-<!-- Modal de alertas -->
 <div id="modal-overlay" onclick="if(event.target===this)closeModal()">
     <div id="modal-box">
         <div id="modal-header">
-            <div>
-                <div id="modal-title">Alertas</div>
-                <div id="modal-subtitle"></div>
-            </div>
+            <div><div id="modal-title">Alertas</div><div id="modal-subtitle"></div></div>
             <button id="modal-close" onclick="closeModal()">✕</button>
         </div>
         <div id="modal-body"></div>
@@ -70,40 +50,30 @@
 </div>
 
 <script>
-const ALERTS = {"IOA Campinas - Alunos": [{"type": "critical", "msg": "🔴 Sem leads: \"ortodontia_VID_001\" — R$100 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"dentistica_protese_VID_001\" — R$99 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"IMG001_cirur_estet_orofacial\" — R$264 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"IMG002_cirur_estet_orofacial\" — R$129 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"buco_fevereiro_2026\" — R$247 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"implant_perio_fev_2026\" — R$237 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"campinas_hof_mar_2026\" — R$165 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"odontoped_janeiro_2026_001\" — R$121 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"odontoped_marco_2026\" — R$96 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"hof_VID_003\" — R$70 investidos"}], "IOA Campinas - Pacientes": [{"type": "critical", "msg": "🔴 Sem leads: \"pacientes_hof002_ioa_campinas\" — R$175 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"pacientes_ortodontia_ioa_campinas\" — R$73 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"pacientes_implante_ioa_campinas\" — R$107 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"pacientes_VID_001\" — R$77 investidos"}], "IOA Ribeirao Preto": [{"type": "critical", "msg": "🔴 Sem leads: \"VID_endodontia_005\" — R$54 investidos"}, {"type": "warning", "msg": "🟡 Frequência alta: \"dent_prot_002\" — freq 3.2"}], "Faculdade IOA": [{"type": "critical", "msg": "🔴 Sem leads: \"Post do Instagram: A mesma graduação pod\" — R$98 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"Post do Instagram: Quando a experiência \" — R$73 investidos"}], "IOA Piracicaba": [], "Mikro Metais": [], "Endotec": [], "Baby Center": []};
-
+const ALERTS = {"IOA Campinas - Alunos": [{"type": "critical", "msg": "🔴 Sem leads: \"ortodontia_VID_001\" — R$137 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"dentistica_protese_VID_001\" — R$139 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"IMG001_cirur_estet_orofacial\" — R$269 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"IMG002_cirur_estet_orofacial\" — R$77 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"buco_fevereiro_2026\" — R$226 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"implant_perio_fev_2026\" — R$218 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"campinas_hof_mar_2026\" — R$205 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"odontoped_janeiro_2026_001\" — R$121 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"odontoped_marco_2026\" — R$79 investidos"}], "IOA Campinas - Pacientes": [{"type": "critical", "msg": "🔴 Sem leads: \"pacientes_hof002_ioa_campinas\" — R$191 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"pacientes_ortodontia_ioa_campinas\" — R$74 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"pacientes_implante_ioa_campinas\" — R$112 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"pacientes_VID_001\" — R$77 investidos"}], "IOA Ribeirao Preto": [{"type": "warning", "msg": "🟡 Frequência alta: \"dent_prot_002\" — freq 3.1"}], "Faculdade IOA": [{"type": "critical", "msg": "🔴 Sem leads: \"Post do Instagram: A mesma graduação pod\" — R$117 investidos"}, {"type": "critical", "msg": "🔴 Sem leads: \"Post do Instagram: Quando a experiência \" — R$90 investidos"}], "IOA Piracicaba": [], "Mikro Metais": [], "Endotec": [], "Baby Center": []};
 function showAlerts(client) {
     const alerts = ALERTS[client] || [];
     document.getElementById('modal-title').textContent = client;
-    document.getElementById('modal-subtitle').textContent = alerts.length + ' alerta(s) encontrado(s)';
+    document.getElementById('modal-subtitle').textContent = alerts.length + ' alerta(s)';
     const body = document.getElementById('modal-body');
-    if (alerts.length === 0) {
-        body.innerHTML = '<div style="color:#10b981;font-size:14px;padding:12px 0">✅ Nenhum alerta</div>';
-    } else {
-        const sections = { critical: [], warning: [] };
-        alerts.forEach(a => sections[a.type].push(a));
-        let html = '';
-        if (sections.critical.length) {
-            html += '<div style="font-size:10px;font-weight:700;color:#ef4444;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">🔴 Ação Imediata — Pausar agora</div>';
-            sections.critical.forEach(a => {
-                html += `<div style="padding:10px 14px;margin:5px 0;border-radius:8px;background:#fef2f2;border-left:3px solid #ef4444;font-size:13px;line-height:1.5">${a.msg}</div>`;
-            });
+    if (!alerts.length) { body.innerHTML = '<div style="color:#10b981;font-size:14px;padding:12px 0">✅ Nenhum alerta</div>'; }
+    else {
+        const s = { critical: [], warning: [] };
+        alerts.forEach(a => s[a.type].push(a));
+        let h = '';
+        if (s.critical.length) {
+            h += '<div style="font-size:10px;font-weight:700;color:#ef4444;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">🔴 Ação Imediata</div>';
+            s.critical.forEach(a => { h += `<div style="padding:10px 14px;margin:5px 0;border-radius:8px;background:#fef2f2;border-left:3px solid #ef4444;font-size:13px;line-height:1.5">${a.msg}</div>`; });
         }
-        if (sections.warning.length) {
-            html += '<div style="font-size:10px;font-weight:700;color:#d97706;text-transform:uppercase;letter-spacing:.5px;margin:14px 0 8px">🟡 Monitorar — Preparar substituto</div>';
-            sections.warning.forEach(a => {
-                html += `<div style="padding:10px 14px;margin:5px 0;border-radius:8px;background:#fffbeb;border-left:3px solid #f59e0b;font-size:13px;line-height:1.5">${a.msg}</div>`;
-            });
+        if (s.warning.length) {
+            h += '<div style="font-size:10px;font-weight:700;color:#d97706;text-transform:uppercase;letter-spacing:.5px;margin:14px 0 8px">🟡 Monitorar</div>';
+            s.warning.forEach(a => { h += `<div style="padding:10px 14px;margin:5px 0;border-radius:8px;background:#fffbeb;border-left:3px solid #f59e0b;font-size:13px;line-height:1.5">${a.msg}</div>`; });
         }
-        body.innerHTML = html;
+        body.innerHTML = h;
     }
     document.getElementById('modal-overlay').classList.add('open');
 }
-
-function closeModal() {
-    document.getElementById('modal-overlay').classList.remove('open');
-}
-
+function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 </script>
 
@@ -112,42 +82,54 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal()
             <h1>📊 Consolidado — Meio Comunica</h1>
             <div class="meta">Todos os clientes · Meta Ads + Google Ads</div>
         </div>
-        <div class="updated">
-            Atualizado em<br><b>17/04/2026 14:31</b>
-        </div>
+        <div class="updated">Atualizado em<br><b>18/04/2026 14:07</b></div>
     </div>
 
     <div class="container">
 
+        
+    <div style="background:white;border-radius:12px;padding:16px 22px;margin-bottom:20px;
+                border-left:4px solid #1e40af;box-shadow:0 1px 4px rgba(0,0,0,.08)">
+        <div style="font-size:10px;font-weight:700;color:#9ca3af;text-transform:uppercase;
+                    letter-spacing:.6px;margin-bottom:10px">TL;DR — 2026-04-11 a 2026-04-17</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;font-size:13px">
+            <div>Portfólio: <b>R$3,792.54</b> investidos,
+                 <b>28</b> leads, CPL médio <b>R$135.45</b></div>
+            <div style="color:#ef4444">Urgente: <b>15 alerta(s) crítico(s)</b></div>
+            <div style="color:#374151">Melhor: <b>IOA Ribeirao Preto</b> CPL R$48.33
+                 &nbsp;·&nbsp; Pior: <b>IOA Ribeirao Preto</b> CPL R$48.33</div>
+        </div>
+    </div>
+
         <div class="kpis">
             <div class="kpi">
                 <div class="lbl">Invest. Ontem</div>
-                <div class="val">R$426</div>
-                <div class="sub">2026-04-16</div>
+                <div class="val">R$557</div>
+                <div class="sub">2026-04-17</div>
             </div>
             <div class="kpi">
                 <div class="lbl">Invest. Semana Atual</div>
-                <div class="val">R$3,913<span style="font-size:10px;color:#ef4444"> ▲16%</span></div>
-                <div class="sub">Ant.: R$3,369.23</div>
+                <div class="val">R$3,793<span style="font-size:10px;color:#ef4444"> ▲5%</span></div>
+                <div class="sub">Ant.: R$3,615.63</div>
             </div>
             <div class="kpi">
                 <div class="lbl">Conv. Semana Atual</div>
-                <div class="val" style="color:#2563eb">29<span style="font-size:10px;color:#10b981"> ▲71%</span></div>
-                <div class="sub">Ontem: 4 · Ant.: 17</div>
+                <div class="val" style="color:#2563eb">28<span style="font-size:10px;color:#10b981"> ▲56%</span></div>
+                <div class="sub">Ontem: 2 · Ant.: 18</div>
             </div>
             <div class="kpi">
                 <div class="lbl">CPL Médio Semana</div>
-                <div class="val" style="color:#ef4444">R$134.93</div>
+                <div class="val" style="color:#ef4444">R$135.45</div>
                 <div class="sub">Custo por lead/conversão</div>
             </div>
         </div>
 
-        <div class="grid2">
+        <div class="grid3">
             <div class="section">
                 <div class="st">📋 Desempenho por Cliente</div>
                 <table>
                     <thead><tr>
-                        <th>Cliente<span class="sub">Clique para ver detalhes</span></th>
+                        <th>Cliente<span class="sub">Clique para detalhes</span></th>
                         <th>Invest.<span class="sub">Ontem</span></th>
                         <th>Invest.<span class="sub">Semana atual</span></th>
                         <th>Invest.<span class="sub">Semana ant.</span></th>
@@ -155,7 +137,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal()
                         <th>Conv.<span class="sub">Semana atual</span></th>
                         <th>Conv.<span class="sub">Semana ant.</span></th>
                         <th>CPL<span class="sub">Semana atual</span></th>
-                        <th>Alertas<span class="sub">Clique p/ ver</span></th>
+                        <th>Alertas</th>
                     </tr></thead>
                     <tbody><tr>
             <td>
@@ -165,14 +147,14 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal()
                        onmouseover="this.style.color='#2563eb'" onmouseout="this.style.color='#1e293b'">IOA Campinas - Alunos</a>
                 </div>
             </td>
-            <td style="font-weight:700">R$151.76</td>
-            <td>R$1,908.77<span style="font-size:10px;color:#ef4444"> ▲34%</span></td>
-            <td style="color:#9ca3af">R$1,427.49</td>
+            <td style="font-weight:700">R$293.54</td>
+            <td>R$1,731.39<span style="font-size:10px;color:#ef4444"> ▲3%</span></td>
+            <td style="color:#9ca3af">R$1,688.43</td>
             <td style="font-weight:700;color:#2563eb">—</td>
             <td style="font-weight:700">—</td>
             <td style="color:#9ca3af">—</td>
             <td style="color:#6b7280;font-weight:700">—</td>
-            <td><span onclick="showAlerts('IOA Campinas - Alunos')" style="background:#ef4444;color:white;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:700;cursor:pointer;user-select:none" title="Ver alertas">10 ⚠️</span></td>
+            <td><span onclick="showAlerts('IOA Campinas - Alunos')" style="background:#ef4444;color:white;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:700;cursor:pointer;user-select:none" title="Ver alertas">9 ⚠️</span></td>
         </tr><tr>
             <td>
                 <div style="display:flex;align-items:center;gap:8px">
@@ -181,9 +163,9 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal()
                        onmouseover="this.style.color='#059669'" onmouseout="this.style.color='#1e293b'">IOA Campinas - Pacientes</a>
                 </div>
             </td>
-            <td style="font-weight:700">R$73.76</td>
-            <td>R$474.37<span style="font-size:10px;color:#ef4444"> ▲41%</span></td>
-            <td style="color:#9ca3af">R$336.42</td>
+            <td style="font-weight:700">R$63.02</td>
+            <td>R$487.78<span style="font-size:10px;color:#ef4444"> ▲43%</span></td>
+            <td style="color:#9ca3af">R$341.93</td>
             <td style="font-weight:700;color:#2563eb">—</td>
             <td style="font-weight:700">—</td>
             <td style="color:#9ca3af">—</td>
@@ -197,14 +179,14 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal()
                        onmouseover="this.style.color='#7c3aed'" onmouseout="this.style.color='#1e293b'">IOA Ribeirao Preto</a>
                 </div>
             </td>
-            <td style="font-weight:700">R$169.42</td>
-            <td>R$1,326.91<span style="font-size:10px;color:#10b981"> ▼14%</span></td>
-            <td style="color:#9ca3af">R$1,535.75</td>
-            <td style="font-weight:700;color:#2563eb">4</td>
-            <td style="font-weight:700">29<span style="font-size:10px;color:#10b981"> ▲71%</span></td>
-            <td style="color:#9ca3af">17</td>
-            <td style="color:#f59e0b;font-weight:700">R$45.76</td>
-            <td><span onclick="showAlerts('IOA Ribeirao Preto')" style="background:#ef4444;color:white;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:700;cursor:pointer;user-select:none" title="Ver alertas">2 ⚠️</span></td>
+            <td style="font-weight:700">R$164.83</td>
+            <td>R$1,353.26<span style="font-size:10px;color:#10b981"> ▼10%</span></td>
+            <td style="color:#9ca3af">R$1,496.83</td>
+            <td style="font-weight:700;color:#2563eb">2</td>
+            <td style="font-weight:700">28<span style="font-size:10px;color:#10b981"> ▲56%</span></td>
+            <td style="color:#9ca3af">18</td>
+            <td style="color:#f59e0b;font-weight:700">R$48.33</td>
+            <td><span onclick="showAlerts('IOA Ribeirao Preto')" style="background:#ef4444;color:white;font-size:11px;padding:3px 9px;border-radius:12px;font-weight:700;cursor:pointer;user-select:none" title="Ver alertas">1 ⚠️</span></td>
         </tr><tr>
             <td>
                 <div style="display:flex;align-items:center;gap:8px">
@@ -213,9 +195,9 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal()
                        onmouseover="this.style.color='#0ea5e9'" onmouseout="this.style.color='#1e293b'">Faculdade IOA</a>
                 </div>
             </td>
-            <td style="font-weight:700">R$30.85</td>
-            <td>R$202.88<span style="font-size:10px;color:#ef4444"> ▲192%</span></td>
-            <td style="color:#9ca3af">R$69.57</td>
+            <td style="font-weight:700">R$36.10</td>
+            <td>R$220.11<span style="font-size:10px;color:#ef4444"> ▲149%</span></td>
+            <td style="color:#9ca3af">R$88.44</td>
             <td style="font-weight:700;color:#2563eb">—</td>
             <td style="font-weight:700">—</td>
             <td style="color:#9ca3af">—</td>
@@ -288,18 +270,37 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal()
         </tr></tbody>
                 </table>
                 <div style="font-size:10px;color:#9ca3af;margin-top:10px">
-                    Semana atual: 2026-04-10 → 2026-04-16 &nbsp;·&nbsp;
-                    Semana anterior: 2026-04-03 → 2026-04-09
+                    Semana atual: 2026-04-11 → 2026-04-17 &nbsp;·&nbsp;
+                    Semana anterior: 2026-04-04 → 2026-04-10
                 </div>
             </div>
 
-            <div class="section">
-                <div class="st">⚠️ Alertas do Dia</div>
-                <div style="margin-bottom:8px"><div style="font-size:11px;font-weight:700;color:#ef4444;margin-bottom:6px;text-transform:uppercase">🔴 Ação Imediata</div><div style="padding:6px 10px;margin:3px 0;background:#fef2f2;border-left:3px solid #ef4444;border-radius:4px;font-size:12px"><b>IOA Campinas - Alunos</b> — 🔴 Sem leads: "ortodontia_VID_001" — R$100 investidos</div><div style="padding:6px 10px;margin:3px 0;background:#fef2f2;border-left:3px solid #ef4444;border-radius:4px;font-size:12px"><b>IOA Campinas - Alunos</b> — 🔴 Sem leads: "dentistica_protese_VID_001" — R$99 investidos</div><div style="padding:6px 10px;margin:3px 0;background:#fef2f2;border-left:3px solid #ef4444;border-radius:4px;font-size:12px"><b>IOA Campinas - Alunos</b> — 🔴 Sem leads: "IMG001_cirur_estet_orofacial" — R$264 investidos</div><div style="padding:6px 10px;margin:3px 0;background:#fef2f2;border-left:3px solid #ef4444;border-radius:4px;font-size:12px"><b>IOA Campinas - Alunos</b> — 🔴 Sem leads: "IMG002_cirur_estet_orofacial" — R$129 investidos</div><div style="padding:6px 10px;margin:3px 0;background:#fef2f2;border-left:3px solid #ef4444;border-radius:4px;font-size:12px"><b>IOA Campinas - Alunos</b> — 🔴 Sem leads: "buco_fevereiro_2026" — R$247 investidos</div><div style="padding:6px 10px;margin:3px 0;background:#fef2f2;border-left:3px solid #ef4444;border-radius:4px;font-size:12px"><b>IOA Campinas - Alunos</b> — 🔴 Sem leads: "implant_perio_fev_2026" — R$237 investidos</div></div><div><div style="font-size:11px;font-weight:700;color:#d97706;margin-bottom:6px;text-transform:uppercase">🟡 Monitorar</div><div style="padding:6px 10px;margin:3px 0;background:#fffbeb;border-left:3px solid #f59e0b;border-radius:4px;font-size:12px"><b>IOA Ribeirao Preto</b> — 🟡 Frequência alta: "dent_prot_002" — freq 3.2</div></div>
+            <div style="display:flex;flex-direction:column;gap:16px">
+                <div class="section">
+                    <div class="st">⚠️ Alertas</div>
+                    <div style="margin-bottom:8px"><div style="font-size:11px;font-weight:700;color:#ef4444;margin-bottom:6px;text-transform:uppercase">🔴 Ação Imediata</div><div style="padding:6px 10px;margin:3px 0;background:#fef2f2;border-left:3px solid #ef4444;border-radius:4px;font-size:12px"><b>IOA Campinas - Alunos</b> — 🔴 Sem leads: "ortodontia_VID_001" — R$137 investidos</div><div style="padding:6px 10px;margin:3px 0;background:#fef2f2;border-left:3px solid #ef4444;border-radius:4px;font-size:12px"><b>IOA Campinas - Alunos</b> — 🔴 Sem leads: "dentistica_protese_VID_001" — R$139 investidos</div><div style="padding:6px 10px;margin:3px 0;background:#fef2f2;border-left:3px solid #ef4444;border-radius:4px;font-size:12px"><b>IOA Campinas - Alunos</b> — 🔴 Sem leads: "IMG001_cirur_estet_orofacial" — R$269 investidos</div><div style="padding:6px 10px;margin:3px 0;background:#fef2f2;border-left:3px solid #ef4444;border-radius:4px;font-size:12px"><b>IOA Campinas - Alunos</b> — 🔴 Sem leads: "IMG002_cirur_estet_orofacial" — R$77 investidos</div><div style="padding:6px 10px;margin:3px 0;background:#fef2f2;border-left:3px solid #ef4444;border-radius:4px;font-size:12px"><b>IOA Campinas - Alunos</b> — 🔴 Sem leads: "buco_fevereiro_2026" — R$226 investidos</div><div style="padding:6px 10px;margin:3px 0;background:#fef2f2;border-left:3px solid #ef4444;border-radius:4px;font-size:12px"><b>IOA Campinas - Alunos</b> — 🔴 Sem leads: "implant_perio_fev_2026" — R$218 investidos</div></div><div style="margin-bottom:8px"><div style="font-size:11px;font-weight:700;color:#d97706;margin-bottom:6px;text-transform:uppercase">🟡 Monitorar</div><div style="padding:6px 10px;margin:3px 0;background:#fffbeb;border-left:3px solid #f59e0b;border-radius:4px;font-size:12px"><b>IOA Ribeirao Preto</b> — 🟡 Frequência alta: "dent_prot_002" — freq 3.1</div></div>
+                </div>
+
+                <div class="section">
+                    <div class="st">🏆 Rankings CPL — Semana</div>
+                    
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div>
+            <div style="font-size:10px;font-weight:700;color:#10b981;text-transform:uppercase;
+                        letter-spacing:.5px;margin-bottom:8px">Melhores CPL</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;margin:4px 0;border-radius:8px;background:#f8fafc"><span style="font-size:13px;font-weight:600">🥇 IOA Ribeirao Preto</span><span style="color:#f59e0b;font-weight:700;font-size:14px">R$48.33</span></div>
+        </div>
+        <div>
+            <div style="font-size:10px;font-weight:700;color:#ef4444;text-transform:uppercase;
+                        letter-spacing:.5px;margin-bottom:8px">CPL mais alto</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;margin:4px 0;border-radius:8px;background:#f8fafc"><span style="font-size:13px;font-weight:600">🔴 IOA Ribeirao Preto</span><span style="color:#f59e0b;font-weight:700;font-size:14px">R$48.33</span></div>
+        </div>
+    </div>
+                </div>
             </div>
         </div>
 
     </div>
-    <div class="footer">Gestor de Tráfego · Meio Comunica · 17/04/2026 14:31</div>
+    <div class="footer">Gestor de Tráfego · Meio Comunica · 18/04/2026 14:07</div>
 </body>
 </html>

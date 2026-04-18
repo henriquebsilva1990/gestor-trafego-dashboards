@@ -1,389 +1,102 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Endotec — Relatório</title>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Endotec — Resumo</title>
     <style>
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap');
-
-:root {
-  --bg: #070d19;
-  --surface: #0f1a2e;
-  --surface-2: #162037;
-  --border: rgba(148,163,184,0.09);
-  --border-bright: rgba(148,163,184,0.18);
-  --text: #e2e8f0;
-  --text-muted: #64748b;
-  --text-subtle: #94a3b8;
-  --accent: #0891b2;
-  --accent-dim: rgba(8,145,178,0.12);
-  --accent-border: rgba(8,145,178,0.28);
-  --google: #10b981;
-  --google-dim: rgba(16,185,129,0.12);
-  --google-border: rgba(16,185,129,0.28);
-  --warn: #f59e0b;
-  --warn-dim: rgba(245,158,11,0.12);
-  --danger: #f87171;
-  --danger-dim: rgba(248,113,113,0.12);
-  --success: #4ade80;
-  --r: 14px;
-}
-
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  line-height: 1.5;
-}
-
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image: radial-gradient(rgba(148,163,184,0.045) 1px, transparent 1px);
-  background-size: 26px 26px;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.header {
-  position: relative;
-  z-index: 1;
-  padding: 36px 44px 32px;
-  overflow: hidden;
-}
-.header::after {
-  content: '';
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 50%;
-  background: linear-gradient(to bottom, transparent, var(--bg));
-  pointer-events: none;
-}
-.header h1 {
-  font-family: 'Syne', sans-serif;
-  font-size: 30px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  color: #fff;
-  position: relative;
-  z-index: 1;
-}
-.header .sub {
-  font-size: 12px;
-  color: rgba(255,255,255,0.5);
-  margin-top: 7px;
-  letter-spacing: 0.4px;
-  position: relative;
-  z-index: 1;
-}
-.header .back {
-  position: relative;
-  z-index: 1;
-  font-size: 12px;
-  color: rgba(255,255,255,0.6);
-  text-decoration: none;
-  border: 1px solid rgba(255,255,255,0.2);
-  padding: 6px 14px;
-  border-radius: 20px;
-  display: inline-block;
-  margin-top: 12px;
-  transition: background 0.15s;
-}
-.header .back:hover { background: rgba(255,255,255,0.1); }
-
-.container {
-  position: relative;
-  z-index: 1;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 24px 36px 40px;
-}
-
-.st {
-  font-family: 'Syne', sans-serif;
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--text-muted);
-  border-bottom: 1px solid var(--border);
-  padding-bottom: 10px;
-  margin-bottom: 16px;
-  text-transform: uppercase;
-  letter-spacing: 1.2px;
-}
-
-.cards {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  margin-bottom: 16px;
-}
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-  padding: 20px 22px;
-  transition: border-color 0.2s;
-  position: relative;
-  overflow: hidden;
-}
-.card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--google) 0%, transparent 100%);
-  opacity: 0.4;
-}
-.card:hover { border-color: var(--border-bright); }
-.card .lbl {
-  font-size: 9.5px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--text-muted);
-  margin-bottom: 10px;
-  font-weight: 600;
-}
-.card .val {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 25px;
-  font-weight: 600;
-  line-height: 1;
-  color: var(--text-muted);
-}
-.card .cmp {
-  font-size: 11px;
-  color: var(--text-muted);
-  margin-top: 9px;
-}
-
-.section {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-  padding: 20px 24px;
-  margin-bottom: 14px;
-}
-
-.cmp-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 14px;
-}
-.period-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-  padding: 18px 22px;
-}
-.period-card h3 {
-  font-family: 'Syne', sans-serif;
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 14px;
-  color: var(--text-muted);
-}
-.mrow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 7px 0;
-  border-bottom: 1px solid rgba(148,163,184,0.05);
-}
-.mrow:last-child { border-bottom: none; }
-.ml { font-size: 12px; color: var(--text-muted); }
-.mv {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-muted);
-}
-
-.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
-.footer {
-  text-align: center;
-  color: var(--text-muted);
-  font-size: 11px;
-  padding: 28px 20px 36px;
-  position: relative;
-  z-index: 1;
-  border-top: 1px solid var(--border);
-  margin-top: 8px;
-}
-
-.pending-banner {
-  background: rgba(245,158,11,0.08);
-  border: 1px solid rgba(245,158,11,0.3);
-  border-radius: var(--r);
-  padding: 16px 20px;
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.pending-banner .icon { font-size: 20px; flex-shrink: 0; }
-.pending-banner .msg { font-size: 13px; color: #fcd34d; line-height: 1.5; }
-.pending-banner .msg strong { color: #fbbf24; }
-
-.val-pending {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  font-weight: 600;
-  color: rgba(245,158,11,0.5);
-}
-
-@media (max-width: 900px) { .cards, .cmp-grid, .g2 { grid-template-columns: 1fr 1fr; } }
-@media (max-width: 600px) { .cmp-grid, .g2 { grid-template-columns: 1fr; } }
-</style>
+        *{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f1f5f9;color:#1e293b}
+        .hd{background:#0891b2;color:white;padding:24px 36px;display:flex;justify-content:space-between;align-items:center}
+        .hd h1{font-size:22px;font-weight:700}
+        .hd .sub{font-size:12px;opacity:.7;margin-top:4px}
+        .back{font-size:12px;opacity:.8;text-decoration:none;color:white;border:1px solid rgba(255,255,255,.4);padding:6px 14px;border-radius:20px}
+        .back:hover{background:rgba(255,255,255,.15)}
+        .wrap{max-width:900px;margin:0 auto;padding:24px 32px}
+        .tldr{background:white;border-radius:12px;padding:16px 20px;margin-bottom:20px;border-left:4px solid #0891b2;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+        .tldr-lbl{font-size:10px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
+        .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+        .card{background:white;border-radius:12px;padding:16px 18px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+        .card .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#9ca3af;margin-bottom:6px}
+        .card .val{font-size:24px;font-weight:800}
+        .card .s{font-size:11px;color:#9ca3af;margin-top:4px}
+        .sec{background:white;border-radius:12px;padding:20px 22px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+        .st{font-size:11px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #e5e7eb;padding-bottom:8px;margin-bottom:14px}
+        table{width:100%;border-collapse:collapse;font-size:13px}
+        th{text-align:left;padding:8px 10px;background:#f8fafc;color:#6b7280;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+        td{padding:10px;border-top:1px solid #f1f5f9;vertical-align:middle}
+        .footer{text-align:center;color:#9ca3af;font-size:11px;padding:16px}
+    </style>
 </head>
 <body>
-    <div class="header" style="background:linear-gradient(135deg,#164e63,#0891b2)">
-        <h1>Endotec</h1>
-        <div class="sub">Google Ads · Relatório Semanal · 18/04/2026</div>
+    <div class="hd">
+        <div>
+            <h1>📊 Endotec</h1>
+            <div class="sub">Meta Ads + Google Ads · Atualizado em 18/04/2026 14:07</div>
+        </div>
         <a class="back" href="consolidado.html">← Voltar ao Consolidado</a>
     </div>
-    <div class="container">
-
-        <div class="pending-banner">
-            <div class="icon">⏳</div>
-            <div class="msg">
-                <strong>Aguardando integração Google Ads</strong><br>
-                O acesso à API do Google Ads está em processo de liberação. Os dados serão populados automaticamente assim que a integração for concluída.
-            </div>
-        </div>
-
-        <div style="font-size:9.5px;color:#64748b;margin-bottom:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px">
-            Google Ads · Semana Atual · <span style="color:#6ee7b7">2026-04-10 → 2026-04-16</span>
+    <div class="wrap">
+        <!-- TL;DR -->
+        <div class="tldr">
+            <div class="tldr-lbl">TL;DR — 2026-04-11 a 2026-04-17</div>
+            <div style="padding:4px 0;font-size:13px;color:#374151">Investimento: <b>—</b> vs semana anterior</div><div style="padding:4px 0;font-size:13px;color:#374151">Leads: <b>0</b> | CPL: <b>—</b></div><div style="padding:4px 0;font-size:13px;color:#374151">Meta de CPL: <b>R$35.00</b> | Status: <b style="color:#6b7280">—</b></div>
         </div>
 
         <div class="cards">
             <div class="card">
-                <div class="lbl">Investimento Total</div>
+                <div class="lbl">Invest. Ontem</div>
                 <div class="val">—</div>
-                <div class="cmp">Semana ant.: —</div>
+                <div class="s">Meta: — · Google: —</div>
             </div>
             <div class="card">
-                <div class="lbl">Conversões Totais</div>
+                <div class="lbl">Invest. Semana Atual</div>
                 <div class="val">—</div>
-                <div class="cmp">Semana ant.: —</div>
+                <div class="s">Ant.: —</div>
             </div>
             <div class="card">
-                <div class="lbl">CPL Médio</div>
-                <div class="val">—</div>
-                <div class="cmp">Semana ant.: —</div>
+                <div class="lbl">Conv. Semana Atual</div>
+                <div class="val" style="color:#2563eb">—</div>
+                <div class="s">Ontem: — · Ant.: —</div>
             </div>
             <div class="card">
-                <div class="lbl">Campanhas Ativas</div>
-                <div class="val">—</div>
-                <div class="cmp">Google Ads</div>
+                <div class="lbl">CPL Semana Atual</div>
+                <div class="val" style="color:#6b7280">—</div>
+                <div class="s">Meta: R$35.00</div>
             </div>
         </div>
 
-
-    <!-- ═══════ TIMELINE DIÁRIA ═══════ -->
-    <div class="section" style="margin-top:14px" id="timeline-section">
-      <div class="st">Linha do Tempo — Dia a Dia <span style="font-size:9px;color:#475569;font-weight:400;margin-left:8px">atualizado 18/04/2026 09:52</span></div>
-      <div style="overflow-x:auto;padding-bottom:8px">
-        <div style="display:flex;gap:8px;min-width:max-content;padding:4px 2px 8px">
-          <div style="min-width:120px;background:rgba(245,158,11,0.04);border:1px dashed rgba(245,158,11,0.2);border-radius:10px;padding:12px 10px;flex-shrink:0"><div style="font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;text-align:center">dom 12</div><div style="text-align:center;color:rgba(245,158,11,0.4);font-size:11px;padding:14px 0">aguardando<br>API</div></div>
-<div style="min-width:120px;background:rgba(245,158,11,0.04);border:1px dashed rgba(245,158,11,0.2);border-radius:10px;padding:12px 10px;flex-shrink:0"><div style="font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;text-align:center">seg 13</div><div style="text-align:center;color:rgba(245,158,11,0.4);font-size:11px;padding:14px 0">aguardando<br>API</div></div>
-<div style="min-width:120px;background:rgba(245,158,11,0.04);border:1px dashed rgba(245,158,11,0.2);border-radius:10px;padding:12px 10px;flex-shrink:0"><div style="font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;text-align:center">ter 14</div><div style="text-align:center;color:rgba(245,158,11,0.4);font-size:11px;padding:14px 0">aguardando<br>API</div></div>
-<div style="min-width:120px;background:rgba(245,158,11,0.04);border:1px dashed rgba(245,158,11,0.2);border-radius:10px;padding:12px 10px;flex-shrink:0"><div style="font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;text-align:center">qua 15</div><div style="text-align:center;color:rgba(245,158,11,0.4);font-size:11px;padding:14px 0">aguardando<br>API</div></div>
-<div style="min-width:120px;background:rgba(245,158,11,0.04);border:1px dashed rgba(245,158,11,0.2);border-radius:10px;padding:12px 10px;flex-shrink:0"><div style="font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;text-align:center">qui 16</div><div style="text-align:center;color:rgba(245,158,11,0.4);font-size:11px;padding:14px 0">aguardando<br>API</div></div>
-<div style="min-width:120px;background:rgba(245,158,11,0.04);border:1px dashed rgba(245,158,11,0.2);border-radius:10px;padding:12px 10px;flex-shrink:0"><div style="font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;text-align:center">sex 17</div><div style="text-align:center;color:rgba(245,158,11,0.4);font-size:11px;padding:14px 0">aguardando<br>API</div></div>
-<div style="min-width:120px;background:rgba(245,158,11,0.04);border:1px dashed rgba(245,158,11,0.2);border-radius:10px;padding:12px 10px;flex-shrink:0"><div style="font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;text-align:center">sáb 18</div><div style="text-align:center;color:rgba(245,158,11,0.4);font-size:11px;padding:14px 0">aguardando<br>API</div></div>
-        </div>
-      </div>
-      
-<div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:10px;color:#64748b">
-  <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#4ade80;margin-right:4px"></span>bom</span>
-  <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#f59e0b;margin-right:4px"></span>atenção</span>
-  <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#f87171;margin-right:4px"></span>crítico</span>
-  <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#64748b;margin-right:4px"></span>sem dados</span>
-  <span style="margin-left:8px">CPL bom ≤ R$35 · alerta ≤ R$55 · CTR bom ≥ 1.5% · Freq. alerta ≥ 2.5</span>
-</div>
-    </div>
-
-    <!-- ═══════ ANÁLISE DE TENDÊNCIAS ═══════ -->
-    <div class="section" style="margin-top:14px" id="analysis-section">
-      <div class="st">
-        Análise de Tendências
-        <span style="font-size:9px;font-weight:600;color:#10b981;margin-left:8px;
-        background:rgba(59,130,246,0.1);padding:2px 8px;border-radius:10px;
-        border:1px solid rgba(59,130,246,0.2)">Método Tessmann (Google Ads)</span>
-      </div>
-      
-<div style="padding:10px 14px;margin:6px 0;border-radius:8px;background:rgba(245,158,11,0.06);
-border-left:3px solid rgba(245,158,11,0.4);font-size:12.5px;line-height:1.65;color:#94a3b8">
-⏳ <strong style="color:#fbbf24">Análise Tessmann aguardando integração Google Ads</strong><br>
-<span style="font-size:11.5px">Quando a API for liberada serão geradas análises de: Quality Score, CTR por correspondência,
-distribuição de impressões por tipo de match, tendência de CPA, oportunidades de palavras-chave negativas
-e diagnóstico de curva de aprendizado das estratégias de lance Smart Bidding.</span>
-</div>
-    </div>
-
-
-        <div class="cmp-grid">
-            <div class="period-card">
-                <h3>Semana Atual · 2026-04-10 → 2026-04-16</h3>
-                <div class="mrow"><span class="ml">Investimento</span><span class="val-pending">aguardando</span></div>
-                <div class="mrow"><span class="ml">Conversões</span><span class="val-pending">aguardando</span></div>
-                <div class="mrow"><span class="ml">CPL médio</span><span class="val-pending">aguardando</span></div>
-                <div class="mrow"><span class="ml">Impressões</span><span class="val-pending">aguardando</span></div>
-                <div class="mrow"><span class="ml">Cliques</span><span class="val-pending">aguardando</span></div>
-                <div class="mrow"><span class="ml">CTR</span><span class="val-pending">aguardando</span></div>
-            </div>
-            <div class="period-card">
-                <h3>Semana Anterior · 2026-04-03 → 2026-04-09</h3>
-                <div class="mrow"><span class="ml">Investimento</span><span class="val-pending">aguardando</span></div>
-                <div class="mrow"><span class="ml">Conversões</span><span class="val-pending">aguardando</span></div>
-                <div class="mrow"><span class="ml">CPL médio</span><span class="val-pending">aguardando</span></div>
-                <div class="mrow"><span class="ml">Impressões</span><span class="val-pending">aguardando</span></div>
-                <div class="mrow"><span class="ml">Cliques</span><span class="val-pending">aguardando</span></div>
-                <div class="mrow"><span class="ml">CTR</span><span class="val-pending">aguardando</span></div>
+        <div class="sec">
+            <div class="st">📈 Comparativo por Plataforma — Semana Atual vs Anterior</div>
+            <table>
+                <tr>
+                    <th>Plataforma</th>
+                    <th>Investimento Atual</th><th>Investimento Ant.</th>
+                    <th>Conv. Atual</th><th>Conv. Ant.</th>
+                    <th>CPL Atual</th>
+                </tr>
+                <tr>
+                    <td><span style="background:#dbeafe;color:#1d4ed8;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px">Meta</span></td>
+                    <td>—</td><td style="color:#9ca3af">—</td>
+                    <td style="font-weight:700;color:#2563eb">—</td><td style="color:#9ca3af">—</td>
+                    <td style="color:#6b7280;font-weight:700">—</td>
+                </tr>
+                <tr>
+                    <td><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px">Google</span></td>
+                    <td>—</td><td style="color:#9ca3af">—</td>
+                    <td style="font-weight:700;color:#2563eb">—</td><td style="color:#9ca3af">—</td>
+                    <td style="color:#6b7280;font-weight:700">—</td>
+                </tr>
+            </table>
+            <div style="font-size:10px;color:#9ca3af;margin-top:10px">
+                Atual: 2026-04-11 → 2026-04-17 &nbsp;·&nbsp; Anterior: 2026-04-04 → 2026-04-10
             </div>
         </div>
 
-        <div class="g2">
-            <div class="section">
-                <div class="st">Campanhas</div>
-                <div style="color:#64748b;font-size:13px;padding:10px 0;line-height:1.7">
-                    Dados das campanhas disponíveis após liberação da API Google Ads.<br>
-                    <span style="font-size:11px;color:#475569">Customer ID: 8332742697</span>
-                </div>
-            </div>
-            <div class="section">
-                <div class="st">Status da Integração</div>
-                <div style="font-size:13px;line-height:1.8;color:#94a3b8">
-                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-                        <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#f59e0b;box-shadow:0 0 6px rgba(245,158,11,.5)"></span>
-                        <span>Google Ads API — pendente liberação</span>
-                    </div>
-                    <div style="font-size:11.5px;color:#64748b">
-                        Assim que a API for aprovada, os relatórios serão atualizados automaticamente na próxima geração.
-                    </div>
-                </div>
-            </div>
+        <div class="sec">
+            <div class="st">⚠️ Alertas de Criativos (últimos 7 dias)</div>
+            <div style="color:#10b981;font-size:13px">✅ Nenhum alerta criativo</div>
         </div>
-
     </div>
-      
-<div style="padding:10px 14px;margin:6px 0;border-radius:8px;background:rgba(245,158,11,0.06);
-border-left:3px solid rgba(245,158,11,0.4);font-size:12.5px;line-height:1.65;color:#94a3b8">
-⏳ <strong style="color:#fbbf24">Análise Tessmann aguardando integração Google Ads</strong><br>
-<span style="font-size:11.5px">Quando a API for liberada serão geradas análises de: Quality Score, CTR por correspondência,
-distribuição de impressões por tipo de match, tendência de CPA, oportunidades de palavras-chave negativas
-e diagnóstico de curva de aprendizado das estratégias de lance Smart Bidding.</span>
-</div>
-    </div>
-    <div class="footer">Gestor de Tráfego · Meio Comunica · 18/04/2026</div>
+    <div class="footer">Gestor de Tráfego · Meio Comunica · 18/04/2026 14:07</div>
 </body>
 </html>

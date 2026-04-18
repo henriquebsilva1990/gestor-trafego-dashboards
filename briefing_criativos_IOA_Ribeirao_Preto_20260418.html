@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Briefing de Criativos — IOA Ribeirao Preto</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: #f1f5f9;
+      color: #1e293b;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* ── Toolbar (oculto no PDF) ── */
+    .toolbar {
+      background: #0f172a;
+      padding: 12px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .toolbar .info { color: #94a3b8; font-size: 12px; }
+    .toolbar .info strong { color: white; }
+    .btn-pdf {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 9px 22px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: background .15s;
+    }
+    .btn-pdf:hover { background: #2563eb; }
+
+    /* ── Wrapper ── */
+    .wrapper {
+      max-width: 800px;
+      margin: 28px auto;
+      padding: 0 16px 48px;
+    }
+
+    /* ── Cover ── */
+    .cover {
+      background: linear-gradient(135deg, #1e3a5f 0%, #1d4ed8 100%);
+      border-radius: 14px;
+      padding: 40px 44px 36px;
+      color: white;
+      margin-bottom: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cover::after {
+      content: '';
+      position: absolute;
+      right: -30px; top: -50px;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.06);
+    }
+    .cover .agency {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: rgba(255,255,255,.55);
+      margin-bottom: 10px;
+    }
+    .cover h1 {
+      font-size: 26px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+    .cover .sub {
+      font-size: 13px;
+      color: rgba(255,255,255,.65);
+    }
+    .cover .pill {
+      display: inline-block;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.2);
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-top: 14px;
+    }
+    .cover .counter {
+      position: absolute;
+      right: 44px;
+      top: 50%;
+      transform: translateY(-50%);
+      text-align: center;
+    }
+    .cover .counter .num {
+      font-size: 52px;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .cover .counter .lbl {
+      font-size: 11px;
+      color: rgba(255,255,255,.6);
+      margin-top: 4px;
+    }
+
+    /* ── Section header ── */
+    .section-title {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: #64748b;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e2e8f0;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: white;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      margin-bottom: 24px;
+      overflow: hidden;
+      page-break-inside: avoid;
+    }
+    .card-header {
+      background: var(--status-bg, #fef2f2);
+      border-bottom: 1px solid #f1f5f9;
+      padding: 14px 20px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .card-left {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .card-index {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--status-color, #dc2626);
+      background: white;
+      border: 1.5px solid var(--status-color, #dc2626);
+      border-radius: 6px;
+      padding: 2px 7px;
+      white-space: nowrap;
+      margin-top: 1px;
+    }
+    .ad-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: #111827;
+      line-height: 1.3;
+    }
+    .adset-name {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-top: 2px;
+    }
+    .status-badge {
+      background: var(--status-color, #dc2626);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      white-space: nowrap;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      flex-shrink: 0;
+    }
+
+    /* ── Metrics ── */
+    .metrics-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      padding: 10px 20px;
+      border-bottom: 1px solid #f8fafc;
+      background: #fafafa;
+    }
+    .metric {
+      font-size: 11px;
+      color: #6b7280;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 3px 9px;
+    }
+    .metric b { color: #374151; }
+
+    /* ── Reason ── */
+    .reason {
+      font-size: 11.5px;
+      color: #92400e;
+      background: #fffbeb;
+      border-left: 3px solid #f59e0b;
+      padding: 6px 14px;
+      margin: 0;
+    }
+    .reason + .reason { border-top: 1px solid #fef3c7; }
+
+    /* ── Briefing box ── */
+    .briefing-box {
+      padding: 20px;
+    }
+    .briefing-title {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #64748b;
+      margin-bottom: 14px;
+    }
+
+    /* ── Format row ── */
+    .format-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .format-item {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .fmt-label {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      color: #9ca3af;
+      font-weight: 600;
+    }
+    .fmt-value {
+      font-size: 13px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 6px;
+    }
+    .fmt-value.current   { background: #f1f5f9; color: #475569; }
+    .fmt-value.suggested { background: #dbeafe; color: #1d4ed8; }
+    .format-arrow {
+      font-size: 18px;
+      color: #94a3b8;
+      margin-top: 12px;
+    }
+    .format-tip {
+      font-size: 11.5px;
+      color: #6b7280;
+      background: #f8fafc;
+      border-radius: 6px;
+      padding: 8px 12px;
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+
+    /* ── Current angle ── */
+    .current-angle {
+      font-size: 11px;
+      color: #6b7280;
+      margin-bottom: 12px;
+    }
+    .current-angle strong { color: #374151; }
+
+    /* ── Angle block ── */
+    .angle-block {
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      border: 1px solid #e2e8f0;
+    }
+    .angle-block.option-1 {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+    }
+    .angle-block.option-2 {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+    }
+    .angle-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .angle-title {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #1e293b;
+    }
+    .angle-block.option-1 .angle-title { color: #166534; }
+    .angle-block.option-2 .angle-title { color: #1e40af; }
+    .angle-format {
+      font-size: 10px;
+      color: #6b7280;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      padding: 2px 8px;
+    }
+    .hook-line {
+      font-size: 12px;
+      color: #374151;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 5px;
+      padding: 7px 10px;
+      margin-bottom: 5px;
+      line-height: 1.4;
+      font-style: italic;
+    }
+    .cta-line {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #1d4ed8;
+      margin-top: 8px;
+    }
+    .angle-block.option-1 .cta-line { color: #16a34a; }
+
+    /* ── Footer ── */
+    .footer {
+      background: white;
+      border-radius: 10px;
+      border: 1px solid #e2e8f0;
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10.5px;
+      color: #94a3b8;
+      margin-top: 8px;
+    }
+
+    /* ── Print ── */
+    @media print {
+      body { background: white; }
+      .toolbar { display: none !important; }
+      .wrapper { margin: 0; padding: 0 0 24px; max-width: 100%; }
+      .cover { border-radius: 0; margin-bottom: 20px; }
+      .card { border-radius: 6px; margin-bottom: 18px; box-shadow: none; }
+      .angle-block { border-radius: 5px; }
+      .footer { border-radius: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Toolbar (oculto no PDF) -->
+<div class="toolbar">
+  <div class="info">
+    <strong>Briefing de Criativos</strong> · IOA Ribeirao Preto · 2026-04-11 → 2026-04-18
+  </div>
+  <button class="btn-pdf" onclick="window.print()">⬇ Salvar como PDF</button>
+</div>
+
+<div class="wrapper">
+
+  <!-- Capa -->
+  <div class="cover">
+    <div class="counter">
+      <div class="num">5</div>
+      <div class="lbl">criativo(s) para<br>substituir</div>
+    </div>
+    <div class="agency">Meio Comunica · Gestão de Tráfego</div>
+    <h1>IOA Ribeirao Preto</h1>
+    <div class="sub">Briefing de Criativos — 2026-04-11 → 2026-04-18</div>
+    <div class="pill">Gerado em 18/04/2026 · Meta Ads</div>
+  </div>
+
+  <!-- Cards de Briefing -->
+  <div class="section-title">Criativos que precisam de substituição</div>
+  
+  <div class="card" style="--status-color:#d97706;--status-bg:#fffbeb">
+    <div class="card-header">
+      <div class="card-left">
+        <div class="card-index">#1</div>
+        <div>
+          <div class="ad-name">dent_prot_002</div>
+          <div class="adset-name">00 - [LP] [INT LAL ENVOLV] [RP + Franca] [24y50]</div>
+        </div>
+      </div>
+      <div class="status-badge">Preparar substituto</div>
+    </div>
+    
+    <div class="metrics-row">
+      <span class="metric"><b>Investido:</b> R$399.66</span>
+      <span class="metric"><b>Leads:</b> 13</span>
+      <span class="metric"><b>CPL:</b> R$30.74</span>
+      <span class="metric"><b>CTR:</b> 0.84%</span>
+      <span class="metric"><b>Freq:</b> 3.1</span>
+    </div>
+    <div class="reason">⚠ Frequência 3.1 — zona de atenção, prepare substituto</div><div class="reason">⚠ CTR 0.84% — hook não está chamando atenção suficiente</div>
+    <div class="briefing-box">
+      <div class="briefing-title">Briefing — Criativo Substituto</div>
+      
+    <div class="format-row">
+      <div class="format-item">
+        <span class="fmt-label">Formato atual</span>
+        <span class="fmt-value current">Imagem estática</span>
+      </div>
+      <div class="format-arrow">→</div>
+      <div class="format-item">
+        <span class="fmt-label">Formato sugerido</span>
+        <span class="fmt-value suggested">Vídeo curto (15–30s / Reels)</span>
+      </div>
+    </div>
+    <div class="format-tip">Use vídeo para dar vida ao serviço: depoimento rápido, bastidor ou apresentação do produto.</div>
+      <div class="current-angle">Ângulo atual não identificado. Use um dos ângulos sugeridos abaixo.</div>
+      
+    <div class="angle-block option-1">
+      <div class="angle-header">
+        <div class="angle-title">Opção 1: Prova Social / Depoimento</div>
+        <div class="angle-format">Vídeo curto (15–30s) com aluno real falando</div>
+      </div>
+      <div class="hook-line">"Veja o depoimento de quem começou igual a você e hoje trabalha na área"</div><div class="hook-line">"Em 18 meses, [nome] saiu do zero e passou no concurso — veja como"</div><div class="hook-line">"Mais de [N] alunos formados. Veja o que eles dizem sobre o curso"</div>
+      <div class="cta-line">CTA → Quero conhecer as histórias</div>
+    </div>
+    <div class="angle-block option-2">
+      <div class="angle-header">
+        <div class="angle-title">Opção 2: Urgência / Escassez</div>
+        <div class="angle-format">Imagem estática com contador ou destaque de prazo</div>
+      </div>
+      <div class="hook-line">"Inscrições encerram em [data] — turma quase cheia"</div><div class="hook-line">"Últimas [N] vagas para o curso de [área] com bolsa disponível"</div><div class="hook-line">"Só até sexta: desconto de [X]% para quem garantir a vaga agora"</div>
+      <div class="cta-line">CTA → Garantir minha vaga</div>
+    </div>
+    </div>
+  </div>
+  <div class="card" style="--status-color:#dc2626;--status-bg:#fef2f2">
+    <div class="card-header">
+      <div class="card-left">
+        <div class="card-index">#2</div>
+        <div>
+          <div class="ad-name">matriculas_2026_ioarp_001</div>
+          <div class="adset-name">[ABERTO] [RP + Franca] [24y34] [M] [IG]</div>
+        </div>
+      </div>
+      <div class="status-badge">Substituir com urgência</div>
+    </div>
+    
+    <div class="metrics-row">
+      <span class="metric"><b>Investido:</b> R$452.33</span>
+      <span class="metric"><b>Leads:</b> 6</span>
+      <span class="metric"><b>CPL:</b> R$75.39</span>
+      <span class="metric"><b>CTR:</b> 0.90%</span>
+      <span class="metric"><b>Freq:</b> 2.3</span>
+    </div>
+    <div class="reason">⚠ CTR 0.90% — hook não está chamando atenção suficiente</div><div class="reason">⚠ CPL R$75.39 — acima do limite de R$55</div>
+    <div class="briefing-box">
+      <div class="briefing-title">Briefing — Criativo Substituto</div>
+      
+    <div class="format-row">
+      <div class="format-item">
+        <span class="fmt-label">Formato atual</span>
+        <span class="fmt-value current">Imagem estática</span>
+      </div>
+      <div class="format-arrow">→</div>
+      <div class="format-item">
+        <span class="fmt-label">Formato sugerido</span>
+        <span class="fmt-value suggested">Vídeo curto (15–30s / Reels)</span>
+      </div>
+    </div>
+    <div class="format-tip">Use vídeo para dar vida ao serviço: depoimento rápido, bastidor ou apresentação do produto.</div>
+      <div class="current-angle">Ângulo atual não identificado. Use um dos ângulos sugeridos abaixo.</div>
+      
+    <div class="angle-block option-1">
+      <div class="angle-header">
+        <div class="angle-title">Opção 1: Problema / Dor do Prospect</div>
+        <div class="angle-format">Vídeo ou carrossel — permita que o prospect se identifique na capa</div>
+      </div>
+      <div class="hook-line">"Está preso no emprego errado e sem perspectiva de crescimento?"</div><div class="hook-line">"Por que tantas pessoas desistem de se especializar — e como você pode ser diferente"</div><div class="hook-line">"Não sabe por onde começar na área de [segmento]? A gente resolve isso"</div>
+      <div class="cta-line">CTA → Quero resolver isso</div>
+    </div>
+    <div class="angle-block option-2">
+      <div class="angle-header">
+        <div class="angle-title">Opção 2: Proposta de Valor / Benefícios</div>
+        <div class="angle-format">Carrossel mostrando cada benefício em um card</div>
+      </div>
+      <div class="hook-line">"[Curso] em [duração]: você sai com diploma, portfólio e empregabilidade garantida"</div><div class="hook-line">"Veja o que você aprende no 1º mês do curso de [área]"</div><div class="hook-line">"Grade completa com [N] módulos práticos — aplicável no trabalho a partir da primeira aula"</div>
+      <div class="cta-line">CTA → Ver conteúdo completo</div>
+    </div>
+    </div>
+  </div>
+  <div class="card" style="--status-color:#d97706;--status-bg:#fffbeb">
+    <div class="card-header">
+      <div class="card-left">
+        <div class="card-index">#3</div>
+        <div>
+          <div class="ad-name">VID_endodontia_002</div>
+          <div class="adset-name">00 - [LP] [LAL + Env.] [RP + Franca] [24y40] VIDEOS</div>
+        </div>
+      </div>
+      <div class="status-badge">Preparar substituto</div>
+    </div>
+    
+    <div class="metrics-row">
+      <span class="metric"><b>Investido:</b> R$208.06</span>
+      <span class="metric"><b>Leads:</b> 4</span>
+      <span class="metric"><b>CPL:</b> R$52.02</span>
+      <span class="metric"><b>CTR:</b> 0.60%</span>
+      <span class="metric"><b>Freq:</b> 2.3</span>
+    </div>
+    <div class="reason">⚠ CTR 0.60% — hook não está chamando atenção suficiente</div>
+    <div class="briefing-box">
+      <div class="briefing-title">Briefing — Criativo Substituto</div>
+      
+    <div class="format-row">
+      <div class="format-item">
+        <span class="fmt-label">Formato atual</span>
+        <span class="fmt-value current">Vídeo</span>
+      </div>
+      <div class="format-arrow">→</div>
+      <div class="format-item">
+        <span class="fmt-label">Formato sugerido</span>
+        <span class="fmt-value suggested">Carrossel ou Imagem estática</span>
+      </div>
+    </div>
+    <div class="format-tip">Troque o movimento por clareza — mostre o produto/resultado em cards ou foto direta.</div>
+      <div class="current-angle">Ângulo atual não identificado. Use um dos ângulos sugeridos abaixo.</div>
+      
+    <div class="angle-block option-1">
+      <div class="angle-header">
+        <div class="angle-title">Opção 1: Autoridade / Credibilidade</div>
+        <div class="angle-format">Imagem estática ou vídeo institucional com elementos de confiança</div>
+      </div>
+      <div class="hook-line">"[N] anos formando profissionais reconhecidos no mercado de [cidade]"</div><div class="hook-line">"Somos credenciados pelo MEC e parceiros das maiores empresas da região"</div><div class="hook-line">"Uma instituição construída junto com o mercado de trabalho local"</div>
+      <div class="cta-line">CTA → Conhecer a instituição</div>
+    </div>
+    <div class="angle-block option-2">
+      <div class="angle-header">
+        <div class="angle-title">Opção 2: Prova Social / Depoimento</div>
+        <div class="angle-format">Vídeo curto (15–30s) com aluno real falando</div>
+      </div>
+      <div class="hook-line">"Veja o depoimento de quem começou igual a você e hoje trabalha na área"</div><div class="hook-line">"Em 18 meses, [nome] saiu do zero e passou no concurso — veja como"</div><div class="hook-line">"Mais de [N] alunos formados. Veja o que eles dizem sobre o curso"</div>
+      <div class="cta-line">CTA → Quero conhecer as histórias</div>
+    </div>
+    </div>
+  </div>
+  <div class="card" style="--status-color:#dc2626;--status-bg:#fef2f2">
+    <div class="card-header">
+      <div class="card-left">
+        <div class="card-index">#4</div>
+        <div>
+          <div class="ad-name">VID_endodontia_003</div>
+          <div class="adset-name">00 - [LP] [LAL + Env.] [RP + Franca] [24y40] VIDEOS</div>
+        </div>
+      </div>
+      <div class="status-badge">Substituir com urgência</div>
+    </div>
+    
+    <div class="metrics-row">
+      <span class="metric"><b>Investido:</b> R$202.93</span>
+      <span class="metric"><b>Leads:</b> 2</span>
+      <span class="metric"><b>CPL:</b> R$101.47</span>
+      <span class="metric"><b>CTR:</b> 0.86%</span>
+      <span class="metric"><b>Freq:</b> 2.1</span>
+    </div>
+    <div class="reason">⚠ CTR 0.86% — hook não está chamando atenção suficiente</div><div class="reason">⚠ CPL R$101.47 — acima do limite de R$55</div>
+    <div class="briefing-box">
+      <div class="briefing-title">Briefing — Criativo Substituto</div>
+      
+    <div class="format-row">
+      <div class="format-item">
+        <span class="fmt-label">Formato atual</span>
+        <span class="fmt-value current">Vídeo</span>
+      </div>
+      <div class="format-arrow">→</div>
+      <div class="format-item">
+        <span class="fmt-label">Formato sugerido</span>
+        <span class="fmt-value suggested">Carrossel ou Imagem estática</span>
+      </div>
+    </div>
+    <div class="format-tip">Troque o movimento por clareza — mostre o produto/resultado em cards ou foto direta.</div>
+      <div class="current-angle">Ângulo atual não identificado. Use um dos ângulos sugeridos abaixo.</div>
+      
+    <div class="angle-block option-1">
+      <div class="angle-header">
+        <div class="angle-title">Opção 1: Prova Social / Depoimento</div>
+        <div class="angle-format">Vídeo curto (15–30s) com aluno real falando</div>
+      </div>
+      <div class="hook-line">"Veja o depoimento de quem começou igual a você e hoje trabalha na área"</div><div class="hook-line">"Em 18 meses, [nome] saiu do zero e passou no concurso — veja como"</div><div class="hook-line">"Mais de [N] alunos formados. Veja o que eles dizem sobre o curso"</div>
+      <div class="cta-line">CTA → Quero conhecer as histórias</div>
+    </div>
+    <div class="angle-block option-2">
+      <div class="angle-header">
+        <div class="angle-title">Opção 2: Urgência / Escassez</div>
+        <div class="angle-format">Imagem estática com contador ou destaque de prazo</div>
+      </div>
+      <div class="hook-line">"Inscrições encerram em [data] — turma quase cheia"</div><div class="hook-line">"Últimas [N] vagas para o curso de [área] com bolsa disponível"</div><div class="hook-line">"Só até sexta: desconto de [X]% para quem garantir a vaga agora"</div>
+      <div class="cta-line">CTA → Garantir minha vaga</div>
+    </div>
+    </div>
+  </div>
+  <div class="card" style="--status-color:#d97706;--status-bg:#fffbeb">
+    <div class="card-header">
+      <div class="card-left">
+        <div class="card-index">#5</div>
+        <div>
+          <div class="ad-name">VID_endodontia_005</div>
+          <div class="adset-name">00 - [LP] [LAL + Env.] [RP + Franca] [24y40] VIDEOS</div>
+        </div>
+      </div>
+      <div class="status-badge">Preparar substituto</div>
+    </div>
+    
+    <div class="metrics-row">
+      <span class="metric"><b>Investido:</b> R$47.49</span>
+      <span class="metric"><b>Leads:</b> 0</span>
+      <span class="metric"><b>CPL:</b> —</span>
+      <span class="metric"><b>CTR:</b> 0.51%</span>
+      <span class="metric"><b>Freq:</b> 1.6</span>
+    </div>
+    <div class="reason">⚠ CTR 0.51% — hook não está chamando atenção suficiente</div>
+    <div class="briefing-box">
+      <div class="briefing-title">Briefing — Criativo Substituto</div>
+      
+    <div class="format-row">
+      <div class="format-item">
+        <span class="fmt-label">Formato atual</span>
+        <span class="fmt-value current">Vídeo</span>
+      </div>
+      <div class="format-arrow">→</div>
+      <div class="format-item">
+        <span class="fmt-label">Formato sugerido</span>
+        <span class="fmt-value suggested">Carrossel ou Imagem estática</span>
+      </div>
+    </div>
+    <div class="format-tip">Troque o movimento por clareza — mostre o produto/resultado em cards ou foto direta.</div>
+      <div class="current-angle">Ângulo atual não identificado. Use um dos ângulos sugeridos abaixo.</div>
+      
+    <div class="angle-block option-1">
+      <div class="angle-header">
+        <div class="angle-title">Opção 1: Prova Social / Depoimento</div>
+        <div class="angle-format">Vídeo curto (15–30s) com aluno real falando</div>
+      </div>
+      <div class="hook-line">"Veja o depoimento de quem começou igual a você e hoje trabalha na área"</div><div class="hook-line">"Em 18 meses, [nome] saiu do zero e passou no concurso — veja como"</div><div class="hook-line">"Mais de [N] alunos formados. Veja o que eles dizem sobre o curso"</div>
+      <div class="cta-line">CTA → Quero conhecer as histórias</div>
+    </div>
+    <div class="angle-block option-2">
+      <div class="angle-header">
+        <div class="angle-title">Opção 2: Urgência / Escassez</div>
+        <div class="angle-format">Imagem estática com contador ou destaque de prazo</div>
+      </div>
+      <div class="hook-line">"Inscrições encerram em [data] — turma quase cheia"</div><div class="hook-line">"Últimas [N] vagas para o curso de [área] com bolsa disponível"</div><div class="hook-line">"Só até sexta: desconto de [X]% para quem garantir a vaga agora"</div>
+      <div class="cta-line">CTA → Garantir minha vaga</div>
+    </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <span>Meio Comunica · henrique@meiocomunica.com.br</span>
+    <span>Gerado em 18/04/2026 · Dados: Meta Ads API</span>
+  </div>
+
+</div>
+</body>
+</html>
