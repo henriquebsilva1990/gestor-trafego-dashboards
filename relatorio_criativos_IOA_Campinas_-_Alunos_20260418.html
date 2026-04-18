@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Relatório de Criativos — IOA Campinas - Alunos</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* ── Print toolbar (não aparece no PDF) ── */
+    .toolbar {
+      background: #1e293b;
+      padding: 12px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .toolbar .info { color: #94a3b8; font-size: 12px; }
+    .toolbar .info strong { color: white; }
+    .btn-pdf {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 9px 22px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      transition: background .15s;
+    }
+    .btn-pdf:hover { background: #2563eb; }
+
+    /* ── Page ── */
+    .page {
+      max-width: 860px;
+      margin: 24px auto;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 6px rgba(0,0,0,.08);
+    }
+
+    /* ── Cover header ── */
+    .cover {
+      background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%);
+      padding: 40px 48px 36px;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+    .cover::after {
+      content: '';
+      position: absolute;
+      right: -40px; top: -40px;
+      width: 220px; height: 220px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.05);
+    }
+    .cover .agency {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: rgba(255,255,255,.6);
+      margin-bottom: 8px;
+    }
+    .cover h1 {
+      font-size: 26px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+    .cover .meta {
+      font-size: 12px;
+      color: rgba(255,255,255,.65);
+    }
+    .cover .badge {
+      display: inline-block;
+      background: rgba(255,255,255,.15);
+      border: 1px solid rgba(255,255,255,.25);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-top: 14px;
+    }
+
+    /* ── Sections ── */
+    .section {
+      padding: 28px 48px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .section:last-child { border-bottom: none; }
+
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 8px;
+      margin-bottom: 18px;
+    }
+
+    /* ── KPI cards ── */
+    .kpis { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 0; }
+    .kpi {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 16px 18px;
+    }
+    .kpi .lbl { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing:.5px; color: #94a3b8; margin-bottom: 6px; }
+    .kpi .val { font-size: 24px; font-weight: 800; line-height: 1; }
+    .kpi .sub { font-size: 11px; color: #94a3b8; margin-top: 6px; }
+
+    /* ── Tables ── */
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th {
+      text-align: left;
+      padding: 8px 10px;
+      background: #f8fafc;
+      color: #64748b;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      border-bottom: 2px solid #e2e8f0;
+    }
+    th:not(:first-child) { text-align: center; }
+    td { border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #fafafa; }
+
+    /* ── Footer ── */
+    .footer-bar {
+      background: #f8fafc;
+      border-top: 1px solid #e2e8f0;
+      padding: 14px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+      color: #94a3b8;
+    }
+
+    /* ── Print ── */
+    @media print {
+      body { background: white; }
+      .toolbar { display: none !important; }
+      .page {
+        margin: 0;
+        border-radius: 0;
+        box-shadow: none;
+        max-width: 100%;
+      }
+      .section { padding: 20px 36px; }
+      .cover { padding: 30px 36px; }
+      tr { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Toolbar (não aparece no PDF) -->
+<div class="toolbar">
+  <div class="info">
+    <strong>Relatório de Criativos</strong> · IOA Campinas - Alunos · 2026-04-11 → 2026-04-18
+  </div>
+  <button class="btn-pdf" onclick="window.print()">
+    ⬇ Salvar como PDF
+  </button>
+</div>
+
+<div class="page">
+
+  <!-- Capa -->
+  <div class="cover">
+    <div class="agency">Meio Comunica · Gestão de Tráfego</div>
+    <h1>IOA Campinas - Alunos</h1>
+    <div class="meta">Relatório de Criativos · Período: 2026-04-11 → 2026-04-18</div>
+    <div class="badge">Gerado em 18/04/2026 · Meta Ads</div>
+  </div>
+
+  <!-- Resumo Executivo -->
+  <div class="section">
+    <div class="section-title">Resumo do Período</div>
+    <div class="kpis">
+      <div class="kpi">
+        <div class="lbl">Investimento Total</div>
+        <div class="val">R$1,784.49</div>
+        <div class="sub">Meta Ads</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">Leads Gerados</div>
+        <div class="val" style="color:#1d4ed8">0</div>
+        <div class="sub">17 criativos rodando</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">CPL Médio</div>
+        <div class="val" style="color:#16a34a">R$0.00</div>
+        <div class="sub">Custo por lead</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Linha do Tempo -->
+  
+  <div class="section">
+    <div class="section-title">Performance Dia a Dia</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th style="text-align:right">Investido</th>
+          <th>Leads</th>
+          <th>CPL</th>
+          <th>CTR</th>
+          <th>Freq.</th>
+        </tr>
+      </thead>
+      <tbody>
+            <tr>
+              <td style="padding:7px 10px;font-weight:600;color:#374151">11/04</td>
+              <td style="padding:7px 10px;text-align:right">R$407.58</td>
+              <td style="padding:7px 10px;text-align:center;font-weight:700;color:#1d4ed8">0</td>
+              <td style="padding:7px 10px;text-align:center;font-weight:700;color:#6b7280">—</td>
+              <td style="padding:7px 10px;text-align:center;color:#dc2626">0.26%</td>
+              <td style="padding:7px 10px;text-align:center;color:#6b7280">1.28</td>
+            </tr>
+            <tr>
+              <td style="padding:7px 10px;font-weight:600;color:#374151">12/04</td>
+              <td style="padding:7px 10px;text-align:right">R$270.52</td>
+              <td style="padding:7px 10px;text-align:center;font-weight:700;color:#1d4ed8">0</td>
+              <td style="padding:7px 10px;text-align:center;font-weight:700;color:#6b7280">—</td>
+              <td style="padding:7px 10px;text-align:center;color:#dc2626">0.16%</td>
+              <td style="padding:7px 10px;text-align:center;color:#6b7280">1.34</td>
+            </tr>
+            <tr>
+              <td style="padding:7px 10px;font-weight:600;color:#374151">13/04</td>
+              <td style="padding:7px 10px;text-align:right">R$263.82</td>
+              <td style="padding:7px 10px;text-align:center;font-weight:700;color:#1d4ed8">0</td>
+              <td style="padding:7px 10px;text-align:center;font-weight:700;color:#6b7280">—</td>
+              <td style="padding:7px 10px;text-align:center;color:#dc2626">0.80%</td>
+              <td style="padding:7px 10px;text-align:center;color:#6b7280">1.78</td>
+            </tr>
+            <tr>
+              <td style="padding:7px 10px;font-weight:600;color:#374151">14/04</td>
+              <td style="padding:7px 10px;text-align:right">R$280.86</td>
+              <td style="padding:7px 10px;text-align:center;font-weight:700;color:#1d4ed8">0</td>
+              <td style="padding:7px 10px;text-align:center;font-weight:700;color:#6b7280">—</td>
+              <td style="padding:7px 10px;text-align:center;color:#dc2626">0.78%</td>
+              <td style="padding:7px 10px;text-align:center;color:#6b7280">1.85</td>
+            </tr>
+            <tr>
+              <td style="padding:7px 10px;font-weight:600;color:#374151">15/04</td>
+              <td style="padding:7px 10px;text-align:right">R$63.30</td>
+              <td style="padding:7px 10px;text-align:center;font-weight:700;color:#1d4ed8">0</td>
+              <td style="padding:7px 10px;text-align:center;font-weight:700;color:#6b7280">—</td>
+              <td style="padding:7px 10px;text-align:center;color:#dc2626">0.77%</td>
+              <td style="padding:7px 10px;text-align:center;color:#6b7280">1.52</td>
+            </tr>
+            <tr>
+              <td style="padding:7px 10px;font-weight:600;color:#374151">16/04</td>
+              <td style="padding:7px 10px;text-align:right">R$151.77</td>
+              <td style="padding:7px 10px;text-align:center;font-weight:700;color:#1d4ed8">0</td>
+              <td style="padding:7px 10px;text-align:center;font-weight:700;color:#6b7280">—</td>
+              <td style="padding:7px 10px;text-align:center;color:#dc2626">0.74%</td>
+              <td style="padding:7px 10px;text-align:center;color:#6b7280">1.47</td>
+            </tr>
+            <tr>
+              <td style="padding:7px 10px;font-weight:600;color:#374151">17/04</td>
+              <td style="padding:7px 10px;text-align:right">R$293.54</td>
+              <td style="padding:7px 10px;text-align:center;font-weight:700;color:#1d4ed8">0</td>
+              <td style="padding:7px 10px;text-align:center;font-weight:700;color:#6b7280">—</td>
+              <td style="padding:7px 10px;text-align:center;color:#dc2626">0.70%</td>
+              <td style="padding:7px 10px;text-align:center;color:#6b7280">1.79</td>
+            </tr>
+            <tr>
+              <td style="padding:7px 10px;font-weight:600;color:#374151">18/04</td>
+              <td style="padding:7px 10px;text-align:right">R$53.10</td>
+              <td style="padding:7px 10px;text-align:center;font-weight:700;color:#1d4ed8">0</td>
+              <td style="padding:7px 10px;text-align:center;font-weight:700;color:#6b7280">—</td>
+              <td style="padding:7px 10px;text-align:center;color:#dc2626">0.83%</td>
+              <td style="padding:7px 10px;text-align:center;color:#6b7280">1.45</td>
+            </tr></tbody>
+    </table>
+  </div>
+  
+
+  <!-- Ranking de Criativos -->
+  <div class="section">
+    <div class="section-title">Ranking de Criativos</div>
+    <table>
+      <thead>
+        <tr>
+          <th style="text-align:center;width:36px">#</th>
+          <th>Criativo</th>
+          <th>Formato</th>
+          <th>Leads</th>
+          <th>CPL</th>
+          <th>CTR</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="text-align:center;font-size:14px;padding:10px 8px">🥇</td>
+          <td style="padding:10px 8px">
+            <div style="font-weight:700;color:#111827;font-size:13px">hof_VID_003</div>
+            <div style="font-size:10px;color:#9ca3af;margin-top:2px">[HOF]</div>
+          </td>
+          <td style="text-align:center;padding:10px 8px">
+            <span style="background:#dbeafe;color:#2563eb;font-size:10px;font-weight:700;
+            padding:2px 9px;border-radius:12px">Vídeo</span>
+          </td>
+          <td style="text-align:center;font-weight:800;font-size:15px;color:#1d4ed8;padding:10px 8px">0</td>
+          <td style="text-align:center;font-weight:700;color:#6b7280;font-size:13px;padding:10px 8px">—</td>
+          <td style="text-align:center;color:#16a34a;font-size:13px;padding:10px 8px">2.13%</td>
+          <td style="text-align:center;padding:10px 8px"><span style="background:#f3f4f6;color:#6b7280;font-size:10px;font-weight:700;padding:2px 9px;border-radius:12px">Sem dados</span></td>
+        </tr>
+        <tr>
+          <td style="text-align:center;font-size:14px;padding:10px 8px">🥈</td>
+          <td style="padding:10px 8px">
+            <div style="font-weight:700;color:#111827;font-size:13px">IMG002_cirur_estet_orofacial</div>
+            <div style="font-size:10px;color:#9ca3af;margin-top:2px">[CIRUR ESTET OROFACIAL]</div>
+          </td>
+          <td style="text-align:center;padding:10px 8px">
+            <span style="background:#d1fae5;color:#059669;font-size:10px;font-weight:700;
+            padding:2px 9px;border-radius:12px">Imagem</span>
+          </td>
+          <td style="text-align:center;font-weight:800;font-size:15px;color:#1d4ed8;padding:10px 8px">0</td>
+          <td style="text-align:center;font-weight:700;color:#6b7280;font-size:13px;padding:10px 8px">—</td>
+          <td style="text-align:center;color:#16a34a;font-size:13px;padding:10px 8px">1.64%</td>
+          <td style="text-align:center;padding:10px 8px"><span style="background:#f3f4f6;color:#6b7280;font-size:10px;font-weight:700;padding:2px 9px;border-radius:12px">Sem dados</span></td>
+        </tr>
+        <tr>
+          <td style="text-align:center;font-size:14px;padding:10px 8px">🥉</td>
+          <td style="padding:10px 8px">
+            <div style="font-weight:700;color:#111827;font-size:13px">IMG001_cirur_estet_orofacial</div>
+            <div style="font-size:10px;color:#9ca3af;margin-top:2px">[CIRUR ESTET OROFACIAL]</div>
+          </td>
+          <td style="text-align:center;padding:10px 8px">
+            <span style="background:#d1fae5;color:#059669;font-size:10px;font-weight:700;
+            padding:2px 9px;border-radius:12px">Imagem</span>
+          </td>
+          <td style="text-align:center;font-weight:800;font-size:15px;color:#1d4ed8;padding:10px 8px">0</td>
+          <td style="text-align:center;font-weight:700;color:#6b7280;font-size:13px;padding:10px 8px">—</td>
+          <td style="text-align:center;color:#d97706;font-size:13px;padding:10px 8px">1.33%</td>
+          <td style="text-align:center;padding:10px 8px"><span style="background:#f3f4f6;color:#6b7280;font-size:10px;font-weight:700;padding:2px 9px;border-radius:12px">Sem dados</span></td>
+        </tr>
+        <tr>
+          <td style="text-align:center;font-size:14px;padding:10px 8px">4.</td>
+          <td style="padding:10px 8px">
+            <div style="font-weight:700;color:#111827;font-size:13px">ortodontia_VID_001</div>
+            <div style="font-size:10px;color:#9ca3af;margin-top:2px">[ORTODONTIA]</div>
+          </td>
+          <td style="text-align:center;padding:10px 8px">
+            <span style="background:#dbeafe;color:#2563eb;font-size:10px;font-weight:700;
+            padding:2px 9px;border-radius:12px">Vídeo</span>
+          </td>
+          <td style="text-align:center;font-weight:800;font-size:15px;color:#1d4ed8;padding:10px 8px">0</td>
+          <td style="text-align:center;font-weight:700;color:#6b7280;font-size:13px;padding:10px 8px">—</td>
+          <td style="text-align:center;color:#dc2626;font-size:13px;padding:10px 8px">0.76%</td>
+          <td style="text-align:center;padding:10px 8px"><span style="background:#f3f4f6;color:#6b7280;font-size:10px;font-weight:700;padding:2px 9px;border-radius:12px">Sem dados</span></td>
+        </tr>
+        <tr>
+          <td style="text-align:center;font-size:14px;padding:10px 8px">5.</td>
+          <td style="padding:10px 8px">
+            <div style="font-weight:700;color:#111827;font-size:13px">dentistica_protese_VID_001</div>
+            <div style="font-size:10px;color:#9ca3af;margin-top:2px">[DENTISTICA PROTESE]</div>
+          </td>
+          <td style="text-align:center;padding:10px 8px">
+            <span style="background:#dbeafe;color:#2563eb;font-size:10px;font-weight:700;
+            padding:2px 9px;border-radius:12px">Vídeo</span>
+          </td>
+          <td style="text-align:center;font-weight:800;font-size:15px;color:#1d4ed8;padding:10px 8px">0</td>
+          <td style="text-align:center;font-weight:700;color:#6b7280;font-size:13px;padding:10px 8px">—</td>
+          <td style="text-align:center;color:#dc2626;font-size:13px;padding:10px 8px">0.48%</td>
+          <td style="text-align:center;padding:10px 8px"><span style="background:#f3f4f6;color:#6b7280;font-size:10px;font-weight:700;padding:2px 9px;border-radius:12px">Sem dados</span></td>
+        </tr>
+        <tr>
+          <td style="text-align:center;font-size:14px;padding:10px 8px">6.</td>
+          <td style="padding:10px 8px">
+            <div style="font-weight:700;color:#111827;font-size:13px">especializacoes_IMG_001</div>
+            <div style="font-size:10px;color:#9ca3af;margin-top:2px">[CURSOS GERAL]</div>
+          </td>
+          <td style="text-align:center;padding:10px 8px">
+            <span style="background:#d1fae5;color:#059669;font-size:10px;font-weight:700;
+            padding:2px 9px;border-radius:12px">Imagem</span>
+          </td>
+          <td style="text-align:center;font-weight:800;font-size:15px;color:#1d4ed8;padding:10px 8px">0</td>
+          <td style="text-align:center;font-weight:700;color:#6b7280;font-size:13px;padding:10px 8px">—</td>
+          <td style="text-align:center;color:#dc2626;font-size:13px;padding:10px 8px">0.33%</td>
+          <td style="text-align:center;padding:10px 8px"><span style="background:#f3f4f6;color:#6b7280;font-size:10px;font-weight:700;padding:2px 9px;border-radius:12px">Sem dados</span></td>
+        </tr>
+        <tr>
+          <td style="text-align:center;font-size:14px;padding:10px 8px">7.</td>
+          <td style="padding:10px 8px">
+            <div style="font-weight:700;color:#111827;font-size:13px">odontoped_janeiro_2026_002</div>
+            <div style="font-size:10px;color:#9ca3af;margin-top:2px">[ODONTOPEDIATRIA]</div>
+          </td>
+          <td style="text-align:center;padding:10px 8px">
+            <span style="background:#d1fae5;color:#059669;font-size:10px;font-weight:700;
+            padding:2px 9px;border-radius:12px">Imagem</span>
+          </td>
+          <td style="text-align:center;font-weight:800;font-size:15px;color:#1d4ed8;padding:10px 8px">0</td>
+          <td style="text-align:center;font-weight:700;color:#6b7280;font-size:13px;padding:10px 8px">—</td>
+          <td style="text-align:center;color:#dc2626;font-size:13px;padding:10px 8px">0.28%</td>
+          <td style="text-align:center;padding:10px 8px"><span style="background:#f3f4f6;color:#6b7280;font-size:10px;font-weight:700;padding:2px 9px;border-radius:12px">Sem dados</span></td>
+        </tr>
+        <tr>
+          <td style="text-align:center;font-size:14px;padding:10px 8px">8.</td>
+          <td style="padding:10px 8px">
+            <div style="font-weight:700;color:#111827;font-size:13px">buco_fevereiro_2026</div>
+            <div style="font-size:10px;color:#9ca3af;margin-top:2px">[CIR TRAUM BUCO]</div>
+          </td>
+          <td style="text-align:center;padding:10px 8px">
+            <span style="background:#d1fae5;color:#059669;font-size:10px;font-weight:700;
+            padding:2px 9px;border-radius:12px">Imagem</span>
+          </td>
+          <td style="text-align:center;font-weight:800;font-size:15px;color:#1d4ed8;padding:10px 8px">0</td>
+          <td style="text-align:center;font-weight:700;color:#6b7280;font-size:13px;padding:10px 8px">—</td>
+          <td style="text-align:center;color:#dc2626;font-size:13px;padding:10px 8px">0.28%</td>
+          <td style="text-align:center;padding:10px 8px"><span style="background:#f3f4f6;color:#6b7280;font-size:10px;font-weight:700;padding:2px 9px;border-radius:12px">Sem dados</span></td>
+        </tr>
+        <tr>
+          <td style="text-align:center;font-size:14px;padding:10px 8px">9.</td>
+          <td style="padding:10px 8px">
+            <div style="font-weight:700;color:#111827;font-size:13px">campinas_hof_mar_2026</div>
+            <div style="font-size:10px;color:#9ca3af;margin-top:2px">[HOF]</div>
+          </td>
+          <td style="text-align:center;padding:10px 8px">
+            <span style="background:#d1fae5;color:#059669;font-size:10px;font-weight:700;
+            padding:2px 9px;border-radius:12px">Imagem</span>
+          </td>
+          <td style="text-align:center;font-weight:800;font-size:15px;color:#1d4ed8;padding:10px 8px">0</td>
+          <td style="text-align:center;font-weight:700;color:#6b7280;font-size:13px;padding:10px 8px">—</td>
+          <td style="text-align:center;color:#dc2626;font-size:13px;padding:10px 8px">0.28%</td>
+          <td style="text-align:center;padding:10px 8px"><span style="background:#f3f4f6;color:#6b7280;font-size:10px;font-weight:700;padding:2px 9px;border-radius:12px">Sem dados</span></td>
+        </tr>
+        <tr>
+          <td style="text-align:center;font-size:14px;padding:10px 8px">10.</td>
+          <td style="padding:10px 8px">
+            <div style="font-weight:700;color:#111827;font-size:13px">odontoped_marco_2026</div>
+            <div style="font-size:10px;color:#9ca3af;margin-top:2px">[ODONTOPEDIATRIA]</div>
+          </td>
+          <td style="text-align:center;padding:10px 8px">
+            <span style="background:#d1fae5;color:#059669;font-size:10px;font-weight:700;
+            padding:2px 9px;border-radius:12px">Imagem</span>
+          </td>
+          <td style="text-align:center;font-weight:800;font-size:15px;color:#1d4ed8;padding:10px 8px">0</td>
+          <td style="text-align:center;font-weight:700;color:#6b7280;font-size:13px;padding:10px 8px">—</td>
+          <td style="text-align:center;color:#dc2626;font-size:13px;padding:10px 8px">0.24%</td>
+          <td style="text-align:center;padding:10px 8px"><span style="background:#f3f4f6;color:#6b7280;font-size:10px;font-weight:700;padding:2px 9px;border-radius:12px">Sem dados</span></td>
+        </tr>
+        <tr>
+          <td style="text-align:center;font-size:14px;padding:10px 8px">11.</td>
+          <td style="padding:10px 8px">
+            <div style="font-weight:700;color:#111827;font-size:13px">dent_e_prot_2026</div>
+            <div style="font-size:10px;color:#9ca3af;margin-top:2px">[DENTISTICA PROTESE]</div>
+          </td>
+          <td style="text-align:center;padding:10px 8px">
+            <span style="background:#d1fae5;color:#059669;font-size:10px;font-weight:700;
+            padding:2px 9px;border-radius:12px">Imagem</span>
+          </td>
+          <td style="text-align:center;font-weight:800;font-size:15px;color:#1d4ed8;padding:10px 8px">0</td>
+          <td style="text-align:center;font-weight:700;color:#6b7280;font-size:13px;padding:10px 8px">—</td>
+          <td style="text-align:center;color:#dc2626;font-size:13px;padding:10px 8px">0.22%</td>
+          <td style="text-align:center;padding:10px 8px"><span style="background:#f3f4f6;color:#6b7280;font-size:10px;font-weight:700;padding:2px 9px;border-radius:12px">Sem dados</span></td>
+        </tr>
+        <tr>
+          <td style="text-align:center;font-size:14px;padding:10px 8px">12.</td>
+          <td style="padding:10px 8px">
+            <div style="font-weight:700;color:#111827;font-size:13px">ortodont_fevereiro_2026</div>
+            <div style="font-size:10px;color:#9ca3af;margin-top:2px">[ORTODONTIA]</div>
+          </td>
+          <td style="text-align:center;padding:10px 8px">
+            <span style="background:#d1fae5;color:#059669;font-size:10px;font-weight:700;
+            padding:2px 9px;border-radius:12px">Imagem</span>
+          </td>
+          <td style="text-align:center;font-weight:800;font-size:15px;color:#1d4ed8;padding:10px 8px">0</td>
+          <td style="text-align:center;font-weight:700;color:#6b7280;font-size:13px;padding:10px 8px">—</td>
+          <td style="text-align:center;color:#dc2626;font-size:13px;padding:10px 8px">0.22%</td>
+          <td style="text-align:center;padding:10px 8px"><span style="background:#f3f4f6;color:#6b7280;font-size:10px;font-weight:700;padding:2px 9px;border-radius:12px">Sem dados</span></td>
+        </tr>
+        <tr>
+          <td style="text-align:center;font-size:14px;padding:10px 8px">13.</td>
+          <td style="padding:10px 8px">
+            <div style="font-weight:700;color:#111827;font-size:13px">implant_perio_fev_2026</div>
+            <div style="font-size:10px;color:#9ca3af;margin-top:2px">[IMPLANT E PERIODONTIA]</div>
+          </td>
+          <td style="text-align:center;padding:10px 8px">
+            <span style="background:#d1fae5;color:#059669;font-size:10px;font-weight:700;
+            padding:2px 9px;border-radius:12px">Imagem</span>
+          </td>
+          <td style="text-align:center;font-weight:800;font-size:15px;color:#1d4ed8;padding:10px 8px">0</td>
+          <td style="text-align:center;font-weight:700;color:#6b7280;font-size:13px;padding:10px 8px">—</td>
+          <td style="text-align:center;color:#dc2626;font-size:13px;padding:10px 8px">0.20%</td>
+          <td style="text-align:center;padding:10px 8px"><span style="background:#f3f4f6;color:#6b7280;font-size:10px;font-weight:700;padding:2px 9px;border-radius:12px">Sem dados</span></td>
+        </tr>
+        <tr>
+          <td style="text-align:center;font-size:14px;padding:10px 8px">14.</td>
+          <td style="padding:10px 8px">
+            <div style="font-weight:700;color:#111827;font-size:13px">VID_ortodontia_fev2026</div>
+            <div style="font-size:10px;color:#9ca3af;margin-top:2px">[ORTODONTIA]</div>
+          </td>
+          <td style="text-align:center;padding:10px 8px">
+            <span style="background:#dbeafe;color:#2563eb;font-size:10px;font-weight:700;
+            padding:2px 9px;border-radius:12px">Vídeo</span>
+          </td>
+          <td style="text-align:center;font-weight:800;font-size:15px;color:#1d4ed8;padding:10px 8px">0</td>
+          <td style="text-align:center;font-weight:700;color:#6b7280;font-size:13px;padding:10px 8px">—</td>
+          <td style="text-align:center;color:#dc2626;font-size:13px;padding:10px 8px">0.14%</td>
+          <td style="text-align:center;padding:10px 8px"><span style="background:#f3f4f6;color:#6b7280;font-size:10px;font-weight:700;padding:2px 9px;border-radius:12px">Sem dados</span></td>
+        </tr>
+        <tr>
+          <td style="text-align:center;font-size:14px;padding:10px 8px">15.</td>
+          <td style="padding:10px 8px">
+            <div style="font-weight:700;color:#111827;font-size:13px">odontoped_janeiro_2026_001</div>
+            <div style="font-size:10px;color:#9ca3af;margin-top:2px">[ODONTOPEDIATRIA]</div>
+          </td>
+          <td style="text-align:center;padding:10px 8px">
+            <span style="background:#d1fae5;color:#059669;font-size:10px;font-weight:700;
+            padding:2px 9px;border-radius:12px">Imagem</span>
+          </td>
+          <td style="text-align:center;font-weight:800;font-size:15px;color:#1d4ed8;padding:10px 8px">0</td>
+          <td style="text-align:center;font-weight:700;color:#6b7280;font-size:13px;padding:10px 8px">—</td>
+          <td style="text-align:center;color:#dc2626;font-size:13px;padding:10px 8px">0.11%</td>
+          <td style="text-align:center;padding:10px 8px"><span style="background:#f3f4f6;color:#6b7280;font-size:10px;font-weight:700;padding:2px 9px;border-radius:12px">Sem dados</span></td>
+        </tr>
+        <tr>
+          <td style="text-align:center;font-size:14px;padding:10px 8px">16.</td>
+          <td style="padding:10px 8px">
+            <div style="font-weight:700;color:#111827;font-size:13px">dentistica_protese_VID_002</div>
+            <div style="font-size:10px;color:#9ca3af;margin-top:2px">[DENTISTICA PROTESE]</div>
+          </td>
+          <td style="text-align:center;padding:10px 8px">
+            <span style="background:#dbeafe;color:#2563eb;font-size:10px;font-weight:700;
+            padding:2px 9px;border-radius:12px">Vídeo</span>
+          </td>
+          <td style="text-align:center;font-weight:800;font-size:15px;color:#1d4ed8;padding:10px 8px">0</td>
+          <td style="text-align:center;font-weight:700;color:#6b7280;font-size:13px;padding:10px 8px">—</td>
+          <td style="text-align:center;color:#6b7280;font-size:13px;padding:10px 8px">0.00%</td>
+          <td style="text-align:center;padding:10px 8px"><span style="background:#f3f4f6;color:#6b7280;font-size:10px;font-weight:700;padding:2px 9px;border-radius:12px">Sem dados</span></td>
+        </tr>
+        <tr>
+          <td style="text-align:center;font-size:14px;padding:10px 8px">17.</td>
+          <td style="padding:10px 8px">
+            <div style="font-weight:700;color:#111827;font-size:13px">aperfeicoamentos_IMG_001</div>
+            <div style="font-size:10px;color:#9ca3af;margin-top:2px">[CURSOS GERAL]</div>
+          </td>
+          <td style="text-align:center;padding:10px 8px">
+            <span style="background:#d1fae5;color:#059669;font-size:10px;font-weight:700;
+            padding:2px 9px;border-radius:12px">Imagem</span>
+          </td>
+          <td style="text-align:center;font-weight:800;font-size:15px;color:#1d4ed8;padding:10px 8px">0</td>
+          <td style="text-align:center;font-weight:700;color:#6b7280;font-size:13px;padding:10px 8px">—</td>
+          <td style="text-align:center;color:#6b7280;font-size:13px;padding:10px 8px">0.00%</td>
+          <td style="text-align:center;padding:10px 8px"><span style="background:#f3f4f6;color:#6b7280;font-size:10px;font-weight:700;padding:2px 9px;border-radius:12px">Sem dados</span></td>
+        </tr></tbody>
+    </table>
+  </div>
+
+  <!-- Análise de Formatos -->
+  <div class="section">
+    <div class="section-title">Análise por Formato</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Formato</th>
+          <th>Criativos</th>
+          <th>Leads</th>
+          <th>CPL Médio</th>
+          <th>Investimento</th>
+          <th>CTR Médio</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background:#f0fdf4">
+          <td style="padding:10px 12px">
+            <span style="background:#d1fae5;color:#059669;font-size:11px;font-weight:700;
+            padding:3px 10px;border-radius:12px">Imagem</span>
+            <span style='font-size:10px;color:#16a34a;margin-left:8px;font-weight:600'>★ melhor formato</span>
+          </td>
+          <td style="text-align:center;font-weight:700;font-size:14px;padding:10px 12px">12</td>
+          <td style="text-align:center;font-weight:800;font-size:15px;color:#1d4ed8;padding:10px 12px">0</td>
+          <td style="text-align:center;font-weight:700;color:#6b7280;font-size:13px;padding:10px 12px">—</td>
+          <td style="text-align:center;font-size:13px;padding:10px 12px">R$1444.09</td>
+          <td style="text-align:center;font-size:13px;padding:10px 12px">0.43%</td>
+        </tr>
+        <tr style="background:white">
+          <td style="padding:10px 12px">
+            <span style="background:#d1fae5;color:#059669;font-size:11px;font-weight:700;
+            padding:3px 10px;border-radius:12px">Vídeo</span>
+            
+          </td>
+          <td style="text-align:center;font-weight:700;font-size:14px;padding:10px 12px">5</td>
+          <td style="text-align:center;font-weight:800;font-size:15px;color:#1d4ed8;padding:10px 12px">0</td>
+          <td style="text-align:center;font-weight:700;color:#6b7280;font-size:13px;padding:10px 12px">—</td>
+          <td style="text-align:center;font-size:13px;padding:10px 12px">R$340.40</td>
+          <td style="text-align:center;font-size:13px;padding:10px 12px">0.70%</td>
+        </tr></tbody>
+    </table>
+  </div>
+
+  <!-- Recomendações -->
+  <div class="section">
+    <div class="section-title">Recomendações de Criativos</div>
+    
+        <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;
+        padding:16px 18px;margin-bottom:14px;page-break-inside:avoid">
+          <div style="display:flex;align-items:flex-start;gap:10px">
+            <span style="font-size:20px;flex-shrink:0;margin-top:2px">🎨</span>
+            <div style="flex:1">
+              <div style="font-weight:700;color:#d97706;font-size:14px;margin-bottom:6px">12 criativo(s) com CTR abaixo de 1% e sem leads</div>
+              <ul style="margin:0 0 8px 16px;padding:0"><li style="margin:4px 0;color:#374151;font-size:12px"><b>ortodontia_VID_001</b> — CTR 0.76% · 4,362 impressões</li><li style="margin:4px 0;color:#374151;font-size:12px"><b>dentistica_protese_VID_001</b> — CTR 0.48% · 3,950 impressões</li><li style="margin:4px 0;color:#374151;font-size:12px"><b>especializacoes_IMG_001</b> — CTR 0.33% · 6,955 impressões</li><li style="margin:4px 0;color:#374151;font-size:12px"><b>odontoped_janeiro_2026_002</b> — CTR 0.28% · 2,127 impressões</li></ul>
+              <div style="background:white;border-left:3px solid #d97706;padding:8px 12px;
+              border-radius:4px;font-size:12px;color:#374151;font-style:italic">
+                <b>Ação:</b> Revisar o hook (primeiros 3s do vídeo ou headline da imagem). O criativo não gera clique.
+              </div>
+            </div>
+          </div>
+        </div>
+  </div>
+
+  <!-- Próximos Passos -->
+  <div class="section">
+    <div class="section-title">Próximos Passos</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start">
+        <span style="font-size:16px;flex-shrink:0">🎨</span>
+        <div>
+          <div style="font-weight:700;font-size:12px;color:#1e293b;margin-bottom:3px">Produzir novos criativos</div>
+          <div style="font-size:11px;color:#64748b;line-height:1.5">Foco no formato Imagem que gerou melhores resultados no período.</div>
+        </div>
+      </div>
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start">
+        <span style="font-size:16px;flex-shrink:0">📊</span>
+        <div>
+          <div style="font-weight:700;font-size:12px;color:#1e293b;margin-bottom:3px">Monitorar CPL diário</div>
+          <div style="font-size:11px;color:#64748b;line-height:1.5">Acompanhar a linha do tempo dia a dia para detectar variações antes que impactem o resultado semanal.</div>
+        </div>
+      </div>
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start">
+        <span style="font-size:16px;flex-shrink:0">⚡</span>
+        <div>
+          <div style="font-weight:700;font-size:12px;color:#1e293b;margin-bottom:3px">Testar novos ângulos de copy</div>
+          <div style="font-size:11px;color:#64748b;line-height:1.5">Alterar o hook principal dos criativos com CTR abaixo de 1% — primeiros 3s definem a performance.</div>
+        </div>
+      </div>
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start">
+        <span style="font-size:16px;flex-shrink:0">🔄</span>
+        <div>
+          <div style="font-weight:700;font-size:12px;color:#1e293b;margin-bottom:3px">Rotacionar criativos fatigados</div>
+          <div style="font-size:11px;color:#64748b;line-height:1.5">Trocar criativos com frequência acima de 2.5 para evitar queda de CTR e aumento de CPL.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer-bar">
+    <span>Meio Comunica · henrique@meiocomunica.com.br</span>
+    <span>Relatório gerado em 18/04/2026 · Dados: Meta Ads API</span>
+  </div>
+
+</div>
+</body>
+</html>
