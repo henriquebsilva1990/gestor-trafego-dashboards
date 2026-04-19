@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — IOA Campinas - Alunos</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8fafc; color: #1e293b; }
+        .header { background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); color: white; padding: 24px 32px; }
+        .header h1 { font-size: 24px; font-weight: 700; }
+        .header .meta { font-size: 14px; opacity: 0.8; margin-top: 4px; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 24px 32px; }
+        .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .card .label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: #6b7280; margin-bottom: 8px; }
+        .card .value { font-size: 28px; font-weight: 700; }
+        .card .sub { font-size: 12px; color: #6b7280; margin-top: 4px; }
+        .section { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .section h2 { font-size: 16px; font-weight: 600; margin-bottom: 16px; color: #374151; border-bottom: 1px solid #e5e7eb; padding-bottom: 10px; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th { text-align: left; padding: 10px 12px; background: #f9fafb; color: #6b7280; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        td { padding: 10px 12px; border-top: 1px solid #f3f4f6; }
+        tr:hover td { background: #f9fafb; }
+        .platform-badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; margin-right: 4px; }
+        .meta-badge { background: #dbeafe; color: #1d4ed8; }
+        .google-badge { background: #dcfce7; color: #166534; }
+        .footer { text-align: center; color: #9ca3af; font-size: 12px; padding: 16px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } .cards { grid-template-columns: 1fr 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📊 IOA Campinas - Alunos</h1>
+        <div class="meta">Período: 7 · Atualizado em 19/04/2026 17:20</div>
+    </div>
+
+    <div class="container">
+        <!-- KPIs Principais -->
+        <div class="cards">
+            <div class="card">
+                <div class="label">Total Investido</div>
+                <div class="value">R$0.00</div>
+                <div class="sub">
+                    <span class="platform-badge meta-badge">Meta R$0.00</span>
+                    <span class="platform-badge google-badge">Google R$0.00</span>
+                </div>
+            </div>
+            <div class="card">
+                <div class="label">Total de Leads</div>
+                <div class="value">0</div>
+                <div class="sub">Meta: 0 · Google: 0</div>
+            </div>
+            <div class="card">
+                <div class="label">CPL Médio Geral</div>
+                <div class="value" style="color:#10b981">R$0.00</div>
+                <div class="sub">Meta: R$0.00 · Google: R$0.00</div>
+            </div>
+            <div class="card">
+                <div class="label">Campanhas Ativas</div>
+                <div class="value">0</div>
+                <div class="sub">Meta: 0 · Google: 0</div>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <!-- Alertas -->
+            <div class="section">
+                <h2>⚠️ Alertas do Período</h2>
+                <div style="color:#6b7280;font-size:14px">Nenhum alerta no período ✅</div>
+            </div>
+
+            <!-- Resumo por Plataforma -->
+            <div class="section">
+                <h2>📈 Performance por Plataforma</h2>
+                <table>
+                    <tr>
+                        <th>Plataforma</th>
+                        <th>Investimento</th>
+                        <th>Leads</th>
+                        <th>CPL</th>
+                    </tr>
+                    <tr>
+                        <td><span class="platform-badge meta-badge">Meta</span></td>
+                        <td>R$0.00</td>
+                        <td><strong>0</strong></td>
+                        <td style="color:#6b7280"><strong>R$0.00</strong></td>
+                    </tr>
+                    <tr>
+                        <td><span class="platform-badge google-badge">Google</span></td>
+                        <td>R$0.00</td>
+                        <td><strong>0</strong></td>
+                        <td style="color:#6b7280"><strong>R$0.00</strong></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Leads por Campanha -->
+        <div class="section">
+            <h2>🎯 Leads por Campanha / Anúncio</h2>
+            <div style="color:#6b7280;font-size:14px">Nenhum lead registrado no período para este cliente.</div>
+        </div>
+
+        <!-- Tabela de Campanhas Meta -->
+        <div class="section">
+            <h2>🔵 Campanhas Meta Ads — Detalhamento completo</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Campanha</th>
+                        <th>Investimento</th>
+                        <th>Leads</th>
+                        <th>CPL</th>
+                        <th>CTR</th>
+                        <th>Frequência</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan='7' style='text-align:center;color:#6b7280'>Sem dados</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="footer">
+        Gerado automaticamente · Gestor de Tráfego · 19/04/2026 17:20
+    </div>
+</body>
+</html>
