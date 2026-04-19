@@ -937,5 +937,159 @@ async function rodarPesquisaSemanal() {
     checkResearchStatus();
 })();
 </script>
+<script>
+// ====== PATCH RADAR — painel_acoes.html ======
+// Cole este bloco antes do </body> no painel_acoes.html
+
+const _RADAR_SKILL_PA = {
+  'IOA Campinas - Alunos':    'radar-ioa-campinas',
+  'IOA Campinas - Pacientes': 'radar-ioa-campinas',
+  'IOA Ribeirao Preto':       'radar-ioa-ribeirao',
+  'Faculdade IOA':            'radar-faculdade-ioa',
+  'IOA Piracicaba':           'radar-ioa-piracicaba',
+  'Mikro Metais':             'radar-mikro-metais',
+  'Endotec':                  'radar-endotec',
+  'Baby Center':              'radar-criativos',
+};
+const _RADAR_PASTA_PA = {
+  'IOA Campinas - Alunos':    'ioa-campinas',
+  'IOA Campinas - Pacientes': 'ioa-campinas',
+  'IOA Ribeirao Preto':       'ioa-ribeirao',
+  'Faculdade IOA':            'faculdade-ioa',
+  'IOA Piracicaba':           'ioa-piracicaba',
+  'Mikro Metais':             'mikro-metais',
+  'Endotec':                  'endotec',
+  'Baby Center':              'babycenter',
+};
+const _RADAR_PLAT_PA = {
+  'IOA Campinas - Alunos':    'Meta (Facebook + Instagram) + Google Search',
+  'IOA Campinas - Pacientes': 'Meta (Facebook + Instagram) + Google Search',
+  'IOA Ribeirao Preto':       'Meta (Facebook + Instagram) + Google Search',
+  'Faculdade IOA':            'Meta (Instagram + Facebook) + Google Search',
+  'IOA Piracicaba':           'Meta (Facebook + Instagram) + Google Search',
+  'Mikro Metais':             'Google Search',
+  'Endotec':                  'Google Search',
+  'Baby Center':              'Meta (Facebook + Instagram)',
+};
+
+// Sobrescreve gerarBriefing — gera briefing Radar e copia, sem chamar API
+window.gerarBriefing = async function() {
+  const cliente = document.getElementById('sc-cliente').value;
+  const period  = document.getElementById('sc-period').value;
+  if (!cliente) { showResult('sc-result', 'Selecione o cliente.', 'err'); return; }
+
+  const skill  = _RADAR_SKILL_PA[cliente]  || 'radar-criativos';
+  const pasta  = _RADAR_PASTA_PA[cliente]  || cliente.toLowerCase().replace(/\s+/g, '-');
+  const plat   = _RADAR_PLAT_PA[cliente]   || 'Meta + Google Search';
+  const label  = {'7d':'Últimos 7 dias','14d':'Últimos 14 dias','30d':'Últimos 30 dias'}[period] || period;
+
+  const texto = [
+    '# Briefing para o Radar de Criativos',
+    '',
+    '## Cliente', cliente, '',
+    '## Plataformas', plat, '',
+    '## Período de análise', label, '',
+    '## Skill que vai disparar', skill, '',
+    '## Como abrir no Claude Code',
+    `cd ~/Documents/projetosclaude/${pasta} && claude`,
+    '',
+    '## Instruções',
+    '1. Execute o protocolo completo (Fases 0 a 5)',
+    '2. Fase 0.5 obrigatória se há criativos em alerta',
+    '3. Diagnostique antes de pesquisar concorrentes',
+    '4. Só gere criativo novo quando eu pedir explicitamente',
+  ].join('\n');
+
+  const btn = document.getElementById('sc-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Gerando…';
+
+  try {
+    await navigator.clipboard.writeText(texto);
+    showResult('sc-result',
+      `✅ Briefing do Radar copiado!\n\nCole no Claude Code para iniciar a análise.\nSkill: ${skill}`,
+      'ok');
+    document.getElementById('sc-result').style.whiteSpace = 'pre-line';
+  } catch {
+    const el = document.getElementById('sc-result');
+    el.textContent = texto;
+    el.className = 'result info';
+    el.style.cssText = 'display:block;white-space:pre-wrap;font-family:monospace;font-size:11px;max-height:280px;overflow-y:auto';
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '📄 Gerar briefing (popup)';
+  }
+};
+
+// Sobrescreve rodarPesquisaSemanal — gera briefing consolidado de todos com alerta
+window.rodarPesquisaSemanal = async function() {
+  const btn = document.getElementById('sc-weekly-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Gerando…';
+
+  let alertasPorCliente = {};
+  try {
+    const r = await fetch(`${API}/alerts_summary`, {signal: AbortSignal.timeout(3000)});
+    if (r.ok) alertasPorCliente = await r.json();
+  } catch {}
+
+  const linhas = [
+    '# Pesquisa semanal — Radar de Criativos',
+    '# Meio Comunicação — ' + new Date().toLocaleString('pt-BR'),
+    ''
+  ];
+  let total = 0;
+  Object.entries(alertasPorCliente).forEach(([cliente, alerts]) => {
+    if (!alerts?.length) return;
+    const skill = _RADAR_SKILL_PA[cliente] || 'radar-criativos';
+    const pasta = _RADAR_PASTA_PA[cliente] || cliente.toLowerCase().replace(/\s+/g, '-');
+    linhas.push(`## ${cliente}  →  skill: ${skill}`);
+    linhas.push(`cd ~/Documents/projetosclaude/${pasta} && claude`);
+    alerts.forEach(a => { linhas.push(`- ${a}`); total++; });
+    linhas.push('');
+  });
+
+  if (!total) {
+    linhas.push('(Nenhum alerta via servidor — consulte o consolidado.html para alertas do período)');
+  }
+
+  linhas.push(
+    '## Instruções',
+    '- Fase 0.5 obrigatória para todos os alertas',
+    '- Só gere criativo quando solicitar explicitamente'
+  );
+
+  const texto = linhas.join('\n');
+  try {
+    await navigator.clipboard.writeText(texto);
+    showResult('sc-result',
+      total
+        ? `✅ Briefing semanal copiado! ${total} alerta(s) para analisar.`
+        : '✅ Briefing copiado. Sem alertas via servidor — verifique o consolidado.',
+      'ok');
+  } catch {
+    const el = document.getElementById('sc-result');
+    el.textContent = texto;
+    el.className = 'result info';
+    el.style.cssText = 'display:block;white-space:pre-wrap;font-family:monospace;font-size:11px;max-height:280px;overflow-y:auto';
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '🔄 Rodar pesquisa agora';
+};
+
+// Atualiza labels da seção no DOM
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('h3, .card-title').forEach(el => {
+    if (/Script|Briefing de Criativos/i.test(el.textContent))
+      el.innerHTML = '🎯 Radar de Criativos';
+  });
+  document.querySelectorAll('small, .card-subtitle').forEach(el => {
+    if (/Pesquisa por nicho|hooks e scripts/i.test(el.textContent))
+      el.textContent = 'Diagnóstico de alertas + sugestão estratégica (protocolo Radar, sob demanda)';
+  });
+});
+// ====== FIM PATCH RADAR painel_acoes.html ======
+</script>
 </body>
 </html>
