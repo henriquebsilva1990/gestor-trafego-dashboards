@@ -665,7 +665,7 @@ async function radarEnviarAPI(mensagem, silencioso) {
   document.getElementById('radar-messages').scrollTop = 99999;
 
   try {
-    const resp = await fetch('http://localhost:7070/radar_chat', {
+    const resp = await fetch('https://web-production-c6a12.up.railway.app/radar_chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
