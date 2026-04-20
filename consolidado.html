@@ -525,6 +525,10 @@ function radarLogin() {
 
 function radarPosLogin() {
   radarAbrirChat();
+  if (window._radarContextoPendente) {
+    radarEnviarAPI(window._radarContextoPendente, true);
+    window._radarContextoPendente = null;
+  }
 }
 
 function radarAbrirChat() {
@@ -546,6 +550,9 @@ function radarAbrir(clienteEnc, alertaEnc) {
   const msgs = document.getElementById('radar-messages');
   Array.from(msgs.children).forEach(c => { if (c.id !== 'radar-typing') c.remove(); });
   msgs.appendChild(document.getElementById('radar-typing'));
+
+  window._radarClientePendente = cliente;
+  window._radarAlertaPendente = alerta;
 
   const auth = sessionStorage.getItem('radar_auth');
   if (!auth) {
@@ -574,7 +581,9 @@ function radarAbrir(clienteEnc, alertaEnc) {
     '4. Só sugira criativo quando eu confirmar explicitamente',
   ].join('\n');
 
+  window._radarContextoPendente = contextoBriefing;
   radarEnviarAPI(contextoBriefing, true);
+  window._radarContextoPendente = null;
 }
 
 function radarFechar() {
