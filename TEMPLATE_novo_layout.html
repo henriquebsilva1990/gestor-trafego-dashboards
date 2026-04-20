@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<!--
+  ╔══════════════════════════════════════════════════════════════╗
+  ║  TEMPLATE — Novo Layout Meio Comunicação e Consultoria       ║
+  ║  Versão: 1.0 · Abril 2026                                   ║
+  ║                                                              ║
+  ║  Como usar no gerador (Claude Code):                         ║
+  ║  Substitua o bloco <style> e a estrutura HTML pelos          ║
+  ║  equivalentes abaixo. As variáveis estão marcadas com        ║
+  ║  {{DUPLAS_CHAVES}} para fácil localização e substituição.    ║
+  ╚══════════════════════════════════════════════════════════════╝
+-->
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — {{TITULO_CLIENTE}}</title>
+
+  <!-- ═══════════════════════════════════════════
+       CSS — BLOCO COMPLETO PARA SUBSTITUIÇÃO
+       Substitui todo o <style> antigo por este.
+  ═══════════════════════════════════════════ -->
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; color: #111; }
+
+    /* ── HEADER ── */
+    .header {
+      background: #111; color: #fff;
+      padding: 24px 40px;
+      display: flex; align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap; gap: 12px;
+    }
+    .header-left { display: flex; align-items: center; gap: 14px; }
+    .logo-mark {
+      width: 38px; height: 38px; background: #F5C800;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 17px; color: #111; flex-shrink: 0;
+    }
+    .header h1 { font-size: 18px; font-weight: 700; color: #fff; letter-spacing: -0.2px; }
+    .header .subtitle { font-size: 12px; color: #888; margin-top: 3px; }
+    .period-badge {
+      background: #F5C800; color: #111;
+      padding: 5px 14px; border-radius: 20px;
+      font-size: 12px; font-weight: 700; white-space: nowrap;
+    }
+
+    /* ── CONTAINER ── */
+    .container { max-width: 1200px; margin: 0 auto; padding: 28px 40px; }
+
+    /* ── SUMMARY BAR (faixa amarela de resumo) ── */
+    .summary-bar {
+      background: #F5C800; border-radius: 12px;
+      padding: 16px 24px;
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 24px;
+    }
+    .summary-bar .icon { font-size: 20px; flex-shrink: 0; }
+    .summary-bar p { font-size: 13px; font-weight: 600; color: #111; line-height: 1.6; }
+    .summary-bar strong { font-weight: 800; }
+
+    /* ── KPI CARDS ── */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px; margin-bottom: 24px;
+    }
+    .kpi {
+      background: #fff; border-radius: 12px;
+      padding: 20px 22px;
+      border-left: 4px solid #F5C800;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+    }
+    /* Card principal (invertido preto/amarelo) */
+    .kpi.highlight { background: #111; border-left-color: #F5C800; }
+    .kpi .kpi-label {
+      font-size: 10px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.8px;
+      color: #999; margin-bottom: 8px;
+    }
+    .kpi.highlight .kpi-label { color: #666; }
+    .kpi .kpi-value { font-size: 30px; font-weight: 800; color: #111; line-height: 1; }
+    .kpi.highlight .kpi-value { color: #F5C800; }
+    .kpi .kpi-sub { font-size: 11px; color: #888; margin-top: 6px; }
+    .kpi.highlight .kpi-sub { color: #555; }
+
+    /* Cores semânticas para valores */
+    .color-green { color: #16a34a !important; }
+    .color-amber { color: #d97706 !important; }
+    .color-red   { color: #dc2626 !important; }
+
+    /* ── SECTIONS ── */
+    .section {
+      background: #fff; border-radius: 12px;
+      padding: 22px 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-size: 12px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.8px; color: #111;
+      padding-bottom: 12px; margin-bottom: 16px;
+      border-bottom: 2px solid #F5C800;
+    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+
+    /* ── ALERTAS ── */
+    /* Estado vazio (sem alertas) */
+    .alert-empty {
+      display: flex; align-items: center; gap: 10px;
+      background: #f0fdf4; border: 1px solid #bbf7d0;
+      border-radius: 8px; padding: 12px 16px;
+      font-size: 13px; color: #15803d; font-weight: 600;
+    }
+    /* Item de alerta (quando houver) */
+    .alert-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      background: #fff7ed; border: 1px solid #fed7aa;
+      border-radius: 8px; padding: 12px 16px;
+      font-size: 13px; color: #92400e;
+      margin-bottom: 8px; line-height: 1.5;
+    }
+
+    /* ── TABELAS ── */
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th {
+      text-align: left; padding: 8px 12px;
+      font-size: 10px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.6px;
+      color: #aaa; background: #fafafa;
+    }
+    td { padding: 9px 12px; border-top: 1px solid #f0f0f0; color: #333; }
+    tr:hover td { background: #fafaf8; }
+
+    /* Linha de campanha pai */
+    .row-campaign td { background: #fafafa; }
+    .row-campaign .camp-name { font-weight: 700; color: #111; font-size: 13px; }
+
+    /* Linha de anúncio (filho, com ↳) */
+    .row-ad .ad-name { padding-left: 28px; font-size: 12px; color: #555; }
+    .row-ad .ad-name::before { content: '↳ '; color: #ccc; }
+
+    /* CPL com cor semântica */
+    .cpl-green { color: #16a34a; font-weight: 700; }
+    .cpl-amber { color: #d97706; font-weight: 700; }
+    .cpl-red   { color: #dc2626; font-weight: 700; }
+
+    /* CTR e Frequência */
+    .ctr-green { color: #16a34a; }
+    .ctr-red   { color: #dc2626; }
+    .freq-ok   { color: #16a34a; }
+    .freq-warn { color: #d97706; }
+
+    /* Status emoji */
+    .status-dot { font-size: 16px; }
+
+    /* ── FOOTER ── */
+    .footer { text-align: center; padding: 20px; font-size: 11px; color: #bbb; }
+
+    /* ── RESPONSIVO ── */
+    @media (max-width: 768px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .header, .container { padding-left: 20px; padding-right: 20px; }
+      .kpi-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════
+     ESTRUTURA HTML — BLOCO A BLOCO COM INSTRUÇÕES
+     Variáveis: {{NOME}}, lógica condicional: [[ IF ]]
+═══════════════════════════════════════════════════ -->
+
+<!-- ── 1. HEADER ─────────────────────────────────── -->
+<!--
+  {{TITULO_CLIENTE}}  = ex: "IOA Campinas — Alunos"
+  {{SUBTITULO}}       = ex: "Meta Ads · Captação de alunos"
+  {{PERIODO_LABEL}}   = ex: "Período: 7 · Atualizado 19/04/2026 17:22"
+-->
+<div class="header">
+  <div class="header-left">
+    <div class="logo-mark">M</div>
+    <div>
+      <h1>{{TITULO_CLIENTE}}</h1>
+      <div class="subtitle">Meio Comunicação e Consultoria · {{SUBTITULO}}</div>
+    </div>
+  </div>
+  <div class="period-badge">{{PERIODO_LABEL}}</div>
+</div>
+
+<div class="container">
+
+  <!-- ── 2. SUMMARY BAR ────────────────────────────── -->
+  <!--
+    {{RESUMO_TEXTO}} = frase de 1-2 linhas com o insight principal.
+    Gerada dinamicamente com: total_leads, cpl_medio, total_investido,
+    e o criativo/campanha de melhor performance do período.
+    Exemplo: "No período, as campanhas geraram <strong>43 leads</strong>
+    ao custo médio de <strong>R$ 37,43</strong>..."
+  -->
+  <div class="summary-bar">
+    <span class="icon">📌</span>
+    <p>{{RESUMO_TEXTO}}</p>
+  </div>
+
+  <!-- ── 3. KPI CARDS ──────────────────────────────── -->
+  <!--
+    Card 1 (highlight = preto/amarelo): Total Investido
+    Card 2: Total de Leads  → cor: color-green se CPL < benchmark, color-red se alto
+    Card 3: CPL Médio       → cor: color-green / color-amber / color-red por faixa
+    Card 4: Campanhas Ativas
+
+    REGRA DE COR DO CPL (ajuste os limiares conforme o cliente):
+      CPL ≤ R$20   → color-green
+      CPL R$21–60  → color-amber
+      CPL > R$60   → color-red
+
+    {{KPI_INVESTIDO}}        = valor formatado ex: "R$1.609,56"
+    {{KPI_LEADS}}            = número inteiro ex: "43"
+    {{KPI_CPL}}              = valor formatado ex: "R$37,43"
+    {{KPI_CPL_CLASS}}        = "color-green" | "color-amber" | "color-red"
+    {{KPI_CAMPANHAS_ATIVAS}} = número inteiro ex: "1"
+    {{KPI_PLATAFORMA_SUB}}   = ex: "Meta Ads · período atual"
+  -->
+  <div class="kpi-grid">
+    <div class="kpi highlight">
+      <div class="kpi-label">Total Investido</div>
+      <div class="kpi-value">{{KPI_INVESTIDO}}</div>
+      <div class="kpi-sub">{{KPI_PLATAFORMA_SUB}}</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Total de Leads</div>
+      <div class="kpi-value color-green">{{KPI_LEADS}}</div>
+      <div class="kpi-sub">Todos via Meta Ads</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">CPL Médio</div>
+      <div class="kpi-value {{KPI_CPL_CLASS}}">{{KPI_CPL}}</div>
+      <div class="kpi-sub">Custo por lead — Meta Ads</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Campanhas Ativas</div>
+      <div class="kpi-value">{{KPI_CAMPANHAS_ATIVAS}}</div>
+      <div class="kpi-sub">Meta Ads · em veiculação</div>
+    </div>
+  </div>
+
+  <!-- ── 4. ALERTAS + PERFORMANCE DA CAMPANHA ──────── -->
+  <!--
+    ALERTAS:
+      Se não houver alertas → renderiza .alert-empty
+      Se houver alertas     → renderiza um .alert-item por alerta
+      {{ALERTAS_HTML}} = bloco gerado dinamicamente
+
+    TABELA DE PERFORMANCE (campanha pai):
+      {{CAMP_NOME}}       = nome truncado da campanha
+      {{CAMP_INVESTIDO}}  = valor formatado
+      {{CAMP_LEADS}}      = número
+      {{CAMP_CPL}}        = valor + classe de cor
+      {{CAMP_CPL_CLASS}}  = "cpl-green" | "cpl-amber" | "cpl-red"
+      {{CAMP_CTR}}        = porcentagem ex: "0,34%"
+      {{CAMP_CTR_CLASS}}  = "ctr-green" | "ctr-red"
+      {{CAMP_FREQ}}       = número ex: "1,6"
+      {{CAMP_FREQ_CLASS}} = "freq-ok" | "freq-warn"
+      {{CAMP_STATUS_EMOJI}} = 🟢 | 🟡 | 🟠 | 🔴
+      {{CAMP_STATUS_TITLE}} = "Matador/Manutenção/Fadigando/Ruim"
+  -->
+  <div class="grid-2">
+
+    <div class="section">
+      <div class="section-title">Alertas do Período</div>
+      {{ALERTAS_HTML}}
+      <!-- Se sem alertas, usar:
+      <div class="alert-empty">✅ Nenhum alerta registrado neste período.</div>
+      -->
+    </div>
+
+    <div class="section">
+      <div class="section-title">Performance — Meta Ads</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Campanha</th>
+            <th>Investimento</th>
+            <th>Leads</th>
+            <th>CPL</th>
+            <th>CTR</th>
+            <th>Freq.</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Repetir para cada campanha -->
+          <tr>
+            <td style="font-size:11px;color:#555;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+                title="{{CAMP_NOME}}">{{CAMP_NOME}}</td>
+            <td>{{CAMP_INVESTIDO}}</td>
+            <td><strong>{{CAMP_LEADS}}</strong></td>
+            <td class="{{CAMP_CPL_CLASS}}">{{CAMP_CPL}}</td>
+            <td class="{{CAMP_CTR_CLASS}}">{{CAMP_CTR}}</td>
+            <td class="{{CAMP_FREQ_CLASS}}">{{CAMP_FREQ}}</td>
+            <td class="status-dot" title="{{CAMP_STATUS_TITLE}}">{{CAMP_STATUS_EMOJI}}</td>
+          </tr>
+          <!-- /Repetir -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── 5. LEADS POR CAMPANHA E ANÚNCIO ───────────── -->
+  <!--
+    Estrutura hierárquica: linha pai (campanha) + linhas filhas (anúncios).
+    Para cada campanha, renderizar um .row-campaign seguido
+    de N linhas .row-ad (uma por anúncio).
+
+    Pai:
+      {{CAMP_NOME}}       = nome completo da campanha
+      {{CAMP_LEADS}}      = total de leads
+      {{CAMP_INVESTIDO}}  = investimento total
+      {{CAMP_CPL}}        = CPL + classe de cor
+
+    Filho (anúncio):
+      {{AD_NOME}}         = nome do anúncio (sem prefixo ↳, adicionado via CSS)
+      {{AD_LEADS}}        = leads do anúncio
+      {{AD_INVESTIDO}}    = investimento do anúncio
+      {{AD_CPL}}          = CPL + classe de cor
+      {{AD_CPL_CLASS}}    = "cpl-green" | "cpl-amber" | "cpl-red"
+  -->
+  <div class="section">
+    <div class="section-title">Leads por Campanha e Anúncio</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Campanha / Anúncio</th>
+          <th>Leads</th>
+          <th>Investimento</th>
+          <th>CPL</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Linha pai — campanha -->
+        <tr class="row-campaign">
+          <td class="camp-name">{{CAMP_NOME}}</td>
+          <td><strong>{{CAMP_LEADS}}</strong></td>
+          <td>{{CAMP_INVESTIDO}}</td>
+          <td class="{{CAMP_CPL_CLASS}}">{{CAMP_CPL}}</td>
+        </tr>
+        <!-- Linhas filhas — anúncios (repetir por anúncio) -->
+        <tr class="row-ad">
+          <td class="ad-name">{{AD_NOME}}</td>
+          <td>{{AD_LEADS}}</td>
+          <td style="color:#888">{{AD_INVESTIDO}}</td>
+          <td class="{{AD_CPL_CLASS}}">{{AD_CPL}}</td>
+        </tr>
+        <!-- /Repetir anúncios -->
+      </tbody>
+    </table>
+  </div>
+
+</div><!-- /container -->
+
+<!-- ── 6. FOOTER ─────────────────────────────────── -->
+<!--
+  {{DATA_GERACAO}} = ex: "19/04/2026 17:22"
+-->
+<div class="footer">
+  Meio Comunicação e Consultoria · Gerado automaticamente · {{DATA_GERACAO}}
+</div>
+
+</body>
+</html>

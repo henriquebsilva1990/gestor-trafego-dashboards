@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Opção 2 — Painel Operacional · IOA Campinas</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace; background: #0d1117; color: #e6edf3; min-height: 100vh; }
+
+    /* ── HEADER ── */
+    .header {
+      background: #161b22;
+      border-bottom: 1px solid #30363d;
+      padding: 18px 36px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 10px;
+    }
+    .header-brand { display: flex; align-items: center; gap: 12px; }
+    .dot-logo { display: flex; gap: 4px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: #F5C800; }
+    .dot:nth-child(2) { opacity: 0.6; width: 6px; height: 6px; }
+    .dot:nth-child(3) { opacity: 0.3; width: 4px; height: 4px; }
+    .header h1 { font-size: 14px; font-weight: 700; color: #F5C800; letter-spacing: 1px; text-transform: uppercase; }
+    .header .client { font-size: 11px; color: #8b949e; margin-top: 2px; }
+    .live-badge {
+      display: flex; align-items: center; gap: 6px;
+      background: #161b22; border: 1px solid #30363d;
+      padding: 5px 12px; border-radius: 6px;
+      font-size: 11px; color: #8b949e;
+    }
+    .live-dot { width: 6px; height: 6px; border-radius: 50%; background: #3fb950; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+    /* ── CONTAINER ── */
+    .container { max-width: 1280px; margin: 0 auto; padding: 28px 36px; }
+
+    /* ── ALERT BAR ── */
+    .alert-bar {
+      background: #1c1007;
+      border: 1px solid #D97706;
+      border-left: 4px solid #D97706;
+      border-radius: 8px;
+      padding: 12px 18px;
+      margin-bottom: 24px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .alert-bar span { font-size: 12px; color: #fbbf24; line-height: 1.6; }
+    .alert-bar strong { color: #F5C800; }
+
+    /* ── METRIC ROW ── */
+    .metric-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .metric {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 16px 18px;
+    }
+    .metric .m-label { font-size: 9px; color: #8b949e; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .metric .m-value { font-size: 26px; font-weight: 700; color: #e6edf3; line-height: 1; }
+    .metric .m-sub { font-size: 10px; color: #8b949e; margin-top: 5px; }
+    .metric.accent { border-color: #F5C800; }
+    .metric.accent .m-value { color: #F5C800; }
+    .metric.green .m-value { color: #3fb950; }
+    .metric.red .m-value { color: #f85149; }
+
+    /* ── TWO COLS ── */
+    .cols-2 { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 16px; margin-bottom: 16px; }
+
+    /* ── TABLE PANEL ── */
+    .panel {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .panel-header {
+      padding: 12px 18px;
+      border-bottom: 1px solid #30363d;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .panel-title { font-size: 11px; color: #F5C800; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+    .panel-count { font-size: 10px; color: #8b949e; }
+    .panel-body { padding: 0; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th {
+      text-align: left; padding: 8px 14px;
+      font-size: 9px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.8px;
+      color: #8b949e; background: #0d1117;
+      border-bottom: 1px solid #21262d;
+    }
+    td { padding: 9px 14px; border-bottom: 1px solid #21262d; color: #c9d1d9; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #1c2128; }
+
+    .status-pill {
+      display: inline-block; padding: 2px 8px;
+      border-radius: 4px; font-size: 9px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.6px;
+      font-family: inherit;
+    }
+    .s-active { background: rgba(63,185,80,0.15); color: #3fb950; border: 1px solid rgba(63,185,80,0.3); }
+    .s-pause { background: rgba(249,168,37,0.15); color: #f9a825; border: 1px solid rgba(249,168,37,0.3); }
+    .s-warn { background: rgba(248,81,73,0.15); color: #f85149; border: 1px solid rgba(248,81,73,0.3); }
+    .s-best { background: rgba(245,200,0,0.15); color: #F5C800; border: 1px solid rgba(245,200,0,0.4); }
+
+    .cpl-num { font-weight: 700; }
+    .cpl-low { color: #3fb950; }
+    .cpl-mid { color: #f9a825; }
+    .cpl-high { color: #f85149; }
+
+    /* ── CHECKLIST ── */
+    .checklist { list-style: none; }
+    .checklist li {
+      padding: 10px 14px;
+      border-bottom: 1px solid #21262d;
+      font-size: 11px;
+      line-height: 1.6;
+      color: #8b949e;
+      display: flex; gap: 10px; align-items: flex-start;
+    }
+    .checklist li:last-child { border-bottom: none; }
+    .checklist li strong { color: #e6edf3; }
+    .check-icon { flex-shrink: 0; font-size: 13px; }
+    .tag-u { color: #f85149; }
+    .tag-s { color: #f9a825; }
+    .tag-v { color: #3fb950; }
+
+    /* ── PACIENTES MINI TABLE ── */
+    .mini-kpis { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: #21262d; }
+    .mini-kpi { background: #161b22; padding: 14px; text-align: center; }
+    .mini-kpi .label { font-size: 9px; color: #8b949e; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; }
+    .mini-kpi .val { font-size: 18px; font-weight: 700; color: #e6edf3; }
+    .mini-kpi .cat { font-size: 9px; color: #F5C800; margin-top: 3px; }
+
+    /* ── TOTALS BAR ── */
+    .totals-bar {
+      background: #0d1117;
+      border: 1px solid #F5C800;
+      border-radius: 8px;
+      padding: 14px 20px;
+      display: flex; align-items: center; justify-content: space-around;
+      flex-wrap: wrap; gap: 12px;
+      margin-top: 16px;
+    }
+    .total-item { text-align: center; }
+    .total-item .t-label { font-size: 9px; color: #8b949e; text-transform: uppercase; letter-spacing: 0.8px; }
+    .total-item .t-val { font-size: 20px; font-weight: 700; color: #F5C800; }
+
+    .footer { text-align: center; padding: 20px; font-size: 10px; color: #30363d; letter-spacing: 0.5px; }
+
+    @media (max-width: 900px) {
+      .metric-row { grid-template-columns: repeat(3,1fr); }
+      .cols-2 { grid-template-columns: 1fr; }
+      .mini-kpis { grid-template-columns: repeat(2,1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="header-brand">
+      <div class="dot-logo">
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      </div>
+      <div>
+        <div class="h1" style="font-size:13px;font-weight:700;color:#F5C800;letter-spacing:1px;text-transform:uppercase;">PAINEL OPERACIONAL</div>
+        <div class="client">IOA Campinas · Tráfego Pago · Meta & Google Ads</div>
+      </div>
+    </div>
+    <div class="live-badge">
+      <div class="live-dot"></div>
+      01–12 Abr 2026 · 12 dias de veiculação
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- ALERTA OPERACIONAL -->
+    <div class="alert-bar">
+      <span>⚡</span>
+      <span>
+        <strong>3 ações pendentes:</strong>
+        Implant. &amp; Perio. precisa de vídeo urgente (fadiga iminente) ·
+        Cursos Geral aguardando novo criativo para reativar ·
+        Qualificação dos leads do novo curso precisa ser validada com a equipe IOA.
+      </span>
+    </div>
+
+    <!-- MÉTRICAS PRINCIPAIS -->
+    <div class="metric-row">
+      <div class="metric accent">
+        <div class="m-label">Leads Totais</div>
+        <div class="m-value">118</div>
+        <div class="m-sub">Alunos + Pacientes</div>
+      </div>
+      <div class="metric green">
+        <div class="m-label">CPL Geral</div>
+        <div class="m-value">R$35</div>
+        <div class="m-sub">Custo médio por lead</div>
+      </div>
+      <div class="metric">
+        <div class="m-label">Investimento</div>
+        <div class="m-value">R$4.240</div>
+        <div class="m-sub">Meta + Google</div>
+      </div>
+      <div class="metric">
+        <div class="m-label">Alcance Total</div>
+        <div class="m-value">240K</div>
+        <div class="m-sub">Meta: 228.9K + 11.4K pac.</div>
+      </div>
+      <div class="metric">
+        <div class="m-label">Leads Qualif.</div>
+        <div class="m-value">81</div>
+        <div class="m-sub">68% de aproveitamento</div>
+      </div>
+    </div>
+
+    <div class="cols-2">
+
+      <!-- CAMPANHAS ALUNOS -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Campanhas de Alunos — Meta Ads</span>
+          <span class="panel-count">8 campanhas · R$3.134 investido</span>
+        </div>
+        <div class="panel-body">
+          <table>
+            <thead>
+              <tr>
+                <th>Campanha</th>
+                <th>Alcance</th>
+                <th>Cliques</th>
+                <th>Leads</th>
+                <th>CPL</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Cir. Estética Orof.</strong></td>
+                <td>4.508</td><td>90</td>
+                <td><strong>37</strong></td>
+                <td><span class="cpl-num cpl-low">R$9</span></td>
+                <td><span class="status-pill s-best">⭐ Top</span></td>
+              </tr>
+              <tr>
+                <td><strong>Odontopediatria</strong></td>
+                <td>71.159</td><td>174</td>
+                <td><strong>10</strong></td>
+                <td><span class="cpl-num cpl-low">R$42</span></td>
+                <td><span class="status-pill s-active">Ativo</span></td>
+              </tr>
+              <tr>
+                <td><strong>HOF</strong></td>
+                <td>23.187</td><td>67</td>
+                <td><strong>8</strong></td>
+                <td><span class="cpl-num cpl-low">R$53</span></td>
+                <td><span class="status-pill s-active">Ativo</span></td>
+              </tr>
+              <tr>
+                <td><strong>Cirur. Traum. Buco.</strong></td>
+                <td>28.750</td><td>118</td>
+                <td><strong>6</strong></td>
+                <td><span class="cpl-num cpl-mid">R$72</span></td>
+                <td><span class="status-pill s-active">Ativo</span></td>
+              </tr>
+              <tr>
+                <td><strong>Implant. e Perio.</strong></td>
+                <td>56.271</td><td>192</td>
+                <td><strong>4</strong></td>
+                <td><span class="cpl-num cpl-high">R$106</span></td>
+                <td><span class="status-pill s-warn">⚠ Fadiga</span></td>
+              </tr>
+              <tr>
+                <td><strong>Dentística e Prót.</strong></td>
+                <td>37.509</td><td>110</td>
+                <td><strong>4</strong></td>
+                <td><span class="cpl-num cpl-high">R$108</span></td>
+                <td><span class="status-pill s-warn">⚠ Atenção</span></td>
+              </tr>
+              <tr>
+                <td><strong>Ortodontia</strong></td>
+                <td>50.834</td><td>143</td>
+                <td><strong>3</strong></td>
+                <td><span class="cpl-num cpl-high">R$139</span></td>
+                <td><span class="status-pill s-warn">⚠ Atenção</span></td>
+              </tr>
+              <tr>
+                <td><strong>Cursos Geral</strong></td>
+                <td style="color:#8b949e">—</td><td>77</td>
+                <td><strong>1</strong></td>
+                <td><span class="cpl-num cpl-high">R$219</span></td>
+                <td><span class="status-pill s-pause">Pausado</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- AÇÕES PENDENTES -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Ações Pendentes</span>
+          <span class="panel-count">5 itens</span>
+        </div>
+        <ul class="checklist">
+          <li>
+            <span class="check-icon tag-u">🔴</span>
+            <div><strong>Produzir vídeo para Implant. e Perio.</strong><br>Único criativo ativo é estático. Risco de queda brusca de performance. Urgente.</div>
+          </li>
+          <li>
+            <span class="check-icon tag-u">🔴</span>
+            <div><strong>Novo criativo para Cursos Geral</strong><br>Campanha pausada — CPL saindo do controle. Retorna após aprovação do novo material.</div>
+          </li>
+          <li>
+            <span class="check-icon tag-s">🟡</span>
+            <div><strong>Monitorar Ortodontia com vídeo do Dr. Josué</strong><br>Criativo anterior reativado. Aguardar 5–7 dias para avaliar resposta do público.</div>
+          </li>
+          <li>
+            <span class="check-icon tag-s">🟡</span>
+            <div><strong>Solicitar arte secundária para cards</strong><br>Variação de criativo estático pode estender vida útil das campanhas sem alterar o público.</div>
+          </li>
+          <li>
+            <span class="check-icon tag-v">🟢</span>
+            <div><strong>Coletar feedback de qualificação dos leads</strong><br>Novo curso em fase de testes. IOA deve retornar com avaliação dos contatos recebidos.</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- PACIENTES -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">Campanhas de Pacientes — Meta Ads</span>
+        <span class="panel-count">4 campanhas · R$606 investido · CPL médio R$16</span>
+      </div>
+      <div class="mini-kpis">
+        <div class="mini-kpi">
+          <div class="label">Pacientes Geral</div>
+          <div class="val">20 leads</div>
+          <div class="cat">R$15 CPL · R$331 investido</div>
+        </div>
+        <div class="mini-kpi">
+          <div class="label">Pacientes Implante</div>
+          <div class="val">7 leads</div>
+          <div class="cat">R$21 CPL · R$172 investido</div>
+        </div>
+        <div class="mini-kpi">
+          <div class="label">Pacientes HOF</div>
+          <div class="val">5 leads</div>
+          <div class="cat">R$15 CPL · R$76 investido</div>
+        </div>
+        <div class="mini-kpi">
+          <div class="label">Pacientes Ortod.</div>
+          <div class="val">2 leads</div>
+          <div class="cat">R$13 CPL · R$26 investido</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOTAIS -->
+    <div class="totals-bar">
+      <div class="total-item">
+        <div class="t-label">Leads Totais</div>
+        <div class="t-val">118</div>
+      </div>
+      <div class="total-item">
+        <div class="t-label">CPL Total</div>
+        <div class="t-val">R$ 35</div>
+      </div>
+      <div class="total-item">
+        <div class="t-label">Investimento Total</div>
+        <div class="t-val">R$ 4.240</div>
+      </div>
+      <div class="total-item">
+        <div class="t-label">Meta Ads</div>
+        <div class="t-val">R$ 3.740</div>
+      </div>
+      <div class="total-item">
+        <div class="t-label">Google Ads</div>
+        <div class="t-val">R$ 500</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    MEIO COMUNICAÇÃO E CONSULTORIA · IOA CAMPINAS · ABR 2026 · OPÇÃO 2 — PAINEL OPERACIONAL
+  </div>
+
+</body>
+</html>

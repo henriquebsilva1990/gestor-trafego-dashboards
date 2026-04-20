@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Briefing de Criativos — Faculdade IOA</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: #f1f5f9;
+      color: #1e293b;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* ── Toolbar (oculto no PDF) ── */
+    .toolbar {
+      background: #0f172a;
+      padding: 12px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .toolbar .info { color: #94a3b8; font-size: 12px; }
+    .toolbar .info strong { color: white; }
+    .btn-pdf {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 9px 22px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: background .15s;
+    }
+    .btn-pdf:hover { background: #2563eb; }
+
+    /* ── Wrapper ── */
+    .wrapper {
+      max-width: 800px;
+      margin: 28px auto;
+      padding: 0 16px 48px;
+    }
+
+    /* ── Cover ── */
+    .cover {
+      background: linear-gradient(135deg, #1e3a5f 0%, #1d4ed8 100%);
+      border-radius: 14px;
+      padding: 40px 44px 36px;
+      color: white;
+      margin-bottom: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cover::after {
+      content: '';
+      position: absolute;
+      right: -30px; top: -50px;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.06);
+    }
+    .cover .agency {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: rgba(255,255,255,.55);
+      margin-bottom: 10px;
+    }
+    .cover h1 {
+      font-size: 26px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+    .cover .sub {
+      font-size: 13px;
+      color: rgba(255,255,255,.65);
+    }
+    .cover .pill {
+      display: inline-block;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.2);
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-top: 14px;
+    }
+    .cover .counter {
+      position: absolute;
+      right: 44px;
+      top: 50%;
+      transform: translateY(-50%);
+      text-align: center;
+    }
+    .cover .counter .num {
+      font-size: 52px;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .cover .counter .lbl {
+      font-size: 11px;
+      color: rgba(255,255,255,.6);
+      margin-top: 4px;
+    }
+
+    /* ── Section header ── */
+    .section-title {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: #64748b;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e2e8f0;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: white;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      margin-bottom: 24px;
+      overflow: hidden;
+      page-break-inside: avoid;
+    }
+    .card-header {
+      background: var(--status-bg, #fef2f2);
+      border-bottom: 1px solid #f1f5f9;
+      padding: 14px 20px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .card-left {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .card-index {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--status-color, #dc2626);
+      background: white;
+      border: 1.5px solid var(--status-color, #dc2626);
+      border-radius: 6px;
+      padding: 2px 7px;
+      white-space: nowrap;
+      margin-top: 1px;
+    }
+    .ad-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: #111827;
+      line-height: 1.3;
+    }
+    .adset-name {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-top: 2px;
+    }
+    .status-badge {
+      background: var(--status-color, #dc2626);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      white-space: nowrap;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      flex-shrink: 0;
+    }
+
+    /* ── Metrics ── */
+    .metrics-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      padding: 10px 20px;
+      border-bottom: 1px solid #f8fafc;
+      background: #fafafa;
+    }
+    .metric {
+      font-size: 11px;
+      color: #6b7280;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 3px 9px;
+    }
+    .metric b { color: #374151; }
+
+    /* ── Reason ── */
+    .reason {
+      font-size: 11.5px;
+      color: #92400e;
+      background: #fffbeb;
+      border-left: 3px solid #f59e0b;
+      padding: 6px 14px;
+      margin: 0;
+    }
+    .reason + .reason { border-top: 1px solid #fef3c7; }
+
+    /* ── Briefing box ── */
+    .briefing-box {
+      padding: 20px;
+    }
+    .briefing-title {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #64748b;
+      margin-bottom: 14px;
+    }
+
+    /* ── Format row ── */
+    .format-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .format-item {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .fmt-label {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      color: #9ca3af;
+      font-weight: 600;
+    }
+    .fmt-value {
+      font-size: 13px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 6px;
+    }
+    .fmt-value.current   { background: #f1f5f9; color: #475569; }
+    .fmt-value.suggested { background: #dbeafe; color: #1d4ed8; }
+    .format-arrow {
+      font-size: 18px;
+      color: #94a3b8;
+      margin-top: 12px;
+    }
+    .format-tip {
+      font-size: 11.5px;
+      color: #6b7280;
+      background: #f8fafc;
+      border-radius: 6px;
+      padding: 8px 12px;
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+
+    /* ── Current angle ── */
+    .current-angle {
+      font-size: 11px;
+      color: #6b7280;
+      margin-bottom: 12px;
+    }
+    .current-angle strong { color: #374151; }
+
+    /* ── Angle block ── */
+    .angle-block {
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      border: 1px solid #e2e8f0;
+    }
+    .angle-block.option-1 {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+    }
+    .angle-block.option-2 {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+    }
+    .angle-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .angle-title {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #1e293b;
+    }
+    .angle-block.option-1 .angle-title { color: #166534; }
+    .angle-block.option-2 .angle-title { color: #1e40af; }
+    .angle-format {
+      font-size: 10px;
+      color: #6b7280;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      padding: 2px 8px;
+    }
+    .hook-line {
+      font-size: 12px;
+      color: #374151;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 5px;
+      padding: 7px 10px;
+      margin-bottom: 5px;
+      line-height: 1.4;
+      font-style: italic;
+    }
+    .cta-line {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #1d4ed8;
+      margin-top: 8px;
+    }
+    .angle-block.option-1 .cta-line { color: #16a34a; }
+
+    /* ── Footer ── */
+    .footer {
+      background: white;
+      border-radius: 10px;
+      border: 1px solid #e2e8f0;
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10.5px;
+      color: #94a3b8;
+      margin-top: 8px;
+    }
+
+    /* ── Print ── */
+    @media print {
+      body { background: white; }
+      .toolbar { display: none !important; }
+      .wrapper { margin: 0; padding: 0 0 24px; max-width: 100%; }
+      .cover { border-radius: 0; margin-bottom: 20px; }
+      .card { border-radius: 6px; margin-bottom: 18px; box-shadow: none; }
+      .angle-block { border-radius: 5px; }
+      .footer { border-radius: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Toolbar (oculto no PDF) -->
+<div class="toolbar">
+  <div class="info">
+    <strong>Briefing de Criativos</strong> · Faculdade IOA · 2026-04-18 → 2026-04-18
+  </div>
+  <button class="btn-pdf" onclick="window.print()">⬇ Salvar como PDF</button>
+</div>
+
+<div class="wrapper">
+
+  <!-- Capa -->
+  <div class="cover">
+    <div class="counter">
+      <div class="num">0</div>
+      <div class="lbl">criativo(s) para<br>substituir</div>
+    </div>
+    <div class="agency">Meio Comunica · Gestão de Tráfego</div>
+    <h1>Faculdade IOA</h1>
+    <div class="sub">Briefing de Criativos — 2026-04-18 → 2026-04-18</div>
+    <div class="pill">Gerado em 19/04/2026 · Meta Ads</div>
+  </div>
+
+  <!-- Cards de Briefing -->
+  <div class="section-title">Criativos que precisam de substituição</div>
+  <div style="text-align:center;padding:60px;color:#6b7280;font-size:15px">Nenhum criativo com necessidade de substituição no período.</div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <span>Meio Comunica · henrique@meiocomunica.com.br</span>
+    <span>Gerado em 19/04/2026 · Dados: Meta Ads API</span>
+  </div>
+
+</div>
+</body>
+</html>

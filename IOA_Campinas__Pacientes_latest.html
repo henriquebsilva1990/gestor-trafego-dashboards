@@ -1,227 +1,107 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
     <title>IOA Campinas - Pacientes — Resumo</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; color: #111; }
-        .header { background: #111; color: #fff; padding: 24px 40px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
-        .header-left { display: flex; align-items: center; gap: 14px; }
-        .logo-mark { width: 38px; height: 38px; background: #F5C800; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 17px; color: #111; flex-shrink: 0; }
-        .header h1 { font-size: 18px; font-weight: 700; color: #fff; letter-spacing: -0.2px; }
-        .header .subtitle { font-size: 12px; color: #888; margin-top: 3px; }
-        .back { font-size: 12px; color: #111; text-decoration: none; background: #F5C800; padding: 5px 14px; border-radius: 20px; font-weight: 700; white-space: nowrap; }
-        .back:hover { background: #e6b800; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 28px 40px; }
-        .summary-bar { background: #F5C800; border-radius: 12px; padding: 16px 24px; display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
-        .summary-bar .icon { font-size: 20px; flex-shrink: 0; }
-        .summary-bar p { font-size: 13px; font-weight: 600; color: #111; line-height: 1.6; }
-        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 24px; }
-        .kpi { background: #fff; border-radius: 12px; padding: 20px 22px; border-left: 4px solid #F5C800; box-shadow: 0 1px 3px rgba(0,0,0,0.07); }
-        .kpi.highlight { background: #111; border-left-color: #F5C800; }
-        .kpi .kpi-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #999; margin-bottom: 8px; }
-        .kpi.highlight .kpi-label { color: #666; }
-        .kpi .kpi-value { font-size: 30px; font-weight: 800; color: #111; line-height: 1; }
-        .kpi.highlight .kpi-value { color: #F5C800; }
-        .kpi .kpi-sub { font-size: 11px; color: #888; margin-top: 6px; }
-        .kpi.highlight .kpi-sub { color: #555; }
-        .color-green { color: #16a34a !important; }
-        .color-amber { color: #d97706 !important; }
-        .color-red   { color: #dc2626 !important; }
-        .section { background: #fff; border-radius: 12px; padding: 22px 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.07); margin-bottom: 16px; }
-        .section-title { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; color: #111; padding-bottom: 12px; margin-bottom: 16px; border-bottom: 2px solid #F5C800; }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
-        .alert-empty { display: flex; align-items: center; gap: 10px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 12px 16px; font-size: 13px; color: #15803d; font-weight: 600; }
-        .alert-item { display: flex; align-items: flex-start; gap: 10px; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 8px; padding: 12px 16px; font-size: 13px; color: #92400e; margin-bottom: 8px; line-height: 1.5; }
-        .alert-warn { display: flex; align-items: flex-start; gap: 10px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px 16px; font-size: 13px; color: #92400e; margin-bottom: 8px; line-height: 1.5; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        th { text-align: left; padding: 8px 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: #aaa; background: #fafafa; }
-        td { padding: 9px 12px; border-top: 1px solid #f0f0f0; color: #333; }
-        tr:hover td { background: #fafaf8; }
-        .platform-badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; margin-right: 4px; }
-        .meta-badge { background: #dbeafe; color: #1d4ed8; }
-        .google-badge { background: #dcfce7; color: #166534; }
-        .cpl-green { color: #16a34a; font-weight: 700; }
-        .cpl-amber { color: #d97706; font-weight: 700; }
-        .cpl-red   { color: #dc2626; font-weight: 700; }
-        .ctr-green { color: #16a34a; }
-        .ctr-red   { color: #dc2626; }
-        .freq-ok   { color: #16a34a; }
-        .freq-warn { color: #d97706; }
-        .status-dot { font-size: 16px; }
-        .footer { text-align: center; padding: 20px; font-size: 11px; color: #bbb; }
-        @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } .header, .container { padding-left: 20px; padding-right: 20px; } .kpi-grid { grid-template-columns: 1fr 1fr; } }
+        *{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f1f5f9;color:#1e293b}
+        .hd{background:#059669;color:white;padding:24px 36px;display:flex;justify-content:space-between;align-items:center}
+        .hd h1{font-size:22px;font-weight:700}
+        .hd .sub{font-size:12px;opacity:.7;margin-top:4px}
+        .back{font-size:12px;opacity:.8;text-decoration:none;color:white;border:1px solid rgba(255,255,255,.4);padding:6px 14px;border-radius:20px}
+        .back:hover{background:rgba(255,255,255,.15)}
+        .wrap{max-width:900px;margin:0 auto;padding:24px 32px}
+        .tldr{background:white;border-radius:12px;padding:16px 20px;margin-bottom:20px;border-left:4px solid #059669;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+        .tldr-lbl{font-size:10px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
+        .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+        .card{background:white;border-radius:12px;padding:16px 18px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+        .card .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#9ca3af;margin-bottom:6px}
+        .card .val{font-size:24px;font-weight:800}
+        .card .s{font-size:11px;color:#9ca3af;margin-top:4px}
+        .sec{background:white;border-radius:12px;padding:20px 22px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+        .st{font-size:11px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid #e5e7eb;padding-bottom:8px;margin-bottom:14px}
+        table{width:100%;border-collapse:collapse;font-size:13px}
+        th{text-align:left;padding:8px 10px;background:#f8fafc;color:#6b7280;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+        td{padding:10px;border-top:1px solid #f1f5f9;vertical-align:middle}
+        .footer{text-align:center;color:#9ca3af;font-size:11px;padding:16px}
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="header-left">
-            <div class="logo-mark">M</div>
-            <div>
-                <h1>IOA Campinas - Pacientes</h1>
-                <div class="subtitle">Meio Comunicação e Consultoria · Meta Ads · Atualizado em 19/04/2026 17:22</div>
-            </div>
+    <div class="hd">
+        <div>
+            <h1>📊 IOA Campinas - Pacientes</h1>
+            <div class="sub">Meta Ads + Google Ads · Atualizado em 20/04/2026 09:04</div>
         </div>
-        <a class="back" href="consolidado.html">← Consolidado</a>
+        <a class="back" href="consolidado.html">← Voltar ao Consolidado</a>
     </div>
-
-    <div class="container">
-        <div class="summary-bar">
-            <span class="icon">📌</span>
-            <p>No período, as campanhas geraram <strong>31 leads</strong> ao excelente custo médio de <strong>R$15,72</strong>. Melhor criativo: <strong>pacientes_VID_001</strong> (CPL R$9,68). Performance muito dentro da meta de R$90,00.</p>
+    <div class="wrap">
+        <!-- TL;DR -->
+        <div class="tldr">
+            <div class="tldr-lbl">TL;DR — 2026-04-13 a 2026-04-19</div>
+            <div style="padding:4px 0;font-size:13px;color:#374151">Investimento: <b>R$484.95</b> <span style="color:#ef4444">(▲28%)</span> vs semana anterior</div><div style="padding:4px 0;font-size:13px;color:#374151">Leads: <b>0</b> | CPL: <b>—</b></div><div style="padding:4px 0;font-size:13px;color:#374151">Meta de CPL: <b>R$90.00</b> | Status: <b style="color:#6b7280">—</b></div>
         </div>
 
-        <div class="kpi-grid">
-            <div class="kpi highlight">
-                <div class="kpi-label">Total Investido</div>
-                <div class="kpi-value">R$487,19</div>
-                <div class="kpi-sub">Ant.: R$359,73 <span style="color:#F5C800">▲35%</span></div>
+        <div class="cards">
+            <div class="card">
+                <div class="lbl">Invest. Ontem</div>
+                <div class="val">R$60.30</div>
+                <div class="s">Meta: R$60.30 · Google: —</div>
             </div>
-            <div class="kpi">
-                <div class="kpi-label">Total de Leads</div>
-                <div class="kpi-value color-green">31</div>
-                <div class="kpi-sub">Ant.: 0 · Google: 0</div>
+            <div class="card">
+                <div class="lbl">Invest. Semana Atual</div>
+                <div class="val">R$484.95<span style="font-size:10px;color:#ef4444"> ▲28%</span></div>
+                <div class="s">Ant.: R$378.79</div>
             </div>
-            <div class="kpi">
-                <div class="kpi-label">CPL Médio Geral</div>
-                <div class="kpi-value color-green">R$15,72</div>
-                <div class="kpi-sub">Meta CPL: R$90,00 ✅</div>
+            <div class="card">
+                <div class="lbl">Conv. Semana Atual</div>
+                <div class="val" style="color:#2563eb">—</div>
+                <div class="s">Ontem: — · Ant.: —</div>
             </div>
-            <div class="kpi">
-                <div class="kpi-label">Campanhas Ativas</div>
-                <div class="kpi-value">1</div>
-                <div class="kpi-sub">Meta: 1 · Google: 0</div>
-            </div>
-        </div>
-
-        <div class="section" style="margin-bottom:16px">
-            <div class="section-title">Semana Atual vs Anterior</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
-                <div style="background:#fafafa;border-radius:10px;padding:14px 16px;border-left:3px solid #F5C800">
-                    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#999;margin-bottom:10px">Investimento</div>
-                    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
-                        <span style="font-size:11px;color:#888">12/04 → 18/04</span>
-                        <span style="font-size:18px;font-weight:800;color:#111">R$487,19</span>
-                    </div>
-                    <div style="display:flex;justify-content:space-between;align-items:baseline;padding-top:8px;border-top:1px solid #e5e5e5">
-                        <span style="font-size:11px;color:#aaa">05/04 → 11/04</span>
-                        <span style="font-size:14px;font-weight:600;color:#aaa">R$359,73</span>
-                    </div>
-                    <div style="margin-top:6px;text-align:right"><span style="font-size:11px;font-weight:700;color:#d97706">▲35% vs sem. ant.</span></div>
-                </div>
-                <div style="background:#fafafa;border-radius:10px;padding:14px 16px;border-left:3px solid #F5C800">
-                    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#999;margin-bottom:10px">Leads</div>
-                    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
-                        <span style="font-size:11px;color:#888">12/04 → 18/04</span>
-                        <span style="font-size:18px;font-weight:800;color:#16a34a">31</span>
-                    </div>
-                    <div style="display:flex;justify-content:space-between;align-items:baseline;padding-top:8px;border-top:1px solid #e5e5e5">
-                        <span style="font-size:11px;color:#aaa">05/04 → 11/04</span>
-                        <span style="font-size:14px;font-weight:600;color:#aaa">0</span>
-                    </div>
-                    <div style="margin-top:6px;text-align:right"><span style="font-size:11px;font-weight:700;color:#16a34a">▲ novo histórico</span></div>
-                </div>
-                <div style="background:#fafafa;border-radius:10px;padding:14px 16px;border-left:3px solid #F5C800">
-                    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#999;margin-bottom:10px">CPL</div>
-                    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
-                        <span style="font-size:11px;color:#888">12/04 → 18/04</span>
-                        <span style="font-size:18px;font-weight:800;color:#16a34a">R$15,72</span>
-                    </div>
-                    <div style="display:flex;justify-content:space-between;align-items:baseline;padding-top:8px;border-top:1px solid #e5e5e5">
-                        <span style="font-size:11px;color:#aaa">05/04 → 11/04</span>
-                        <span style="font-size:14px;font-weight:600;color:#aaa">—</span>
-                    </div>
-                    <div style="margin-top:6px;text-align:right"><span style="font-size:11px;color:#888">Meta: R$90,00 ✅</span></div>
-                </div>
+            <div class="card">
+                <div class="lbl">CPL Semana Atual</div>
+                <div class="val" style="color:#6b7280">—</div>
+                <div class="s">Meta: R$90.00</div>
             </div>
         </div>
 
-        <div class="grid-2">
-            <div class="section">
-                <div class="section-title">Alertas do Período</div>
-                <div class="alert-empty">✅ Nenhum alerta registrado neste período.</div>
-            </div>
-            <div class="section">
-                <div class="section-title">Performance por Plataforma</div>
-                <table>
-                    <thead><tr><th>Plataforma</th><th>Investimento</th><th>Leads</th><th>CPL</th></tr></thead>
-                    <tbody>
-                        <tr><td><span class="platform-badge meta-badge">Meta</span></td><td>R$487,19</td><td><strong>31</strong></td><td class="cpl-green">R$15,72</td></tr>
-                        <tr><td><span class="platform-badge google-badge">Google</span></td><td>—</td><td><strong>0</strong></td><td style="color:#888">—</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="section">
-            <div class="section-title">Leads por Campanha / Anúncio</div>
+        <div class="sec">
+            <div class="st">📈 Comparativo por Plataforma — Semana Atual vs Anterior</div>
             <table>
-                <thead>
-                    <tr>
-                        <th>Campanha / Anúncio</th>
-                        <th>Leads<br><span style="font-weight:400;color:#ccc;text-transform:none;letter-spacing:0">12/04→18/04</span></th>
-                        <th>Leads Ant.<br><span style="font-weight:400;color:#ccc;text-transform:none;letter-spacing:0">05/04→11/04</span></th>
-                        <th>Investimento</th>
-                        <th>CPL</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr style="background:#fafafa">
-                        <td style="font-weight:700;color:#111">[P] [ENGAJAMENTO] [WPP] 09.04.26</td>
-                        <td><strong>31</strong></td>
-                        <td style="color:#aaa">0</td>
-                        <td>R$487,19</td>
-                        <td class="cpl-green">R$15,72</td>
-                    </tr>
-                    <tr>
-                        <td style="padding-left:28px;font-size:12px;color:#555">↳ pacientes_hof002_ioa_campinas</td>
-                        <td>15</td><td style="color:#aaa">—</td>
-                        <td style="color:#888">R$202,24</td><td class="cpl-green">R$13,48</td>
-                    </tr>
-                    <tr>
-                        <td style="padding-left:28px;font-size:12px;color:#555">↳ pacientes_VID_001</td>
-                        <td>8</td><td style="color:#aaa">—</td>
-                        <td style="color:#888">R$77,41</td><td class="cpl-green">R$9,68</td>
-                    </tr>
-                    <tr>
-                        <td style="padding-left:28px;font-size:12px;color:#555">↳ pacientes_implante_ioa_campinas</td>
-                        <td>4</td><td style="color:#aaa">—</td>
-                        <td style="color:#888">R$111,25</td><td class="cpl-green">R$27,81</td>
-                    </tr>
-                    <tr>
-                        <td style="padding-left:28px;font-size:12px;color:#555">↳ pacientes_ortodontia_ioa_campinas</td>
-                        <td>3</td><td style="color:#aaa">—</td>
-                        <td style="color:#888">R$74,40</td><td class="cpl-green">R$24,80</td>
-                    </tr>
-                    <tr>
-                        <td style="padding-left:28px;font-size:12px;color:#555">↳ pacientes_hof001_ioa_campinas</td>
-                        <td>1</td><td style="color:#aaa">—</td>
-                        <td style="color:#888">R$21,89</td><td class="cpl-green">R$21,89</td>
-                    </tr>
-                </tbody>
+                <tr>
+                    <th>Plataforma</th>
+                    <th>Investimento Atual</th><th>Investimento Ant.</th>
+                    <th>Conv. Atual</th><th>Conv. Ant.</th>
+                    <th>CPL Atual</th>
+                </tr>
+                <tr>
+                    <td><span style="background:#dbeafe;color:#1d4ed8;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px">Meta</span></td>
+                    <td>R$484.95</td><td style="color:#9ca3af">R$378.79</td>
+                    <td style="font-weight:700;color:#2563eb">—</td><td style="color:#9ca3af">—</td>
+                    <td style="color:#6b7280;font-weight:700">—</td>
+                </tr>
+                <tr>
+                    <td><span style="background:#dcfce7;color:#166534;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px">Google</span></td>
+                    <td>—</td><td style="color:#9ca3af">—</td>
+                    <td style="font-weight:700;color:#2563eb">—</td><td style="color:#9ca3af">—</td>
+                    <td style="color:#6b7280;font-weight:700">—</td>
+                </tr>
             </table>
+            <div style="font-size:10px;color:#9ca3af;margin-top:10px">
+                Atual: 2026-04-13 → 2026-04-19 &nbsp;·&nbsp; Anterior: 2026-04-06 → 2026-04-12
+            </div>
         </div>
 
-        <div class="section">
-            <div class="section-title">Campanhas Meta Ads — Detalhamento</div>
-            <table>
-                <thead><tr><th>Campanha</th><th>Investimento</th><th>Leads</th><th>CPL</th><th>CTR</th><th>Frequência</th><th>Status</th></tr></thead>
-                <tbody>
-                    <tr>
-                        <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;color:#555" title="[P] [ENGAJAMENTO] [WPP] 09.04.26">[P] [ENGAJAMENTO] [WPP] 09.04.26</td>
-                        <td>R$487,19</td><td><strong>31</strong></td>
-                        <td class="cpl-green">R$15,72</td>
-                        <td class="ctr-green">1,34%</td>
-                        <td class="freq-ok">1,6</td>
-                        <td class="status-dot" title="Matador">🟢</td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="sec">
+            <div class="st">🎯 Leads por Campanha / Anúncio</div>
+            <div style="color:#6b7280;font-size:13px;padding:4px 0">Nenhum lead registrado no período de dados disponível.</div>
+        </div>
+
+        <div class="sec">
+            <div class="st">⚠️ Alertas de Criativos (últimos 7 dias)</div>
+            <div style="padding:8px 12px;margin:4px 0;border-radius:6px;background:#fef2f2;border-left:3px solid #ef4444;font-size:13px">🔴 Sem leads: "pacientes_hof002_ioa_campinas" — R$210 investidos</div><div style="padding:8px 12px;margin:4px 0;border-radius:6px;background:#fef2f2;border-left:3px solid #ef4444;font-size:13px">🔴 Sem leads: "pacientes_ortodontia_ioa_campinas" — R$73 investidos</div><div style="padding:8px 12px;margin:4px 0;border-radius:6px;background:#fef2f2;border-left:3px solid #ef4444;font-size:13px">🔴 Sem leads: "pacientes_implante_ioa_campinas" — R$114 investidos</div><div style="padding:8px 12px;margin:4px 0;border-radius:6px;background:#fef2f2;border-left:3px solid #ef4444;font-size:13px">🔴 Sem leads: "pacientes_VID_001" — R$77 investidos</div>
         </div>
     </div>
-
-    <div class="footer">Meio Comunicação e Consultoria · 19/04/2026 17:22</div>
+    <div class="footer">Gestor de Tráfego · Meio Comunica · 20/04/2026 09:04</div>
 </body>
 </html>

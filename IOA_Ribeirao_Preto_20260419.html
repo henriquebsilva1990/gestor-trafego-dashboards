@@ -6,177 +6,213 @@
     <title>Dashboard — IOA Ribeirao Preto</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8fafc; color: #1e293b; }
-        .header { background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); color: white; padding: 24px 32px; }
-        .header h1 { font-size: 24px; font-weight: 700; }
-        .header .meta { font-size: 14px; opacity: 0.8; margin-top: 4px; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 24px 32px; }
-        .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
-        .card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .card .label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: #6b7280; margin-bottom: 8px; }
-        .card .value { font-size: 28px; font-weight: 700; }
-        .card .sub { font-size: 12px; color: #6b7280; margin-top: 4px; }
-        .section { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .section h2 { font-size: 16px; font-weight: 600; margin-bottom: 16px; color: #374151; border-bottom: 1px solid #e5e7eb; padding-bottom: 10px; }
-        table { width: 100%; border-collapse: collapse; font-size: 14px; }
-        th { text-align: left; padding: 10px 12px; background: #f9fafb; color: #6b7280; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-        td { padding: 10px 12px; border-top: 1px solid #f3f4f6; }
-        tr:hover td { background: #f9fafb; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; color: #111; }
+        .header { background: #111; color: #fff; padding: 24px 40px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+        .header-left { display: flex; align-items: center; gap: 14px; }
+        .logo-mark { width: 38px; height: 38px; background: #F5C800; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 17px; color: #111; flex-shrink: 0; }
+        .header h1 { font-size: 18px; font-weight: 700; color: #fff; letter-spacing: -0.2px; }
+        .header .subtitle { font-size: 12px; color: #888; margin-top: 3px; }
+        .period-badge { background: #F5C800; color: #111; padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 28px 40px; }
+        .summary-bar { background: #F5C800; border-radius: 12px; padding: 16px 24px; display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+        .summary-bar .icon { font-size: 20px; flex-shrink: 0; }
+        .summary-bar p { font-size: 13px; font-weight: 600; color: #111; line-height: 1.6; }
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 24px; }
+        .kpi { background: #fff; border-radius: 12px; padding: 20px 22px; border-left: 4px solid #F5C800; box-shadow: 0 1px 3px rgba(0,0,0,0.07); }
+        .kpi.highlight { background: #111; border-left-color: #F5C800; }
+        .kpi .kpi-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #999; margin-bottom: 8px; }
+        .kpi.highlight .kpi-label { color: #666; }
+        .kpi .kpi-value { font-size: 30px; font-weight: 800; color: #111; line-height: 1; }
+        .kpi.highlight .kpi-value { color: #F5C800; }
+        .kpi .kpi-sub { font-size: 11px; color: #888; margin-top: 6px; }
+        .kpi.highlight .kpi-sub { color: #555; }
+        .color-green { color: #16a34a !important; }
+        .color-amber { color: #d97706 !important; }
+        .color-red   { color: #dc2626 !important; }
+        .section { background: #fff; border-radius: 12px; padding: 22px 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.07); margin-bottom: 16px; }
+        .section-title { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; color: #111; padding-bottom: 12px; margin-bottom: 16px; border-bottom: 2px solid #F5C800; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+        .alert-empty { display: flex; align-items: center; gap: 10px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 12px 16px; font-size: 13px; color: #15803d; font-weight: 600; }
+        .alert-item { display: flex; align-items: flex-start; gap: 10px; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 8px; padding: 12px 16px; font-size: 13px; color: #92400e; margin-bottom: 8px; line-height: 1.5; }
+        .alert-warn { display: flex; align-items: flex-start; gap: 10px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px 16px; font-size: 13px; color: #92400e; margin-bottom: 8px; line-height: 1.5; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { text-align: left; padding: 8px 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: #aaa; background: #fafafa; }
+        td { padding: 9px 12px; border-top: 1px solid #f0f0f0; color: #333; }
+        tr:hover td { background: #fafaf8; }
         .platform-badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; margin-right: 4px; }
         .meta-badge { background: #dbeafe; color: #1d4ed8; }
         .google-badge { background: #dcfce7; color: #166534; }
-        .footer { text-align: center; color: #9ca3af; font-size: 12px; padding: 16px; }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-        @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } .cards { grid-template-columns: 1fr 1fr; } }
+        .cpl-green { color: #16a34a; font-weight: 700; }
+        .cpl-amber { color: #d97706; font-weight: 700; }
+        .cpl-red   { color: #dc2626; font-weight: 700; }
+        .ctr-green { color: #16a34a; }
+        .ctr-red   { color: #dc2626; }
+        .freq-ok   { color: #16a34a; }
+        .freq-warn { color: #d97706; }
+        .status-dot { font-size: 16px; }
+        .footer { text-align: center; padding: 20px; font-size: 11px; color: #bbb; }
+        @media (max-width: 768px) {
+          .grid-2 { grid-template-columns: 1fr; }
+          .header, .container { padding-left: 20px; padding-right: 20px; }
+          .kpi-grid { grid-template-columns: 1fr 1fr; }
+        }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>📊 IOA Ribeirao Preto</h1>
-        <div class="meta">Período: 7 · Atualizado em 19/04/2026 17:20</div>
+        <div class="header-left">
+            <div class="logo-mark">M</div>
+            <div>
+                <h1>IOA Ribeirao Preto</h1>
+                <div class="subtitle">Meio Comunicação e Consultoria · Meta Ads</div>
+            </div>
+        </div>
+        <div class="period-badge">Período: 7 · Atualizado 19/04/2026 17:20</div>
     </div>
 
     <div class="container">
-        <!-- KPIs Principais -->
-        <div class="cards">
-            <div class="card">
-                <div class="label">Total Investido</div>
-                <div class="value">R$1,295.03</div>
-                <div class="sub">
-                    <span class="platform-badge meta-badge">Meta R$1,295.03</span>
-                    <span class="platform-badge google-badge">Google R$0.00</span>
-                </div>
+        <div class="summary-bar">
+            <span class="icon">📌</span>
+            <p>No período, as campanhas geraram <strong>38 leads</strong> ao custo médio de <strong>R$34,08</strong> com 3 campanhas ativas. Melhor campanha: <strong>DENTÍSTICA E PRÓTESE</strong> (CPL R$21,79). Monitorar frequências altas — 2 campanhas acima de 3,0.</p>
+        </div>
+
+        <div class="kpi-grid">
+            <div class="kpi highlight">
+                <div class="kpi-label">Total Investido</div>
+                <div class="kpi-value">R$1.295,03</div>
+                <div class="kpi-sub">Meta Ads · período atual</div>
             </div>
-            <div class="card">
-                <div class="label">Total de Leads</div>
-                <div class="value">38</div>
-                <div class="sub">Meta: 38 · Google: 0</div>
+            <div class="kpi">
+                <div class="kpi-label">Total de Leads</div>
+                <div class="kpi-value color-green">38</div>
+                <div class="kpi-sub">Meta: 38 · Google: 0</div>
             </div>
-            <div class="card">
-                <div class="label">CPL Médio Geral</div>
-                <div class="value" style="color:#f59e0b">R$34.08</div>
-                <div class="sub">Meta: R$34.08 · Google: R$0.00</div>
+            <div class="kpi">
+                <div class="kpi-label">CPL Médio Geral</div>
+                <div class="kpi-value color-amber">R$34,08</div>
+                <div class="kpi-sub">Meta: R$34,08 · Google: —</div>
             </div>
-            <div class="card">
-                <div class="label">Campanhas Ativas</div>
-                <div class="value">3</div>
-                <div class="sub">Meta: 3 · Google: 0</div>
+            <div class="kpi">
+                <div class="kpi-label">Campanhas Ativas</div>
+                <div class="kpi-value">3</div>
+                <div class="kpi-sub">Meta: 3 · Google: 0</div>
             </div>
         </div>
 
         <div class="grid-2">
-            <!-- Alertas -->
             <div class="section">
-                <h2>⚠️ Alertas do Período</h2>
-                <div style="padding:8px 12px;margin:4px 0;border-radius:6px;background:#fffbeb;border-left:3px solid #f59e0b">🟡 Monitorar frequência: "[U] [LEADS] [IOA RP] [ENDODONTIA]" (freq 3.0)</div><div style="padding:8px 12px;margin:4px 0;border-radius:6px;background:#fffbeb;border-left:3px solid #f59e0b">🟡 Monitorar frequência: "[U] [LEADS] [IOA RP] [DENTÍSTICA E PRÓTESE]" (freq 3.2)</div>
+                <div class="section-title">Alertas do Período</div>
+                <div class="alert-warn">🟡 Monitorar frequência: "[U] [LEADS] [IOA RP] [ENDODONTIA]" (freq 3,0)</div>
+                <div class="alert-warn">🟡 Monitorar frequência: "[U] [LEADS] [IOA RP] [DENTÍSTICA E PRÓTESE]" (freq 3,2)</div>
             </div>
 
-            <!-- Resumo por Plataforma -->
             <div class="section">
-                <h2>📈 Performance por Plataforma</h2>
+                <div class="section-title">Performance por Plataforma</div>
                 <table>
-                    <tr>
-                        <th>Plataforma</th>
-                        <th>Investimento</th>
-                        <th>Leads</th>
-                        <th>CPL</th>
-                    </tr>
-                    <tr>
-                        <td><span class="platform-badge meta-badge">Meta</span></td>
-                        <td>R$1295.03</td>
-                        <td><strong>38</strong></td>
-                        <td style="color:#f59e0b"><strong>R$34.08</strong></td>
-                    </tr>
-                    <tr>
-                        <td><span class="platform-badge google-badge">Google</span></td>
-                        <td>R$0.00</td>
-                        <td><strong>0</strong></td>
-                        <td style="color:#6b7280"><strong>R$0.00</strong></td>
-                    </tr>
+                    <thead>
+                        <tr>
+                            <th>Plataforma</th>
+                            <th>Investimento</th>
+                            <th>Leads</th>
+                            <th>CPL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="platform-badge meta-badge">Meta</span></td>
+                            <td>R$1.295,03</td>
+                            <td><strong>38</strong></td>
+                            <td class="cpl-amber">R$34,08</td>
+                        </tr>
+                        <tr>
+                            <td><span class="platform-badge google-badge">Google</span></td>
+                            <td>—</td>
+                            <td><strong>0</strong></td>
+                            <td style="color:#888">—</td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- Leads por Campanha -->
         <div class="section">
-            <h2>🎯 Leads por Campanha / Anúncio</h2>
-            
-    <table>
-        <thead>
-            <tr>
-                <th>Campanha / Anúncio</th>
-                <th>Leads</th>
-                <th>Investimento</th>
-                <th>CPL</th>
-            </tr>
-        </thead>
-        <tbody>
-        <tr style="background:#f8fafc">
-            <td style="font-weight:700;color:#1e293b;padding:10px 12px">[U] [LEADS] [IOA RP] [DENTÍSTICA E PRÓTESE]</td>
-            <td style="font-weight:700;font-size:15px;padding:10px 12px">19</td>
-            <td style="padding:10px 12px">R$414.00</td>
-            <td style="font-weight:700;color:#10b981;padding:10px 12px">R$21.79</td>
-        </tr>
-        <tr>
-            <td style="padding:7px 12px 7px 28px;color:#374151;font-size:13px">↳ dent_prot_002</td>
-            <td style="padding:7px 12px;font-size:13px">13</td>
-            <td style="padding:7px 12px;font-size:13px;color:#6b7280">R$349.37</td>
-            <td style="padding:7px 12px;font-size:13px;color:#10b981">R$26.87</td>
-        </tr>
-        <tr>
-            <td style="padding:7px 12px 7px 28px;color:#374151;font-size:13px">↳ dent_prot_001</td>
-            <td style="padding:7px 12px;font-size:13px">4</td>
-            <td style="padding:7px 12px;font-size:13px;color:#6b7280">R$32.08</td>
-            <td style="padding:7px 12px;font-size:13px;color:#10b981">R$8.02</td>
-        </tr>
-        <tr>
-            <td style="padding:7px 12px 7px 28px;color:#374151;font-size:13px">↳ dent_prot_004</td>
-            <td style="padding:7px 12px;font-size:13px">2</td>
-            <td style="padding:7px 12px;font-size:13px;color:#6b7280">R$28.11</td>
-            <td style="padding:7px 12px;font-size:13px;color:#10b981">R$14.05</td>
-        </tr>
-        <tr style="background:#f8fafc">
-            <td style="font-weight:700;color:#1e293b;padding:10px 12px">[U] [LEADS] [IOA RP] [ENDODONTIA]</td>
-            <td style="font-weight:700;font-size:15px;padding:10px 12px">10</td>
-            <td style="padding:10px 12px">R$422.51</td>
-            <td style="font-weight:700;color:#f59e0b;padding:10px 12px">R$42.25</td>
-        </tr>
-        <tr>
-            <td style="padding:7px 12px 7px 28px;color:#374151;font-size:13px">↳ VID_endodontia_002</td>
-            <td style="padding:7px 12px;font-size:13px">6</td>
-            <td style="padding:7px 12px;font-size:13px;color:#6b7280">R$194.99</td>
-            <td style="padding:7px 12px;font-size:13px;color:#f59e0b">R$32.50</td>
-        </tr>
-        <tr>
-            <td style="padding:7px 12px 7px 28px;color:#374151;font-size:13px">↳ VID_endodontia_003</td>
-            <td style="padding:7px 12px;font-size:13px">3</td>
-            <td style="padding:7px 12px;font-size:13px;color:#6b7280">R$185.72</td>
-            <td style="padding:7px 12px;font-size:13px;color:#ef4444">R$61.91</td>
-        </tr>
-        <tr>
-            <td style="padding:7px 12px 7px 28px;color:#374151;font-size:13px">↳ VID_endodontia_001</td>
-            <td style="padding:7px 12px;font-size:13px">1</td>
-            <td style="padding:7px 12px;font-size:13px;color:#6b7280">R$5.05</td>
-            <td style="padding:7px 12px;font-size:13px;color:#10b981">R$5.05</td>
-        </tr>
-        <tr style="background:#f8fafc">
-            <td style="font-weight:700;color:#1e293b;padding:10px 12px">[U] [LEADS] [MATRÍCULAS 2026]</td>
-            <td style="font-weight:700;font-size:15px;padding:10px 12px">9</td>
-            <td style="padding:10px 12px">R$458.52</td>
-            <td style="font-weight:700;color:#f59e0b;padding:10px 12px">R$50.95</td>
-        </tr>
-        <tr>
-            <td style="padding:7px 12px 7px 28px;color:#374151;font-size:13px">↳ matriculas_2026_ioarp_001</td>
-            <td style="padding:7px 12px;font-size:13px">9</td>
-            <td style="padding:7px 12px;font-size:13px;color:#6b7280">R$458.52</td>
-            <td style="padding:7px 12px;font-size:13px;color:#f59e0b">R$50.95</td>
-        </tr></tbody>
-    </table>
+            <div class="section-title">Leads por Campanha / Anúncio</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Campanha / Anúncio</th>
+                        <th>Leads</th>
+                        <th>Investimento</th>
+                        <th>CPL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="background:#fafafa">
+                        <td style="font-weight:700;color:#111">[U] [LEADS] [IOA RP] [DENTÍSTICA E PRÓTESE]</td>
+                        <td><strong>19</strong></td>
+                        <td>R$414,00</td>
+                        <td class="cpl-green">R$21,79</td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left:28px;font-size:12px;color:#555">↳ dent_prot_002</td>
+                        <td>13</td>
+                        <td style="color:#888">R$349,37</td>
+                        <td class="cpl-green">R$26,87</td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left:28px;font-size:12px;color:#555">↳ dent_prot_001</td>
+                        <td>4</td>
+                        <td style="color:#888">R$32,08</td>
+                        <td class="cpl-green">R$8,02</td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left:28px;font-size:12px;color:#555">↳ dent_prot_004</td>
+                        <td>2</td>
+                        <td style="color:#888">R$28,11</td>
+                        <td class="cpl-green">R$14,05</td>
+                    </tr>
+                    <tr style="background:#fafafa">
+                        <td style="font-weight:700;color:#111">[U] [LEADS] [IOA RP] [ENDODONTIA]</td>
+                        <td><strong>10</strong></td>
+                        <td>R$422,51</td>
+                        <td class="cpl-amber">R$42,25</td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left:28px;font-size:12px;color:#555">↳ VID_endodontia_002</td>
+                        <td>6</td>
+                        <td style="color:#888">R$194,99</td>
+                        <td class="cpl-amber">R$32,50</td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left:28px;font-size:12px;color:#555">↳ VID_endodontia_003</td>
+                        <td>3</td>
+                        <td style="color:#888">R$185,72</td>
+                        <td class="cpl-red">R$61,91</td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left:28px;font-size:12px;color:#555">↳ VID_endodontia_001</td>
+                        <td>1</td>
+                        <td style="color:#888">R$5,05</td>
+                        <td class="cpl-green">R$5,05</td>
+                    </tr>
+                    <tr style="background:#fafafa">
+                        <td style="font-weight:700;color:#111">[U] [LEADS] [MATRÍCULAS 2026]</td>
+                        <td><strong>9</strong></td>
+                        <td>R$458,52</td>
+                        <td class="cpl-amber">R$50,95</td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left:28px;font-size:12px;color:#555">↳ matriculas_2026_ioarp_001</td>
+                        <td>9</td>
+                        <td style="color:#888">R$458,52</td>
+                        <td class="cpl-amber">R$50,95</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
-        <!-- Tabela de Campanhas Meta -->
         <div class="section">
-            <h2>🔵 Campanhas Meta Ads — Detalhamento completo</h2>
+            <div class="section-title">Campanhas Meta Ads — Detalhamento</div>
             <table>
                 <thead>
                     <tr>
@@ -190,43 +226,38 @@
                     </tr>
                 </thead>
                 <tbody>
-                    
-        <tr>
-            <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="[U] [LEADS] [IOA RP] [ENDODONTIA]">[U] [LEADS] [IOA RP] [ENDODONTIA]</td>
-            <td>R$422.51</td>
-            <td style="font-weight:600">10</td>
-            <td style="color:#f59e0b;font-weight:600">R$42.25</td>
-            <td style="color:#ef4444">0.70%</td>
-            <td style="color:#f59e0b">3.0</td>
-            <td title="Matador/Manutenção/Fadigando/Ruim">🟠</td>
-        </tr>
-
-        <tr>
-            <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="[U] [LEADS] [IOA RP] [DENTÍSTICA E PRÓTESE]">[U] [LEADS] [IOA RP] [DENTÍSTICA E PRÓTESE]</td>
-            <td>R$414.00</td>
-            <td style="font-weight:600">19</td>
-            <td style="color:#10b981;font-weight:600">R$21.79</td>
-            <td style="color:#ef4444">0.84%</td>
-            <td style="color:#f59e0b">3.2</td>
-            <td title="Matador/Manutenção/Fadigando/Ruim">🟠</td>
-        </tr>
-
-        <tr>
-            <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="[U] [LEADS] [MATRÍCULAS 2026]">[U] [LEADS] [MATRÍCULAS 2026]</td>
-            <td>R$458.52</td>
-            <td style="font-weight:600">9</td>
-            <td style="color:#f59e0b;font-weight:600">R$50.95</td>
-            <td style="color:#ef4444">0.90%</td>
-            <td style="color:#10b981">2.3</td>
-            <td title="Matador/Manutenção/Fadigando/Ruim">🟠</td>
-        </tr>
+                    <tr>
+                        <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;color:#555" title="[U] [LEADS] [IOA RP] [ENDODONTIA]">[U] [LEADS] [IOA RP] [ENDODONTIA]</td>
+                        <td>R$422,51</td>
+                        <td><strong>10</strong></td>
+                        <td class="cpl-amber">R$42,25</td>
+                        <td class="ctr-red">0,70%</td>
+                        <td class="freq-warn">3,0</td>
+                        <td class="status-dot" title="Fadigando">🟠</td>
+                    </tr>
+                    <tr>
+                        <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;color:#555" title="[U] [LEADS] [IOA RP] [DENTÍSTICA E PRÓTESE]">[U] [LEADS] [IOA RP] [DENTÍSTICA E PRÓTESE]</td>
+                        <td>R$414,00</td>
+                        <td><strong>19</strong></td>
+                        <td class="cpl-green">R$21,79</td>
+                        <td class="ctr-red">0,84%</td>
+                        <td class="freq-warn">3,2</td>
+                        <td class="status-dot" title="Fadigando">🟠</td>
+                    </tr>
+                    <tr>
+                        <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;color:#555" title="[U] [LEADS] [MATRÍCULAS 2026]">[U] [LEADS] [MATRÍCULAS 2026]</td>
+                        <td>R$458,52</td>
+                        <td><strong>9</strong></td>
+                        <td class="cpl-amber">R$50,95</td>
+                        <td class="ctr-red">0,90%</td>
+                        <td class="freq-ok">2,3</td>
+                        <td class="status-dot" title="Manutenção">🟠</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
     </div>
 
-    <div class="footer">
-        Gerado automaticamente · Gestor de Tráfego · 19/04/2026 17:20
-    </div>
+    <div class="footer">Meio Comunicação e Consultoria · Gerado automaticamente · 19/04/2026 17:20</div>
 </body>
 </html>

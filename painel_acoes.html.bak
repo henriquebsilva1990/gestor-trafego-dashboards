@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Ações — Gestor de Tráfego</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; color: #111; }
+
+        /* ── Header ─────────────────────────────────────────────── */
+        .header { background: #111; color: white; padding: 18px 36px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+        .header-left { display: flex; align-items: center; gap: 14px; }
+        .logo-mark { width: 38px; height: 38px; background: #F5C800; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 17px; color: #111; flex-shrink: 0; }
+        .header h1 { font-size: 18px; font-weight: 700; color: #fff; letter-spacing: -0.2px; }
+        .header .sub { font-size: 12px; color: #888; margin-top: 3px; }
+        .back { font-size: 12px; color: #111; text-decoration: none; background: #F5C800; padding: 5px 14px; border-radius: 20px; font-weight: 700; white-space: nowrap; }
+        .back:hover { background: #e6b800; }
+
+        /* ── Status bar ─────────────────────────────────────────── */
+        .status-bar { background: #1e293b; color: white; padding: 7px 36px; font-size: 12px; display: flex; align-items: center; gap: 10px; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; background: #ef4444; flex-shrink: 0; transition: background .3s; }
+        .dot.on { background: #10b981; }
+
+        /* ── Layout ─────────────────────────────────────────────── */
+        .container { max-width: 1140px; margin: 0 auto; padding: 24px 28px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+        .section-full { grid-column: 1 / -1; }
+
+        /* ── Card ───────────────────────────────────────────────── */
+        .card { background: white; border-radius: 14px; padding: 22px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+        .card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid #F5C800; }
+        .card-icon { font-size: 20px; }
+        .card-title { font-size: 14px; font-weight: 700; color: #0f172a; }
+        .card-sub { font-size: 11px; color: #94a3b8; margin-top: 1px; }
+
+        /* ── Form elements ──────────────────────────────────────── */
+        label { display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px; margin-top: 11px; }
+        label:first-of-type { margin-top: 0; }
+        input, select, textarea { width: 100%; padding: 8px 11px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 13px; color: #1e293b; outline: none; transition: border .15s; background: white; }
+        input:focus, select:focus, textarea:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,.12); }
+        input:disabled, select:disabled { background: #f8fafc; color: #94a3b8; }
+        textarea { min-height: 72px; resize: vertical; }
+
+        /* ── Buttons ─────────────────────────────────────────────── */
+        .btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; transition: all .15s; }
+        .btn:disabled { opacity: .4; cursor: not-allowed; }
+        .btn-primary { background: #111; color: white; }
+        .btn-primary:hover:not(:disabled) { background: #333; }
+        .btn-green   { background: #059669; color: white; }
+        .btn-green:hover:not(:disabled)   { background: #047857; }
+        .btn-orange  { background: #d97706; color: white; }
+        .btn-orange:hover:not(:disabled)  { background: #b45309; }
+        .btn-purple  { background: #7c3aed; color: white; }
+        .btn-purple:hover:not(:disabled)  { background: #6d28d9; }
+        .btn-sm { padding: 6px 12px; font-size: 12px; }
+        .btn-row { margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+        /* ── Results ─────────────────────────────────────────────── */
+        .result { margin-top: 10px; padding: 10px 13px; border-radius: 8px; font-size: 13px; display: none; }
+        .result.ok   { background: #f0fdf4; border-left: 3px solid #10b981; color: #065f46; }
+        .result.err  { background: #fef2f2; border-left: 3px solid #ef4444; color: #7f1d1d; }
+        .result.info { background: #eff6ff; border-left: 3px solid #3b82f6; color: #1e3a8a; }
+        .hint { font-size: 11px; color: #94a3b8; margin-top: 3px; }
+
+        /* ── Step badge ──────────────────────────────────────────── */
+        .step-badge { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: #111; color: #F5C800; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+
+        /* ── Niche research panel ────────────────────────────────── */
+        .research-panel { margin-top: 12px; padding: 14px; background: #f8f5ff; border: 1px solid #ddd6fe; border-radius: 10px; display: none; }
+        .research-panel h4 { font-size: 12px; font-weight: 700; color: #5b21b6; margin-bottom: 10px; }
+        .research-section { margin-bottom: 10px; }
+        .research-section .rs-title { font-size: 11px; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 5px; }
+        .research-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+        .tag { display: inline-block; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 500; }
+        .tag-hook   { background: #fef3c7; color: #92400e; }
+        .tag-angulo { background: #dbeafe; color: #1e3a8a; }
+        .tag-fmt    { background: #d1fae5; color: #065f46; }
+        .tag-cta    { background: #ede9fe; color: #5b21b6; }
+        .tag-neg    { background: #fee2e2; color: #7f1d1d; }
+
+        /* ── Audience suggestions panel ──────────────────────────── */
+        .audience-panel { margin-top: 12px; padding: 14px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; display: none; }
+        .audience-panel h4 { font-size: 12px; font-weight: 700; color: #92400e; margin-bottom: 10px; }
+        .aud-block { margin-bottom: 9px; }
+        .aud-name  { font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 3px; }
+        .aud-desc  { font-size: 12px; color: #4b5563; line-height: 1.5; }
+
+        /* ── Creative list ───────────────────────────────────────── */
+        .creative-options { display: none; margin-top: 8px; }
+        .creative-list { max-height: 160px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px; padding: 6px; }
+        .creative-item { display: flex; align-items: center; gap: 8px; padding: 5px 7px; border-radius: 6px; cursor: pointer; }
+        .creative-item:hover { background: #f8fafc; }
+        .creative-item input[type=checkbox] { width: auto; }
+        .creative-item img { width: 32px; height: 32px; object-fit: cover; border-radius: 4px; background: #f1f5f9; }
+        .creative-item .cname { font-size: 12px; color: #374151; }
+
+        /* ── Campaign picker ─────────────────────────────────────── */
+        .picker-step { margin-top: 8px; padding: 10px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
+        .picker-step label { margin-top: 0; }
+
+        /* ── Log ─────────────────────────────────────────────────── */
+        .log-item { padding: 7px 11px; margin: 3px 0; border-radius: 6px; background: #f8fafc; font-size: 12px; border-left: 3px solid #e2e8f0; }
+        .log-item .ts { color: #94a3b8; font-size: 11px; }
+
+        /* ── Modal overlay ───────────────────────────────────────── */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.65); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .modal-overlay.open { display: flex; }
+        .modal-box { background: white; border-radius: 14px; width: 100%; max-width: 960px; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; }
+        .modal-header { padding: 14px 20px; background: linear-gradient(135deg, #0f172a, #1e3a8a); color: white; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+        .modal-header h3 { font-size: 14px; font-weight: 700; }
+        .modal-close { background: rgba(255,255,255,.2); border: none; color: white; font-size: 18px; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .modal-close:hover { background: rgba(255,255,255,.35); }
+        .modal-body { flex: 1; overflow: auto; padding: 0; }
+        .modal-iframe { width: 100%; height: 100%; border: none; min-height: 600px; }
+        .modal-html-content { padding: 24px; }
+
+        /* ── Loading spinner ─────────────────────────────────────── */
+        .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.4); border-top-color: white; border-radius: 50%; animation: spin .7s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+<!-- ── MODAL BRIEFING ─────────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="briefing-modal" onclick="closeModal(event)">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3 id="modal-title">📄 Briefing de Criativos</h3>
+            <button class="modal-close" onclick="document.getElementById('briefing-modal').classList.remove('open')">✕</button>
+        </div>
+        <div class="modal-body" id="modal-body">
+            <div class="modal-html-content" id="modal-html-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ── HEADER ─────────────────────────────────────────────────────────────── -->
+<div class="header">
+    <div class="header-left">
+        <div class="logo-mark">M</div>
+        <div>
+            <h1>Painel de Ações</h1>
+            <div class="sub">Meio Comunicação e Consultoria · Criar campanha · Conjunto · Upload · Script</div>
+        </div>
+    </div>
+    <a class="back" href="consolidado.html">← Consolidado</a>
+</div>
+
+<div class="status-bar">
+    <div class="dot" id="srv-dot"></div>
+    <span id="srv-status">Verificando servidor (porta 7070)…</span>
+    <span id="research-badge" style="display:none;margin-left:20px;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600"></span>
+    <span style="margin-left:auto;opacity:.45;font-size:11px">Para iniciar: python3 ~/.claude/skills/gestor-trafego/scripts/actions_server.py</span>
+</div>
+
+<div class="container">
+<div class="grid">
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     CRIAR CAMPANHA
+════════════════════════════════════════════════════════════════════════════ -->
+<div class="card">
+    <div class="card-header">
+        <div class="card-icon">🚀</div>
+        <div>
+            <div class="card-title">Criar Nova Campanha</div>
+            <div class="card-sub">Estrutura completa — Meta Ads ou Google Ads</div>
+        </div>
+    </div>
+
+    <label>Cliente</label>
+    <select id="cc-cliente" onchange="onClienteChange('cc')">
+        <option value="">Selecione o cliente…</option>
+    </select>
+
+    <label>Plataforma</label>
+    <select id="cc-plataforma">
+        <option>Meta Ads</option>
+        <option>Google Ads</option>
+        <option>Ambas</option>
+    </select>
+
+    <label>Objetivo</label>
+    <select id="cc-objetivo">
+        <option>Leads via formulário</option>
+        <option>Leads via WhatsApp</option>
+        <option>Leads via landing page</option>
+        <option>Conversões (compra)</option>
+    </select>
+
+    <label>Orçamento diário (R$)</label>
+    <input type="number" id="cc-orcamento" placeholder="Ex: 50">
+
+    <label>Observações</label>
+    <textarea id="cc-obs" placeholder="Produto, público-alvo, diferencial, período…"></textarea>
+
+    <!-- Niche research panel for campanha -->
+    <div class="research-panel" id="cc-research">
+        <h4>🔬 Pesquisa por nicho — ângulos validados</h4>
+        <div id="cc-research-content"></div>
+    </div>
+
+    <div class="btn-row">
+        <button class="btn btn-primary" onclick="gerarEstruturaCampanha()">📋 Gerar Estrutura</button>
+    </div>
+    <div class="result" id="cc-result" style="white-space:pre-line"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     CRIAR CONJUNTO
+════════════════════════════════════════════════════════════════════════════ -->
+<div class="card">
+    <div class="card-header">
+        <div class="card-icon">📦</div>
+        <div>
+            <div class="card-title">Criar Novo Conjunto de Anúncios</div>
+            <div class="card-sub">Selecione cliente → campanha → conjunto fonte</div>
+        </div>
+    </div>
+
+    <!-- Step 1: Client -->
+    <div class="picker-step">
+        <label style="display:flex;align-items:center;gap:6px"><span class="step-badge">1</span> Cliente</label>
+        <select id="cj-cliente" onchange="onCjClienteChange()">
+            <option value="">Selecione o cliente…</option>
+        </select>
+    </div>
+
+    <!-- Step 2: Campaign -->
+    <div class="picker-step" style="margin-top:8px">
+        <label style="display:flex;align-items:center;gap:6px"><span class="step-badge">2</span> Campanha ativa</label>
+        <select id="cj-campanha" disabled onchange="onCjCampanhaChange()">
+            <option value="">Selecione o cliente primeiro…</option>
+        </select>
+    </div>
+
+    <!-- Step 3: Source adset -->
+    <div class="picker-step" style="margin-top:8px">
+        <label style="display:flex;align-items:center;gap:6px"><span class="step-badge">3</span> Conjunto fonte (copiar targeting)</label>
+        <select id="cj-adset-fonte" disabled>
+            <option value="">Selecione a campanha primeiro…</option>
+        </select>
+    </div>
+
+    <label>Nome do novo conjunto</label>
+    <input type="text" id="cj-name" placeholder="Ex: IOA_Campinas_Alunos_TOF_ABR26_V2">
+
+    <label>Orçamento diário (R$)</label>
+    <input type="number" id="cj-budget" placeholder="50" value="50">
+
+    <!-- Audience suggestions -->
+    <div class="audience-panel" id="cj-audience">
+        <h4>👥 Sugestões de públicos — por nicho</h4>
+        <div id="cj-audience-content"></div>
+    </div>
+
+    <label style="margin-top:12px">Criativos a incluir</label>
+    <button type="button" class="btn btn-orange btn-sm" style="margin-top:5px" onclick="buscarCriativos()">🔍 Buscar criativos da conta</button>
+    <div class="creative-options" id="creative-options">
+        <div class="creative-list" id="creative-list"></div>
+    </div>
+
+    <div class="btn-row">
+        <button class="btn btn-green" onclick="criarConjunto()">✅ Criar conjunto (pausado)</button>
+    </div>
+    <div class="result" id="cj-result" style="white-space:pre-line"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     UPLOAD CRIATIVO
+════════════════════════════════════════════════════════════════════════════ -->
+<div class="card">
+    <div class="card-header">
+        <div class="card-icon">🖼️</div>
+        <div>
+            <div class="card-title">Upload de Novo Criativo</div>
+            <div class="card-sub">Imagem + copy → cria anúncio no conjunto</div>
+        </div>
+    </div>
+
+    <label>ID do conjunto de anúncios</label>
+    <input type="text" id="up-adset" placeholder="Ex: 120213842640…">
+
+    <label>Nome do anúncio</label>
+    <input type="text" id="up-adname" placeholder="Ex: IOA_Ribeirao_Alunos_IMG_ABR26_V3">
+
+    <label>Imagem (JPG/PNG)</label>
+    <input type="file" id="up-image" accept="image/*">
+
+    <label>Texto principal (copy)</label>
+    <textarea id="up-body" placeholder="Texto que aparece acima da imagem no feed…"></textarea>
+
+    <label>Headline</label>
+    <input type="text" id="up-headline" placeholder="Texto em destaque no card">
+
+    <label>URL de destino</label>
+    <input type="url" id="up-url" placeholder="https://…">
+
+    <div class="btn-row">
+        <button class="btn btn-primary" onclick="uploadCriativo()">⬆️ Enviar criativo (pausado)</button>
+    </div>
+    <div class="result" id="up-result" style="white-space:pre-line"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SUGESTÃO DE SCRIPT / BRIEFING
+════════════════════════════════════════════════════════════════════════════ -->
+<div class="card">
+    <div class="card-header">
+        <div class="card-icon">✍️</div>
+        <div>
+            <div class="card-title">Script / Briefing de Criativos</div>
+            <div class="card-sub">Pesquisa por nicho + geração de briefing com hooks e scripts</div>
+        </div>
+    </div>
+
+    <label>Cliente</label>
+    <select id="sc-cliente" onchange="onClienteChange('sc')">
+        <option value="">Selecione o cliente…</option>
+    </select>
+
+    <label>Período de análise</label>
+    <select id="sc-period">
+        <option value="7d">Últimos 7 dias</option>
+        <option value="14d">Últimos 14 dias</option>
+        <option value="30d">Últimos 30 dias</option>
+    </select>
+
+    <!-- Research panel for script card -->
+    <div class="research-panel" id="sc-research">
+        <h4>🔬 Base de pesquisa por nicho</h4>
+        <div id="sc-research-content"></div>
+    </div>
+
+    <div style="margin-top:12px;padding:11px;background:#f8fafc;border-radius:8px;font-size:12px;color:#374151;line-height:1.6">
+        <b>O que o briefing inclui:</b><br>
+        • Criativos candidatos à substituição (21+ dias / freq alta)<br>
+        • 2 ângulos alternativos por criativo com hooks prontos<br>
+        • Scripts completos para designer/editor de vídeo<br>
+        • CTAs testados por nicho + negativos a evitar
+    </div>
+
+    <div id="sc-research-status" style="display:none;margin-top:10px;padding:9px 12px;border-radius:8px;font-size:12px"></div>
+
+    <div class="btn-row">
+        <button class="btn btn-purple" id="sc-btn" onclick="gerarBriefing()">📄 Gerar briefing (popup)</button>
+        <button class="btn btn-orange btn-sm" id="sc-weekly-btn" onclick="rodarPesquisaSemanal()" title="Roda cron_weekly.py para todos os clientes">🔄 Rodar pesquisa agora</button>
+    </div>
+    <div class="result" id="sc-result"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     LOG DE AÇÕES RECENTES
+════════════════════════════════════════════════════════════════════════════ -->
+<div class="card section-full">
+    <div class="card-header">
+        <div class="card-icon">📋</div>
+        <div>
+            <div class="card-title">Histórico de Ações Recentes</div>
+            <div class="card-sub">Últimas 10 ações registradas</div>
+        </div>
+    </div>
+    <div id="log-list"><div style="color:#94a3b8;font-size:13px">Carregando log…</div></div>
+</div>
+
+</div><!-- /grid -->
+</div><!-- /container -->
+
+<script>
+const API = 'http://localhost:7070';
+
+// ── Data ─────────────────────────────────────────────────────────────────────
+let CLIENTS = [];   // [{name, account_id, nicho}]
+
+// Static audience suggestions per niche
+const AUDIENCE_BY_NICHE = {
+    alunos: [
+        { name: "Frio — Dentistas graduados", desc: "Cirurgiões-dentistas 24–42 anos. Interesse: CRO, Odontologia, Especialização, Implantodontia, Ortodontia. Excluir alunos já matriculados (lista de e-mails do CRM)." },
+        { name: "Frio — Comportamental profissional", desc: "Pessoas que pesquisaram 'especialização odontologia', 'pós-graduação odontologia', 'curso implante', 'curso ortho' nos últimos 30 dias. Cargo/formação: Odontologia, Ciências da Saúde." },
+        { name: "Lookalike de matriculados", desc: "Lookalike 1–3% a partir de lista de alunos já matriculados. Público de alta conversão — idêntico ao perfil que já fechou." },
+        { name: "Remarketing", desc: "Visitantes do site 60 dias + engajamento Instagram 90 dias. Excluir leads convertidos. Use depoimento de ex-aluno já especializado como criativo." },
+    ],
+    pacientes: [
+        { name: "Frio — Interesses", desc: "25–55 anos, interesse em Odontologia, Saúde bucal, Implante dentário, Clareamento dental. Raio de até 15 km da clínica." },
+        { name: "Lookalike pacientes", desc: "Lookalike 1% de lista de pacientes ativos. Público quente e com perfil similar." },
+        { name: "Remarketing local", desc: "Visitantes do site 30 dias. Exibir depoimentos e antes/depois de pacientes reais." },
+    ],
+    varejo: [
+        { name: "Frio — Interesse produto", desc: "18–45, interesse no segmento do produto, comportamento de compra online nos últimos 30 dias." },
+        { name: "Lookalike compradores", desc: "Lookalike 1–5% de lista de clientes que compraram. Alta taxa de conversão." },
+        { name: "Remarketing carrinho", desc: "Visitantes da página de produto 7 dias + abandono de carrinho 3 dias. CTA de urgência." },
+    ],
+    industria: [
+        { name: "Decisores B2B", desc: "35–55, cargo: Comprador, Engenheiro de Produção, Diretor Industrial, Gerente de Operações." },
+        { name: "Segmentação por setor", desc: "Empresa de manufatura, setor industrial. Localização: interior SP, ABC Paulista, RS." },
+        { name: "LinkedIn-style (Meta)", desc: "Interesses: Automação industrial, ERP, Qualidade, ISO. Combine com cargo de decisão." },
+    ],
+    default: [
+        { name: "Público frio", desc: "Defina faixa etária e interesses alinhados ao produto/serviço. Comece com público de 500 mil–2 milhões." },
+        { name: "Lookalike", desc: "Crie lookalike a partir de lista de clientes ou do pixel (eventos de conversão)." },
+        { name: "Remarketing", desc: "Visitantes do site 30 dias + engajamento em redes sociais 60 dias." },
+    ],
+};
+
+// ── Server check ─────────────────────────────────────────────────────────────
+async function checkServer() {
+    try {
+        const r = await fetch(`${API}/ping`, { signal: AbortSignal.timeout(2500) });
+        const d = await r.json();
+        if (d.ok) {
+            document.getElementById('srv-dot').classList.add('on');
+            document.getElementById('srv-status').textContent = 'Servidor de ações online ✅';
+            return true;
+        }
+    } catch {}
+    document.getElementById('srv-status').textContent = 'Servidor offline ❌ — inicie: python3 ~/.claude/skills/gestor-trafego/scripts/actions_server.py';
+    return false;
+}
+
+// ── Load clients ─────────────────────────────────────────────────────────────
+async function loadClients() {
+    try {
+        const r = await fetch(`${API}/clients`, { signal: AbortSignal.timeout(3000) });
+        if (!r.ok) throw new Error();
+        const d = await r.json();
+        CLIENTS = d.clients || [];
+    } catch {
+        // Fallback static list
+        CLIENTS = [
+            { name: 'IOA Campinas - Alunos',    account_id: '', nicho: 'alunos' },
+            { name: 'IOA Campinas - Pacientes',  account_id: '', nicho: 'pacientes' },
+            { name: 'IOA Ribeirao Preto',        account_id: '', nicho: 'alunos' },
+            { name: 'Faculdade IOA',             account_id: '', nicho: 'alunos' },
+            { name: 'IOA Piracicaba',            account_id: '', nicho: 'alunos' },
+            { name: 'Mikro Metais',              account_id: '', nicho: 'industria' },
+            { name: 'Endotec',                   account_id: '', nicho: 'varejo' },
+            { name: 'Baby Center',               account_id: '', nicho: 'varejo' },
+        ];
+    }
+
+    // Populate all client selects
+    ['cc-cliente', 'sc-cliente', 'cj-cliente'].forEach(id => {
+        const sel = document.getElementById(id);
+        const current = sel.value;
+        sel.innerHTML = '<option value="">Selecione o cliente…</option>';
+        CLIENTS.forEach(c => {
+            const opt = document.createElement('option');
+            opt.value = c.name;
+            opt.dataset.account = c.account_id || '';
+            opt.dataset.nicho   = c.nicho || 'default';
+            opt.textContent = c.name;
+            sel.appendChild(opt);
+        });
+        if (current) sel.value = current;
+    });
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function showResult(id, msg, type = 'ok') {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.className = `result ${type}`;
+    el.style.display = 'block';
+}
+
+function getClientNicho(selectId) {
+    const sel = document.getElementById(selectId);
+    if (!sel.value) return 'default';
+    const opt = sel.options[sel.selectedIndex];
+    return opt?.dataset?.nicho || 'default';
+}
+
+function getNichoResearch(nicho) {
+    // Ask server first; fall back to nothing (panel stays hidden)
+    return null;
+}
+
+// ── Render niche research tags ────────────────────────────────────────────────
+function renderResearchPanel(panelId, contentId, data) {
+    if (!data) return;
+    const panel   = document.getElementById(panelId);
+    const content = document.getElementById(contentId);
+    const nicho   = data.nicho || {};
+    const label   = nicho.label || '';
+
+    let html = '';
+    if (label) html += `<div style="font-size:11px;color:#5b21b6;margin-bottom:8px;font-weight:600">Nicho: ${label}</div>`;
+
+    if (nicho.hooks?.length) {
+        html += `<div class="research-section"><div class="rs-title">🎣 Hooks (primeiros 3s)</div><div class="research-tags">`;
+        nicho.hooks.forEach(h => html += `<span class="tag tag-hook">${h}</span>`);
+        html += `</div></div>`;
+    }
+    if (nicho.angulos?.length) {
+        html += `<div class="research-section"><div class="rs-title">🎯 Ângulos estratégicos</div><div class="research-tags">`;
+        nicho.angulos.forEach(a => html += `<span class="tag tag-angulo">${a}</span>`);
+        html += `</div></div>`;
+    }
+    if (nicho.formatos?.length) {
+        html += `<div class="research-section"><div class="rs-title">📐 Formatos recomendados</div><div class="research-tags">`;
+        nicho.formatos.forEach(f => html += `<span class="tag tag-fmt">${f}</span>`);
+        html += `</div></div>`;
+    }
+    if (nicho.ctas?.length) {
+        html += `<div class="research-section"><div class="rs-title">📢 CTAs por nicho</div><div class="research-tags">`;
+        nicho.ctas.forEach(c => html += `<span class="tag tag-cta">${c}</span>`);
+        html += `</div></div>`;
+    }
+    if (nicho.negativos?.length) {
+        html += `<div class="research-section"><div class="rs-title">🚫 Evitar</div><div class="research-tags">`;
+        nicho.negativos.forEach(n => html += `<span class="tag tag-neg">${n}</span>`);
+        html += `</div></div>`;
+    }
+
+    content.innerHTML = html || '<div style="font-size:12px;color:#9ca3af">Sem dados de pesquisa para este nicho.</div>';
+    panel.style.display = 'block';
+}
+
+// ── Render audience panel ─────────────────────────────────────────────────────
+function renderAudiencePanel(nicho) {
+    const audiences = AUDIENCE_BY_NICHE[nicho] || AUDIENCE_BY_NICHE.default;
+    const panel   = document.getElementById('cj-audience');
+    const content = document.getElementById('cj-audience-content');
+
+    content.innerHTML = audiences.map(a => `
+        <div class="aud-block">
+            <div class="aud-name">📌 ${a.name}</div>
+            <div class="aud-desc">${a.desc}</div>
+        </div>
+    `).join('<hr style="border:none;border-top:1px solid #fde68a;margin:8px 0">');
+
+    panel.style.display = 'block';
+}
+
+// ── onClienteChange (cc + sc) ─────────────────────────────────────────────────
+async function onClienteChange(prefix) {
+    const selId    = `${prefix}-cliente`;
+    const clientNm = document.getElementById(selId).value;
+    const nicho    = getClientNicho(selId);
+
+    const panelId   = `${prefix}-research`;
+    const contentId = `${prefix}-research-content`;
+    document.getElementById(panelId).style.display = 'none';
+
+    if (!clientNm) return;
+
+    // Try server for niche research
+    try {
+        const r = await fetch(`${API}/niche_research?client=${encodeURIComponent(clientNm)}`, { signal: AbortSignal.timeout(3000) });
+        if (r.ok) {
+            const d = await r.json();
+            renderResearchPanel(panelId, contentId, d);
+        }
+    } catch {}
+}
+
+// ── Criar Conjunto — step handlers ───────────────────────────────────────────
+async function onCjClienteChange() {
+    const sel    = document.getElementById('cj-cliente');
+    const name   = sel.value;
+    const opt    = sel.options[sel.selectedIndex];
+    const accId  = opt?.dataset?.account || '';
+    const nicho  = opt?.dataset?.nicho   || 'default';
+
+    // Reset downstream
+    const campSel = document.getElementById('cj-campanha');
+    const adsSel  = document.getElementById('cj-adset-fonte');
+    campSel.innerHTML = '<option value="">Carregando campanhas…</option>';
+    campSel.disabled  = true;
+    adsSel.innerHTML  = '<option value="">Selecione a campanha primeiro…</option>';
+    adsSel.disabled   = true;
+    document.getElementById('cj-audience').style.display = 'none';
+
+    if (!name) {
+        campSel.innerHTML = '<option value="">Selecione o cliente primeiro…</option>';
+        return;
+    }
+
+    // Show audience suggestions immediately
+    renderAudiencePanel(nicho);
+
+    if (!accId) {
+        campSel.innerHTML = '<option value="">Conta Meta não configurada</option>';
+        return;
+    }
+
+    // Load campaigns
+    try {
+        const r = await fetch(`${API}/campaigns?account_id=${encodeURIComponent(accId)}`, { signal: AbortSignal.timeout(5000) });
+        if (!r.ok) throw new Error();
+        const d = await r.json();
+        const camps = d.campaigns || [];
+        campSel.innerHTML = camps.length
+            ? camps.map(c => `<option value="${c.id}" data-name="${c.name}">${c.name} (${c.status})</option>`).join('')
+            : '<option value="">Nenhuma campanha ativa encontrada</option>';
+        campSel.disabled = !camps.length;
+        if (camps.length) onCjCampanhaChange();
+    } catch {
+        campSel.innerHTML = '<option value="">Erro ao carregar campanhas</option>';
+    }
+}
+
+async function onCjCampanhaChange() {
+    const campId = document.getElementById('cj-campanha').value;
+    const adsSel = document.getElementById('cj-adset-fonte');
+    adsSel.innerHTML = '<option value="">Carregando conjuntos…</option>';
+    adsSel.disabled  = true;
+
+    if (!campId) return;
+
+    try {
+        const r = await fetch(`${API}/adsets?campaign_id=${encodeURIComponent(campId)}`, { signal: AbortSignal.timeout(5000) });
+        if (!r.ok) throw new Error();
+        const d = await r.json();
+        const adsets = d.adsets || [];
+        adsSel.innerHTML = adsets.length
+            ? adsets.map(a => `<option value="${a.id}">${a.name} (${a.status})</option>`).join('')
+            : '<option value="">Nenhum conjunto encontrado</option>';
+        adsSel.disabled = !adsets.length;
+    } catch {
+        adsSel.innerHTML = '<option value="">Erro ao carregar conjuntos</option>';
+    }
+}
+
+// ── Criar Campanha (estrutura textual) ───────────────────────────────────────
+function gerarEstruturaCampanha() {
+    const cliente   = document.getElementById('cc-cliente').value;
+    const plataforma = document.getElementById('cc-plataforma').value;
+    const objetivo  = document.getElementById('cc-objetivo').value;
+    const orcamento = document.getElementById('cc-orcamento').value;
+    const obs       = document.getElementById('cc-obs').value;
+
+    if (!cliente) { showResult('cc-result', 'Selecione o cliente.', 'err'); return; }
+
+    // Find client config
+    const c = CLIENTS.find(x => x.name === cliente) || {};
+    const bench = {
+        alunos:    { cpl: 30, fw: 2.5, fc: 3.5 },
+        pacientes: { cpl: 50, fw: 2.0, fc: 2.5 },
+        varejo:    { cpl: 18, fw: 2.5, fc: 3.5 },
+        industria: { cpl: 60, fw: 2.5, fc: 3.5 },
+    }[c.nicho] || { cpl: 30, fw: 2.5, fc: 3.5 };
+
+    const estrutura = `📋 ESTRUTURA DE CAMPANHA — ${cliente}
+Plataforma: ${plataforma} | Objetivo: ${objetivo}
+Orçamento diário: R$${orcamento || '?'}${obs ? '\nObs: ' + obs : ''}
+
+CAMPANHA
+• Tipo de compra: Leilão (AUCTION)
+• Estratégia de lance: Custo por resultado mais baixo
+• Meta de CPL: R$${bench.cpl}
+
+CONJUNTO 1 — Público Frio (Topo de funil)
+• Interesse + Lookalike 1–5%
+• Orçamento: 60% do total (R$${Math.round((orcamento || 50) * 0.6)}/dia)
+• Limite frequência: ${bench.fw} (atenção) / ${bench.fc} (pausar)
+
+CONJUNTO 2 — Remarketing (Fundo de funil)
+• Visitantes site 30d + engajamento 60d
+• Orçamento: 40% do total (R$${Math.round((orcamento || 50) * 0.4)}/dia)
+
+ANÚNCIOS (por conjunto)
+• 3–4 criativos por conjunto (teste A/B implícito)
+• Formatos: feed quadrado 1:1 + story 9:16
+• Copy: testar 2 ângulos de proposta de valor
+• CTA: Saiba mais / Inscreva-se / Fale conosco
+
+⚠️ Checklist pré-publicação:
+☐ Pixel instalado e evento de lead configurado
+☐ Janela de atribuição: 7 dias clique / 1 dia visualização
+☐ UTMs nos links (utm_source=meta&utm_medium=cpc)
+☐ Aprovação do criativo pela plataforma`;
+
+    showResult('cc-result', estrutura, 'info');
+}
+
+// ── Buscar criativos ─────────────────────────────────────────────────────────
+async function buscarCriativos() {
+    const adsSel  = document.getElementById('cj-adset-fonte');
+    const campSel = document.getElementById('cj-campanha');
+    const cjSel   = document.getElementById('cj-cliente');
+    const opt     = cjSel.options[cjSel.selectedIndex];
+    const accId   = opt?.dataset?.account || '';
+
+    if (!accId) { alert('Selecione o cliente e aguarde o carregamento da conta Meta.'); return; }
+    if (!(await checkServer())) return;
+
+    try {
+        const r = await fetch(`${API}/creatives?account_id=${encodeURIComponent(accId)}`);
+        const d = await r.json();
+        const list = document.getElementById('creative-list');
+        list.innerHTML = '';
+        const creatives = d.creatives || [];
+        if (!creatives.length) {
+            list.innerHTML = '<div style="color:#94a3b8;font-size:12px;padding:8px">Nenhum criativo encontrado.</div>';
+        } else {
+            creatives.forEach(c => {
+                const div = document.createElement('div');
+                div.className = 'creative-item';
+                div.innerHTML = `
+                    <input type="checkbox" value="${c.id}" id="cr-${c.id}">
+                    <img src="${c.thumb || ''}" onerror="this.src=''" alt="">
+                    <label class="cname" for="cr-${c.id}" style="margin:0;font-weight:400">${c.name}</label>
+                `;
+                list.appendChild(div);
+            });
+        }
+        document.getElementById('creative-options').style.display = 'block';
+    } catch(e) {
+        alert('Erro ao buscar criativos: ' + e.message);
+    }
+}
+
+// ── Criar Conjunto ───────────────────────────────────────────────────────────
+async function criarConjunto() {
+    if (!(await checkServer())) return;
+
+    const source  = document.getElementById('cj-adset-fonte').value.trim();
+    const cjSel   = document.getElementById('cj-cliente');
+    const opt     = cjSel.options[cjSel.selectedIndex];
+    const accId   = opt?.dataset?.account || '';
+    const name    = document.getElementById('cj-name').value.trim();
+    const budget  = parseFloat(document.getElementById('cj-budget').value) || 50;
+
+    if (!source || !accId || !name) {
+        showResult('cj-result', 'Selecione cliente, campanha, conjunto fonte e informe um nome.', 'err');
+        return;
+    }
+
+    const selected = [...document.querySelectorAll('#creative-list input[type=checkbox]:checked')].map(i => i.value);
+    const client   = cjSel.value;
+
+    try {
+        const r = await fetch(`${API}/create_adset`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ source_adset_id: source, account_id: accId, name, daily_budget: budget, creative_ids: selected, client, reason: `Novo conjunto criado via painel: ${name}` })
+        });
+        const d = await r.json();
+        if (d.success) {
+            showResult('cj-result', `✅ Conjunto criado: ${d.adset_id}\n${d.ads_created?.length || 0} anúncio(s) criado(s) — status PAUSADO\nRevise e ative no Gerenciador de Anúncios.`, 'ok');
+        } else {
+            showResult('cj-result', '❌ Erro: ' + (d.error || JSON.stringify(d)), 'err');
+        }
+    } catch(e) {
+        showResult('cj-result', '❌ Falha na requisição: ' + e.message, 'err');
+    }
+}
+
+// ── Upload Criativo ──────────────────────────────────────────────────────────
+async function uploadCriativo() {
+    if (!(await checkServer())) return;
+
+    const adset   = document.getElementById('up-adset').value.trim();
+    const adname  = document.getElementById('up-adname').value.trim();
+    const image   = document.getElementById('up-image').files[0];
+    const body    = document.getElementById('up-body').value.trim();
+    const headline = document.getElementById('up-headline').value.trim();
+    const url     = document.getElementById('up-url').value.trim();
+
+    if (!adset || !adname || !image || !url) {
+        showResult('up-result', 'Preencha conjunto, nome, imagem e URL.', 'err');
+        return;
+    }
+
+    const fd = new FormData();
+    fd.append('adset_id',  adset);
+    fd.append('ad_name',   adname);
+    fd.append('image',     image, image.name);
+    fd.append('body_text', body);
+    fd.append('headline',  headline);
+    fd.append('link_url',  url);
+
+    try {
+        showResult('up-result', '⏳ Enviando imagem e criando anúncio…', 'info');
+        const r = await fetch(`${API}/upload_creative`, { method: 'POST', body: fd });
+        const d = await r.json();
+        if (d.success) {
+            showResult('up-result', `✅ Anúncio criado: ${d.ad_id}\nCriativo ID: ${d.creative_id}\nStatus: PAUSADO — revise e ative no Gerenciador.`, 'ok');
+        } else {
+            showResult('up-result', '❌ Erro: ' + (d.error || JSON.stringify(d)), 'err');
+        }
+    } catch(e) {
+        showResult('up-result', '❌ Falha no upload: ' + e.message, 'err');
+    }
+}
+
+// ── Gerar Briefing (popup) ───────────────────────────────────────────────────
+async function gerarBriefing() {
+    const cliente = document.getElementById('sc-cliente').value;
+    const period  = document.getElementById('sc-period').value;
+
+    if (!cliente) { showResult('sc-result', 'Selecione o cliente.', 'err'); return; }
+
+    const btn = document.getElementById('sc-btn');
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner"></span> Gerando briefing…`;
+    document.getElementById('sc-result').style.display = 'none';
+
+    try {
+        const r = await fetch(`${API}/generate_briefing?client=${encodeURIComponent(cliente)}&period=${period}`, { signal: AbortSignal.timeout(30000) });
+        const d = await r.json();
+
+        if (d.ok && d.html) {
+            openBriefingModal(d.html, cliente, period);
+        } else if (d.path) {
+            // Server returned path only — open as new tab
+            window.open(d.path, '_blank');
+            showResult('sc-result', `✅ Briefing gerado: ${d.path}`, 'ok');
+        } else {
+            throw new Error(d.error || 'Resposta inválida');
+        }
+    } catch(e) {
+        // Fallback: show terminal instruction + static niche research
+        const safeName = cliente.replace(/ /g, '_');
+        showResult('sc-result',
+            `Para gerar o briefing, execute no terminal:\n\npython3 ~/.claude/skills/gestor-trafego/scripts/generate_creative_pdf.py --client "${cliente}" --period ${period}\n\nO arquivo será salvo em:\n~/Documents/projetosclaude/Gestor de Trafego/dashboards/`,
+            'info'
+        );
+        document.getElementById('sc-result').style.whiteSpace = 'pre-line';
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '📄 Gerar briefing (popup)';
+    }
+}
+
+// ── Modal ─────────────────────────────────────────────────────────────────────
+function openBriefingModal(htmlContent, cliente, period) {
+    document.getElementById('modal-title').textContent = `📄 Briefing — ${cliente} (${period})`;
+    document.getElementById('modal-html-content').innerHTML = htmlContent;
+    document.getElementById('briefing-modal').classList.add('open');
+}
+
+function closeModal(e) {
+    if (e.target.id === 'briefing-modal') {
+        e.target.classList.remove('open');
+    }
+}
+
+// ── Log de ações ─────────────────────────────────────────────────────────────
+async function carregarLog() {
+    try {
+        const r = await fetch(`${API}/log?limit=10`, { signal: AbortSignal.timeout(2500) });
+        if (!r.ok) throw new Error();
+        const d = await r.json();
+        renderLog(d.records || []);
+    } catch {
+        document.getElementById('log-list').innerHTML =
+            '<div style="color:#94a3b8;font-size:13px">Log disponível em: <code>~/.gestor-trafego/actions_log.jsonl</code></div>';
+    }
+}
+
+function renderLog(records) {
+    const el = document.getElementById('log-list');
+    if (!records.length) {
+        el.innerHTML = '<div style="color:#94a3b8;font-size:13px">Nenhuma ação registrada ainda.</div>';
+        return;
+    }
+    const icons = { meta: '🔵', google: '🟢', tiktok: '⚫' };
+    el.innerHTML = records.map(r => `
+        <div class="log-item">
+            <span class="ts">${(r.ts || '').slice(0,16).replace('T',' ')}</span>
+            &nbsp; ${icons[r.platform] || '⚪'} <b>${r.client}</b>
+            — ${r.action_label || r.action_type}: ${r.target}
+            <span style="color:#94a3b8"> — ${(r.justification||'').slice(0,70)}${(r.justification||'').length > 70 ? '…' : ''}</span>
+        </div>
+    `).join('');
+}
+
+// ── Research status ───────────────────────────────────────────────────────────
+async function checkResearchStatus() {
+    const badge   = document.getElementById('research-badge');
+    const scPanel = document.getElementById('sc-research-status');
+    try {
+        const r = await fetch(`${API}/research_status`, { signal: AbortSignal.timeout(2500) });
+        if (!r.ok) throw new Error();
+        const d = await r.json();
+
+        if (!d.exists) {
+            badge.textContent = '⚠️ Pesquisa nunca rodou';
+            badge.style.cssText = 'display:inline-block;background:#fef3c7;color:#92400e;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600';
+            scPanel.innerHTML  = '⚠️ Nenhuma pesquisa semanal encontrada. Clique em "Rodar pesquisa agora" para gerar os briefings.';
+            scPanel.style.cssText = 'display:block;background:#fef3c7;border-left:3px solid #f59e0b;color:#92400e;padding:9px 12px;border-radius:8px;font-size:12px';
+        } else if (d.stale) {
+            const days = d.days_ago !== null ? `há ${d.days_ago} dias` : '';
+            badge.textContent = `⚠️ Pesquisa desatualizada (${days})`;
+            badge.style.cssText = 'display:inline-block;background:#fee2e2;color:#7f1d1d;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600';
+            scPanel.innerHTML  = `⚠️ Última pesquisa: ${d.run_date?.slice(0,10)} (${days}). Recomendado rodar toda segunda-feira.`;
+            scPanel.style.cssText = 'display:block;background:#fee2e2;border-left:3px solid #ef4444;color:#7f1d1d;padding:9px 12px;border-radius:8px;font-size:12px';
+        } else {
+            const days = d.days_ago === 0 ? 'hoje' : `há ${d.days_ago} dia(s)`;
+            badge.textContent = `✅ Pesquisa: ${d.run_date?.slice(0,10)} (${days})`;
+            badge.style.cssText = 'display:inline-block;background:#d1fae5;color:#065f46;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600';
+            scPanel.innerHTML  = `✅ Última pesquisa semanal: ${d.run_date?.slice(0,10)} — ${d.briefings_ok} briefing(s) gerado(s) ${days}.`;
+            scPanel.style.cssText = 'display:block;background:#f0fdf4;border-left:3px solid #10b981;color:#065f46;padding:9px 12px;border-radius:8px;font-size:12px';
+        }
+    } catch {}
+}
+
+async function rodarPesquisaSemanal() {
+    const btn = document.getElementById('sc-weekly-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Rodando…';
+
+    try {
+        const r = await fetch(`${API}/run_weekly`, { method: 'POST', signal: AbortSignal.timeout(120000) });
+        const d = await r.json();
+        if (d.ok) {
+            showResult('sc-result', `✅ Pesquisa semanal concluída: ${d.briefings_ok} briefing(s) gerado(s).`, 'ok');
+            await checkResearchStatus();
+        } else {
+            // Fallback: tell user to run manually
+            showResult('sc-result',
+                `Execute no terminal para rodar a pesquisa:\n\npython3 ~/.claude/skills/gestor-trafego/scripts/cron_weekly.py`,
+                'info'
+            );
+            document.getElementById('sc-result').style.whiteSpace = 'pre-line';
+        }
+    } catch {
+        showResult('sc-result',
+            `Execute no terminal:\n\npython3 ~/.claude/skills/gestor-trafego/scripts/cron_weekly.py`,
+            'info'
+        );
+        document.getElementById('sc-result').style.whiteSpace = 'pre-line';
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '🔄 Rodar pesquisa agora';
+    }
+}
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+(async () => {
+    await checkServer();
+    await loadClients();
+    carregarLog();
+    checkResearchStatus();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Opção 3 — Relatório de Performance · IOA Campinas</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, sans-serif; background: #fff; color: #1a1a1a; }
+
+    /* ── CAPA ── */
+    .capa {
+      background: #111;
+      padding: 60px 60px 48px;
+      position: relative;
+      overflow: hidden;
+    }
+    .capa::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 320px; height: 320px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #F5C800 0%, transparent 70%);
+      opacity: 0.12;
+    }
+    .capa::after {
+      content: '';
+      position: absolute;
+      bottom: -80px; left: 40%;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      background: #F5C800;
+      opacity: 0.06;
+    }
+    .capa-tag {
+      display: inline-block;
+      background: #F5C800;
+      color: #111;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 3px;
+      margin-bottom: 20px;
+    }
+    .capa h1 { font-size: 42px; font-weight: 800; color: #fff; line-height: 1.1; letter-spacing: -1px; margin-bottom: 10px; }
+    .capa h1 span { color: #F5C800; }
+    .capa .period { font-size: 16px; color: #888; margin-bottom: 40px; }
+    .capa-stats {
+      display: flex; gap: 40px; flex-wrap: wrap;
+      border-top: 1px solid #2a2a2a;
+      padding-top: 28px;
+    }
+    .capa-stat .cs-val { font-size: 28px; font-weight: 800; color: #F5C800; }
+    .capa-stat .cs-label { font-size: 11px; color: #666; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.6px; }
+    .capa-agency { position: absolute; top: 28px; right: 40px; text-align: right; }
+    .capa-agency .ag-name { font-size: 11px; font-weight: 700; color: #F5C800; letter-spacing: 1.5px; text-transform: uppercase; }
+    .capa-agency .ag-sub { font-size: 10px; color: #555; }
+
+    /* ── BODY ── */
+    .body { max-width: 1100px; margin: 0 auto; padding: 48px 60px; }
+
+    /* ── SECTION HEADER ── */
+    .sec-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; margin-top: 48px; }
+    .sec-header:first-child { margin-top: 0; }
+    .sec-line { flex: 1; height: 1px; background: #e5e5e5; }
+    .sec-label { font-size: 10px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #aaa; white-space: nowrap; }
+    .sec-num {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: #F5C800; color: #111;
+      font-size: 12px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* ── INSIGHT BOX ── */
+    .insight {
+      background: #fafafa;
+      border-left: 4px solid #F5C800;
+      border-radius: 0 8px 8px 0;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      font-size: 14px;
+      line-height: 1.7;
+      color: #333;
+    }
+    .insight strong { color: #111; }
+
+    /* ── KPI CARDS ── */
+    .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+    .kpi-card {
+      border: 1px solid #e8e8e8;
+      border-radius: 10px;
+      padding: 20px 22px;
+      position: relative;
+      overflow: hidden;
+    }
+    .kpi-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 3px;
+      background: #F5C800;
+    }
+    .kpi-card .kc-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #999; margin-bottom: 10px; }
+    .kpi-card .kc-val { font-size: 30px; font-weight: 800; color: #111; line-height: 1; }
+    .kpi-card .kc-sub { font-size: 11px; color: #888; margin-top: 6px; }
+    .kpi-card.featured { background: #111; border-color: #111; }
+    .kpi-card.featured .kc-label { color: #666; }
+    .kpi-card.featured .kc-val { color: #F5C800; }
+    .kpi-card.featured .kc-sub { color: #555; }
+    .kpi-card.featured::after { background: #F5C800; }
+
+    /* ── COURSE TABLE ── */
+    .course-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+    .course-row {
+      display: grid;
+      grid-template-columns: 200px 80px 80px auto 80px 100px;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 18px;
+      background: #fafafa;
+      border-radius: 8px;
+      border: 1px solid #f0f0f0;
+    }
+    .course-row.header-row { background: transparent; border: none; padding-bottom: 4px; }
+    .course-row.header-row span { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #bbb; }
+    .course-row.top { background: #fffbeb; border-color: #F5C800; }
+    .course-row.paused { opacity: 0.5; }
+    .cr-name { font-size: 13px; font-weight: 600; color: #111; }
+    .cr-num { font-size: 13px; color: #444; }
+    .cr-num.big { font-size: 16px; font-weight: 800; color: #111; }
+    .cr-num.green { color: #16a34a; }
+    .cr-num.red { color: #dc2626; }
+
+    /* ── BAR CHART CSS ── */
+    .bar-section { margin-bottom: 32px; }
+    .bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+    .bar-label { width: 180px; font-size: 12px; color: #555; flex-shrink: 0; text-align: right; }
+    .bar-track { flex: 1; height: 28px; background: #f5f5f5; border-radius: 4px; overflow: hidden; position: relative; }
+    .bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      display: flex; align-items: center; padding-left: 10px;
+      font-size: 11px; font-weight: 700; color: #111;
+      transition: width 0.3s ease;
+    }
+    .bar-fill.yellow { background: #F5C800; }
+    .bar-fill.light { background: #fde68a; }
+    .bar-fill.faint { background: #fef3c7; }
+    .bar-fill.gray { background: #e5e5e5; }
+
+    /* ── PACIENTES CARDS ── */
+    .pac-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .pac-card {
+      border: 1px solid #e8e8e8;
+      border-radius: 10px;
+      padding: 18px;
+      text-align: center;
+    }
+    .pac-card .pc-cat { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #999; margin-bottom: 10px; }
+    .pac-card .pc-val { font-size: 28px; font-weight: 800; color: #111; }
+    .pac-card .pc-unit { font-size: 11px; color: #888; }
+    .pac-card .pc-cpl { font-size: 12px; font-weight: 700; color: #F5C800; margin-top: 8px; background: #111; padding: 3px 8px; border-radius: 4px; display: inline-block; }
+
+    /* ── CONCLUSÃO ── */
+    .conclusao {
+      background: #111;
+      border-radius: 12px;
+      padding: 32px 36px;
+      margin-top: 48px;
+    }
+    .conclusao h3 { font-size: 18px; font-weight: 800; color: #F5C800; margin-bottom: 16px; }
+    .conclusao-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .conclusao-item {
+      background: #1a1a1a;
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #999;
+    }
+    .conclusao-item strong { color: #fff; display: block; margin-bottom: 4px; }
+
+    /* ── FOOTER ── */
+    .footer-bar {
+      background: #111;
+      padding: 18px 60px;
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 0;
+    }
+    .footer-bar .fb-left { font-size: 11px; color: #555; }
+    .footer-bar .fb-brand { font-size: 11px; font-weight: 700; color: #F5C800; letter-spacing: 1px; }
+
+    @media (max-width: 800px) {
+      .body { padding: 28px 24px; }
+      .kpi-row, .pac-grid { grid-template-columns: repeat(2, 1fr); }
+      .course-row { grid-template-columns: 1fr 60px 60px; }
+      .course-row > *:nth-child(n+4) { display: none; }
+      .conclusao-grid { grid-template-columns: 1fr; }
+      .capa { padding: 40px 24px 36px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- CAPA -->
+  <div class="capa">
+    <div class="capa-agency">
+      <div class="ag-name">Meio Comunicação</div>
+      <div class="ag-sub">e Consultoria</div>
+    </div>
+    <div class="capa-tag">Relatório de Performance</div>
+    <h1>Tráfego Pago<br><span>IOA Campinas</span></h1>
+    <div class="period">01 a 12 de Abril de 2026 · Meta Ads & Google Ads</div>
+    <div class="capa-stats">
+      <div class="capa-stat">
+        <div class="cs-val">118</div>
+        <div class="cs-label">Leads gerados</div>
+      </div>
+      <div class="capa-stat">
+        <div class="cs-val">R$ 35</div>
+        <div class="cs-label">Custo por lead</div>
+      </div>
+      <div class="capa-stat">
+        <div class="cs-val">R$ 4.240</div>
+        <div class="cs-label">Investimento total</div>
+      </div>
+      <div class="capa-stat">
+        <div class="cs-val">68%</div>
+        <div class="cs-label">Leads qualificados</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="body">
+
+    <!-- 01. VISÃO GERAL -->
+    <div class="sec-header">
+      <div class="sec-num">01</div>
+      <div class="sec-label">Visão Geral do Período</div>
+      <div class="sec-line"></div>
+    </div>
+
+    <div class="insight">
+      Nos primeiros <strong>12 dias de abril</strong>, as campanhas entregaram <strong>118 novos contatos</strong> para IOA Campinas — sendo 84 de alunos (Meta + Google) e 34 de pacientes. O custo médio de <strong>R$ 35 por lead</strong> está dentro do parâmetro esperado para o segmento de pós-graduação odontológica. O destaque absoluto do período foi a campanha de <strong>Cirurgia Estética Orofacial</strong>, que gerou 37 leads ao custo de apenas R$ 9 cada.
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi-card featured">
+        <div class="kc-label">Leads Totais</div>
+        <div class="kc-val">118</div>
+        <div class="kc-sub">Alunos + Pacientes · Meta & Google</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kc-label">Custo por Lead</div>
+        <div class="kc-val">R$ 35</div>
+        <div class="kc-sub">Média geral do período</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kc-label">Investimento Total</div>
+        <div class="kc-val">R$ 4.240</div>
+        <div class="kc-sub">Meta R$3.740 · Google R$500</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kc-label">Taxa de Qualificação</div>
+        <div class="kc-val">68%</div>
+        <div class="kc-sub">81 de 118 leads qualificados</div>
+      </div>
+    </div>
+
+    <!-- 02. CAPTAÇÃO DE ALUNOS -->
+    <div class="sec-header">
+      <div class="sec-num">02</div>
+      <div class="sec-label">Captação de Alunos — Meta Ads</div>
+      <div class="sec-line"></div>
+    </div>
+
+    <div class="insight">
+      As campanhas de alunos geraram <strong>73 leads via Meta</strong> e <strong>11 via Google</strong>, totalizando 84. A eficiência variou bastante entre cursos — Cir. Estética Orofacial se destacou com CPL de R$ 9, enquanto alguns cursos estão com criativo em fadiga e precisam de renovação.
+    </div>
+
+    <!-- LEADS POR CURSO — BARRA VISUAL -->
+    <div class="bar-section">
+      <div class="bar-row"><div class="bar-label">Cir. Estética Orof.</div><div class="bar-track"><div class="bar-fill yellow" style="width:100%">37 leads · R$9</div></div></div>
+      <div class="bar-row"><div class="bar-label">Odontopediatria</div><div class="bar-track"><div class="bar-fill light" style="width:27%">10 leads · R$42</div></div></div>
+      <div class="bar-row"><div class="bar-label">HOF</div><div class="bar-track"><div class="bar-fill light" style="width:22%">8 leads · R$53</div></div></div>
+      <div class="bar-row"><div class="bar-label">Cirur. Traum. Buco.</div><div class="bar-track"><div class="bar-fill faint" style="width:16%">6 leads · R$72</div></div></div>
+      <div class="bar-row"><div class="bar-label">Implant. e Perio.</div><div class="bar-track"><div class="bar-fill faint" style="width:11%">4 leads · R$106</div></div></div>
+      <div class="bar-row"><div class="bar-label">Dentística e Prót.</div><div class="bar-track"><div class="bar-fill faint" style="width:11%">4 leads · R$108</div></div></div>
+      <div class="bar-row"><div class="bar-label">Ortodontia</div><div class="bar-track"><div class="bar-fill faint" style="width:8%">3 leads · R$139</div></div></div>
+      <div class="bar-row"><div class="bar-label">Cursos Geral</div><div class="bar-track"><div class="bar-fill gray" style="width:3%">1 lead · pausada</div></div></div>
+    </div>
+
+    <!-- 03. CAPTAÇÃO DE PACIENTES -->
+    <div class="sec-header">
+      <div class="sec-num">03</div>
+      <div class="sec-label">Captação de Pacientes — Meta Ads</div>
+      <div class="sec-line"></div>
+    </div>
+
+    <div class="insight">
+      As campanhas de pacientes entregaram <strong>34 leads</strong> com investimento de <strong>R$ 606</strong> e CPL médio de <strong>R$ 16</strong> — o melhor custo por lead entre todas as frentes. Pacientes HOF e Ortod. registraram taxa de qualificação de <strong>100%</strong> dos leads recebidos.
+    </div>
+
+    <div class="pac-grid">
+      <div class="pac-card">
+        <div class="pc-cat">Pacientes Geral</div>
+        <div class="pc-val">20</div>
+        <div class="pc-unit">leads · 7 qualif.</div>
+        <div class="pc-cpl">R$15 CPL</div>
+      </div>
+      <div class="pac-card">
+        <div class="pc-cat">Pacientes Implante</div>
+        <div class="pc-val">7</div>
+        <div class="pc-unit">leads · 3 qualif.</div>
+        <div class="pc-cpl">R$21 CPL</div>
+      </div>
+      <div class="pac-card">
+        <div class="pc-cat">Pacientes HOF</div>
+        <div class="pc-val">5</div>
+        <div class="pc-unit">leads · 5 qualif. ✓</div>
+        <div class="pc-cpl">R$15 CPL</div>
+      </div>
+      <div class="pac-card">
+        <div class="pc-cat">Pacientes Ortod.</div>
+        <div class="pc-val">2</div>
+        <div class="pc-unit">leads · 2 qualif. ✓</div>
+        <div class="pc-cpl">R$13 CPL</div>
+      </div>
+    </div>
+
+    <!-- 04. PRÓXIMOS PASSOS -->
+    <div class="conclusao">
+      <h3>O que fazemos agora</h3>
+      <div class="conclusao-grid">
+        <div class="conclusao-item">
+          <strong>🔴 Produzir vídeo para Implant. e Perio.</strong>
+          Campanha com apenas criativo estático está entrando em fadiga. Solicitar produção com urgência para manter a performance antes de uma queda de resultados.
+        </div>
+        <div class="conclusao-item">
+          <strong>🔴 Novo criativo para Cursos Geral</strong>
+          Campanha pausada aguardando material novo. CPL estava acima do aceitável. A reativação depende da aprovação da nova peça criativa.
+        </div>
+        <div class="conclusao-item">
+          <strong>🟡 Acompanhar Ortodontia com criativo alternado</strong>
+          Vídeo anterior do Dr. Josué reativado para sustentar performance enquanto novos criativos são produzidos.
+        </div>
+        <div class="conclusao-item">
+          <strong>🟡 Criar variações de cards para todas as campanhas</strong>
+          Artes secundárias estendem a vida útil dos anúncios sem necessidade de alterar segmentação ou público.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer-bar">
+    <div class="fb-left">IOA Campinas · Abril 2026 · Opção 3 — Relatório de Performance para Cliente</div>
+    <div class="fb-brand">Meio Comunicação e Consultoria</div>
+  </div>
+
+</body>
+</html>
