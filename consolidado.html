@@ -404,24 +404,6 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal()
 }
 #radar-auth-btn:hover { background: #e08e00; }
 #radar-auth-err { color: #ef4444; font-size: 12px; display: none; }
-#radar-apikey-wrap {
-  flex: 1; display: none; flex-direction: column;
-  align-items: center; justify-content: center;
-  background: #111; padding: 32px; gap: 14px;
-}
-#radar-apikey-wrap h3 { color: #fff; font-size: 14px; margin: 0 0 4px; text-align: center; }
-#radar-apikey-wrap small { color: #888; font-size: 11px; text-align: center; }
-#radar-apikey-input {
-  width: 100%; box-sizing: border-box; padding: 10px 14px;
-  background: #222; border: 1px solid #333; border-radius: 8px;
-  color: #fff; font-size: 12px; font-family: monospace; outline: none;
-}
-#radar-apikey-input:focus { border-color: #f59e0b; }
-#radar-apikey-btn {
-  width: 100%; padding: 11px; background: #f59e0b; color: #111;
-  border: none; border-radius: 8px; font-size: 13px; font-weight: 700;
-  cursor: pointer;
-}
 #radar-messages {
   flex: 1; overflow-y: auto; padding: 16px; display: flex;
   flex-direction: column; gap: 10px; background: #fafafa; display: none;
@@ -512,14 +494,6 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal()
     <button id="radar-auth-btn" onclick="radarLogin()">Entrar</button>
   </div>
 
-  <!-- Tela de API key -->
-  <div id="radar-apikey-wrap">
-    <h3>🔑 API Key</h3>
-    <small>Insira sua Anthropic API Key.<br>Salva apenas nesta sessão.</small>
-    <input id="radar-apikey-input" type="password" placeholder="sk-ant-..." />
-    <button id="radar-apikey-btn" onclick="radarSalvarKey()">Salvar e continuar</button>
-  </div>
-
   <!-- Mensagens -->
   <div id="radar-messages">
     <div class="radar-typing" id="radar-typing">
@@ -583,26 +557,11 @@ function radarLogin() {
 }
 
 function radarPosLogin() {
-  const key = sessionStorage.getItem('anthropic_key');
-  if (!key) {
-    document.getElementById('radar-auth').style.display = 'none';
-    document.getElementById('radar-apikey-wrap').style.display = 'flex';
-  } else {
-    radarAbrirChat();
-  }
-}
-
-function radarSalvarKey() {
-  const k = document.getElementById('radar-apikey-input').value.trim();
-  if (!k.startsWith('sk-')) { alert('API Key inválida.'); return; }
-  sessionStorage.setItem('anthropic_key', k);
-  document.getElementById('radar-apikey-wrap').style.display = 'none';
   radarAbrirChat();
 }
 
 function radarAbrirChat() {
   document.getElementById('radar-auth').style.display = 'none';
-  document.getElementById('radar-apikey-wrap').style.display = 'none';
   document.getElementById('radar-messages').style.display = 'flex';
   document.getElementById('radar-input-area').style.display = 'flex';
 }
@@ -624,15 +583,6 @@ function radarAbrir(clienteEnc, alertaEnc) {
   const auth = sessionStorage.getItem('radar_auth');
   if (!auth) {
     document.getElementById('radar-auth').style.display = 'flex';
-    document.getElementById('radar-messages').style.display = 'none';
-    document.getElementById('radar-input-area').style.display = 'none';
-    document.getElementById('radar-apikey-wrap').style.display = 'none';
-    return;
-  }
-  const key = sessionStorage.getItem('anthropic_key');
-  if (!key) {
-    document.getElementById('radar-auth').style.display = 'none';
-    document.getElementById('radar-apikey-wrap').style.display = 'flex';
     document.getElementById('radar-messages').style.display = 'none';
     document.getElementById('radar-input-area').style.display = 'none';
     return;
@@ -706,9 +656,6 @@ function radarAprovar(btn) {
 }
 
 async function radarEnviarAPI(mensagem, silencioso) {
-  const key = sessionStorage.getItem('anthropic_key');
-  if (!key) return;
-
   if (!silencioso) radarAddMsg(mensagem, 'user');
 
   _radarHistory.push({ role: 'user', content: mensagem });
@@ -718,17 +665,10 @@ async function radarEnviarAPI(mensagem, silencioso) {
   document.getElementById('radar-messages').scrollTop = 99999;
 
   try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    const resp = await fetch('http://localhost:7070/radar_chat', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': key,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1024,
         system: 'Você é o Radar, estrategista sênior de criativos da Meio Comunicação. Siga o protocolo radar-criativos: execute a Fase 0.5 (diagnóstico do alerta), faça perguntas objetivas uma de cada vez para completar o briefing, pesquise concorrentes quando tiver os inputs necessários, e só sugira criativo quando o usuário confirmar. Seja direto e conciso. Nunca use buzzwords como alavancar, escalar, transformar, potencializar.',
         messages: _radarHistory,
       }),
