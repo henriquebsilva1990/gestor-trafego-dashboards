@@ -116,6 +116,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal()
         </div>
         <div style="display:flex;align-items:center;gap:12px">
             <a href="painel_acoes.html" style="font-size:12px;color:#888;text-decoration:none;border:1px solid #333;padding:7px 16px;border-radius:20px">⚡ Painel de Ações</a>
+            <button onclick="radarAbrirDireto()" style="font-size:12px;color:#111;background:#f59e0b;border:none;padding:7px 16px;border-radius:20px;cursor:pointer;font-weight:700">🎯 Radar</button>
             <div class="period-badge">Atualizado: 20/04/2026 11:05</div>
         </div>
     </div>
@@ -338,6 +339,488 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal()
 
     </div>
     <div class="footer">Gestor de Tráfego · Meio Comunicação · 20/04/2026 11:05</div>
-{RADAR_CHAT_WIDGET}
+<!-- ====== RADAR CHAT LATERAL ====== -->
+<style>
+#radar-widget {
+  position: fixed; top: 0; right: -420px; width: 400px; height: 100vh;
+  background: #fff; box-shadow: -4px 0 24px rgba(0,0,0,.18);
+  display: flex; flex-direction: column; z-index: 10000;
+  transition: right .3s cubic-bezier(.4,0,.2,1); font-family: -apple-system, sans-serif;
+}
+#radar-widget.open { right: 0; }
+#radar-header {
+  background: #111; padding: 16px 18px; display: flex;
+  align-items: center; justify-content: space-between; flex-shrink: 0;
+}
+#radar-header-info { display: flex; flex-direction: column; gap: 2px; }
+#radar-title { color: #fff; font-size: 14px; font-weight: 700; }
+#radar-status { color: #f59e0b; font-size: 11px; font-weight: 600; }
+#radar-close {
+  background: none; border: none; color: #888; font-size: 20px;
+  cursor: pointer; padding: 4px; line-height: 1;
+}
+#radar-close:hover { color: #fff; }
+#radar-auth {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  background: #111; padding: 32px; gap: 14px;
+}
+#radar-auth h3 { color: #fff; font-size: 15px; margin: 0 0 8px; text-align: center; }
+#radar-auth input {
+  width: 100%; box-sizing: border-box; padding: 10px 14px;
+  background: #222; border: 1px solid #333; border-radius: 8px;
+  color: #fff; font-size: 13px; outline: none;
+}
+#radar-auth input:focus { border-color: #f59e0b; }
+#radar-auth-btn {
+  width: 100%; padding: 11px; background: #f59e0b; color: #111;
+  border: none; border-radius: 8px; font-size: 13px; font-weight: 700;
+  cursor: pointer; margin-top: 4px;
+}
+#radar-auth-btn:hover { background: #e08e00; }
+#radar-auth-err { color: #ef4444; font-size: 12px; display: none; }
+#radar-messages {
+  flex: 1; overflow-y: auto; padding: 16px; display: flex;
+  flex-direction: column; gap: 10px; background: #fafafa; display: none;
+}
+.radar-msg { max-width: 85%; font-size: 13px; line-height: 1.55; padding: 10px 14px; word-break: break-word; }
+.radar-msg.bot {
+  background: #f3f4f6; border-radius: 2px 12px 12px 12px;
+  align-self: flex-start; color: #111;
+}
+.radar-msg.user {
+  background: #111; color: #fff;
+  border-radius: 12px 2px 12px 12px; align-self: flex-end;
+}
+.radar-typing {
+  display: none; align-self: flex-start; padding: 10px 14px;
+  background: #f3f4f6; border-radius: 2px 12px 12px 12px; gap: 4px;
+}
+.radar-typing span {
+  width: 7px; height: 7px; background: #aaa; border-radius: 50%;
+  display: inline-block; animation: typingDot 1.2s infinite;
+}
+.radar-typing span:nth-child(2) { animation-delay: .2s; }
+.radar-typing span:nth-child(3) { animation-delay: .4s; }
+@keyframes typingDot { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-5px)} }
+.radar-criativo-box {
+  border: 1.5px solid #f59e0b; border-radius: 10px;
+  padding: 12px; margin-top: 8px; background: #fff;
+}
+.radar-criativo-label {
+  font-size: 10px; font-weight: 700; color: #f59e0b;
+  text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px;
+}
+.radar-criativo-box textarea {
+  width: 100%; box-sizing: border-box; min-height: 100px; padding: 8px;
+  border: 1px solid #e5e7eb; border-radius: 6px; font-size: 12px;
+  font-family: inherit; resize: vertical; background: #fafafa;
+}
+.radar-criativo-actions { display: flex; gap: 8px; margin-top: 8px; }
+.radar-criativo-actions button {
+  flex: 1; padding: 8px; border-radius: 6px; font-size: 12px;
+  font-weight: 700; cursor: pointer; border: 1.5px solid #111;
+}
+.radar-criativo-actions .btn-aprovar {
+  background: #111; color: #fff;
+}
+.radar-criativo-actions .btn-editar {
+  background: #fff; color: #111;
+}
+#radar-input-area {
+  padding: 12px; border-top: 1px solid #e5e7eb; display: none;
+  gap: 8px; align-items: center; background: #fff; flex-shrink: 0;
+}
+#radar-input {
+  flex: 1; padding: 10px 14px; border: 1px solid #ddd; border-radius: 20px;
+  font-size: 13px; outline: none; background: #f9f9f9;
+}
+#radar-input:focus { border-color: #f59e0b; background: #fff; }
+#radar-send {
+  background: #111; color: #fff; border: none; border-radius: 50%;
+  width: 36px; height: 36px; cursor: pointer; font-size: 16px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+#radar-send:hover { background: #333; }
+#radar-toast-v2 {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: #1c1c1c; color: #fff; padding: 12px 20px; border-radius: 10px;
+  font-size: 13px; font-weight: 500; z-index: 99999;
+  box-shadow: 0 4px 20px rgba(0,0,0,.35); border-left: 3px solid #f59e0b;
+  max-width: 480px; text-align: center; line-height: 1.5; display: none;
+}
+</style>
+
+<div id="radar-widget">
+  <div id="radar-header">
+    <div id="radar-header-info">
+      <div id="radar-title">Radar</div>
+      <div id="radar-status">● online</div>
+    </div>
+    <button id="radar-close" onclick="radarFechar()">✕</button>
+  </div>
+
+  <!-- Tela de login -->
+  <div id="radar-auth">
+    <h3>🎯 Radar de Criativos</h3>
+    <input id="radar-user" type="text" placeholder="Usuário" autocomplete="off" />
+    <input id="radar-pass" type="password" placeholder="Senha" />
+    <div id="radar-auth-err">Usuário ou senha incorretos</div>
+    <button id="radar-auth-btn" onclick="radarLogin()">Entrar</button>
+  </div>
+
+  <!-- Mensagens -->
+  <div id="radar-messages">
+    <div class="radar-typing" id="radar-typing">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+
+  <!-- Input -->
+  <div id="radar-input-area">
+    <input id="radar-input" type="text" placeholder="Digite sua mensagem…"
+      onkeydown="if(event.key==='Enter')radarEnviar()" />
+    <button id="radar-send" onclick="radarEnviar()">➤</button>
+  </div>
+</div>
+
+<div id="radar-toast-v2"></div>
+
+<script>
+// ====== RADAR CHAT LATERAL ======
+
+const RADAR_SKILL = {
+  'IOA Campinas - Alunos':    'radar-ioa-campinas',
+  'IOA Campinas - Pacientes': 'radar-ioa-campinas',
+  'IOA Ribeirao Preto':       'radar-ioa-ribeirao',
+  'Faculdade IOA':            'radar-faculdade-ioa',
+  'IOA Piracicaba':           'radar-ioa-piracicaba',
+  'Mikro Metais':             'radar-mikro-metais',
+  'Endotec':                  'radar-endotec',
+  'Baby Center':              'radar-criativos',
+};
+const RADAR_PASTA = {
+  'IOA Campinas - Alunos':    'ioa-campinas',
+  'IOA Campinas - Pacientes': 'ioa-campinas',
+  'IOA Ribeirao Preto':       'ioa-ribeirao',
+  'Faculdade IOA':            'faculdade-ioa',
+  'IOA Piracicaba':           'ioa-piracicaba',
+  'Mikro Metais':             'mikro-metais',
+  'Endotec':                  'endotec',
+  'Baby Center':              'babycenter',
+};
+
+let _radarHistory = [];
+let _radarClienteAtual = '';
+
+function radarToast(msg) {
+  const t = document.getElementById('radar-toast-v2');
+  t.innerHTML = msg; t.style.display = 'block';
+  setTimeout(() => { t.style.display = 'none'; }, 4500);
+}
+
+function radarLogin() {
+  const u = document.getElementById('radar-user').value.trim();
+  const p = document.getElementById('radar-pass').value;
+  if (u === 'meio' && p === 'radar2026') {
+    sessionStorage.setItem('radar_auth', '1');
+    document.getElementById('radar-auth-err').style.display = 'none';
+    radarPosLogin();
+  } else {
+    document.getElementById('radar-auth-err').style.display = 'block';
+  }
+}
+
+function radarPosLogin() {
+  radarAbrirChat();
+  if (window._radarContextoPendente) {
+    radarEnviarAPI(window._radarContextoPendente, true);
+    window._radarContextoPendente = null;
+  }
+}
+
+function radarAbrirChat() {
+  document.getElementById('radar-auth').style.display = 'none';
+  document.getElementById('radar-messages').style.display = 'flex';
+  document.getElementById('radar-input-area').style.display = 'flex';
+}
+
+function radarAbrir(clienteEnc, alertaEnc) {
+  const cliente = decodeURIComponent(clienteEnc);
+  const alerta  = decodeURIComponent(alertaEnc);
+  _radarClienteAtual = cliente;
+  _radarHistory = [];
+
+  // Monta e salva contexto ANTES de verificar auth
+  window._radarClientePendente = cliente;
+  window._radarAlertaPendente = alerta;
+  const skill = RADAR_SKILL[cliente] || 'radar-criativos';
+  const contextoBriefing = [
+    '# Briefing para o Radar de Criativos',
+    '',
+    '## Cliente', cliente,
+    '',
+    '## Alerta identificado no dashboard', alerta,
+    '',
+    '## Skill que vai disparar', skill,
+    '',
+    '## Instruções',
+    '1. Execute o protocolo completo (Fases 0 a 5)',
+    '2. Fase 0.5 obrigatória — diagnostique o alerta antes de pesquisar concorrentes',
+    '3. Faça perguntas uma de cada vez para completar o briefing',
+    '4. Só sugira criativo quando eu confirmar explicitamente',
+  ].join('\n');
+  window._radarContextoPendente = contextoBriefing;
+
+  document.getElementById('radar-title').textContent = 'Radar — ' + cliente;
+  document.getElementById('radar-widget').classList.add('open');
+
+  // Limpa mensagens anteriores (exceto typing)
+  const msgs = document.getElementById('radar-messages');
+  Array.from(msgs.children).forEach(c => { if (c.id !== 'radar-typing') c.remove(); });
+  msgs.appendChild(document.getElementById('radar-typing'));
+
+  const auth = sessionStorage.getItem('radar_auth');
+  if (!auth) {
+    document.getElementById('radar-auth').style.display = 'flex';
+    document.getElementById('radar-messages').style.display = 'none';
+    document.getElementById('radar-input-area').style.display = 'none';
+    return;
+  }
+
+  radarAbrirChat();
+  radarEnviarAPI(contextoBriefing, true);
+  window._radarContextoPendente = null;
+}
+
+function radarFechar() {
+  document.getElementById('radar-widget').classList.remove('open');
+}
+
+function radarAddMsg(texto, tipo) {
+  const msgs = document.getElementById('radar-messages');
+  const typing = document.getElementById('radar-typing');
+
+  const div = document.createElement('div');
+  div.className = 'radar-msg ' + tipo;
+
+  // Detecta criativo sugerido
+  if (tipo === 'bot' && (texto.includes('**Gancho**') || texto.includes('**Criativo sugerido**') || texto.includes('**Criativo**'))) {
+    const pre = texto.split(/\*\*Gancho\*\*|\*\*Criativo sugerido\*\*|\*\*Criativo\*\*/)[0];
+    const criat = texto.substring(pre.length);
+
+    div.textContent = pre.trim();
+
+    const box = document.createElement('div');
+    box.className = 'radar-criativo-box';
+    box.innerHTML = `
+      <div class="radar-criativo-label">Criativo sugerido</div>
+      <textarea>${criat.replace(/\*\*/g,'').trim()}</textarea>
+      <div class="radar-criativo-actions">
+        <button class="btn-editar" onclick="this.closest('.radar-criativo-box').querySelector('textarea').focus()">Editar</button>
+        <button class="btn-aprovar" onclick="radarAprovar(this)">Aprovar criativo</button>
+      </div>`;
+    div.appendChild(box);
+  } else {
+    // Renderiza markdown bold simples
+    div.innerHTML = texto.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+  }
+
+  msgs.insertBefore(div, typing);
+  msgs.scrollTop = msgs.scrollHeight;
+  return div;
+}
+
+function radarAprovar(btn) {
+  const ta = btn.closest('.radar-criativo-box').querySelector('textarea');
+  navigator.clipboard.writeText(ta.value)
+    .then(() => radarToast('✅ Criativo aprovado e copiado!'))
+    .catch(() => radarToast('✅ Criativo aprovado!'));
+}
+
+async function radarEnviarAPI(mensagem, silencioso) {
+  if (!silencioso) radarAddMsg(mensagem, 'user');
+
+  _radarHistory.push({ role: 'user', content: mensagem });
+
+  const typing = document.getElementById('radar-typing');
+  typing.style.display = 'flex';
+  document.getElementById('radar-messages').scrollTop = 99999;
+
+  const _radarUrl = 'https://web-production-c6a12.up.railway.app/radar_chat';
+  const _radarPayload = { system: 'Você é o Radar, estrategista sênior de criativos da Meio Comunicação. Siga o protocolo radar-criativos: execute a Fase 0.5 (diagnóstico do alerta), faça perguntas objetivas uma de cada vez para completar o briefing, pesquise concorrentes quando tiver os inputs necessários, e só sugira criativo quando o usuário confirmar. Seja direto e conciso. Nunca use buzzwords como alavancar, escalar, transformar, potencializar.', messages: _radarHistory };
+  console.log('RADAR_FETCH:', _radarUrl, JSON.stringify(_radarPayload).slice(0, 200));
+
+  try {
+    const resp = await fetch(_radarUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(_radarPayload),
+    });
+
+    const data = await resp.json();
+    typing.style.display = 'none';
+
+    if (data.content && data.content[0]) {
+      const resposta = data.content[0].text;
+      _radarHistory.push({ role: 'assistant', content: resposta });
+      radarAddMsg(resposta, 'bot');
+    } else if (data.error) {
+      radarAddMsg('Erro: ' + (data.error.message || JSON.stringify(data.error)), 'bot');
+    }
+  } catch (e) {
+    console.error('RADAR_API_ERROR:', e);
+    typing.style.display = 'none';
+    radarAddMsg('Erro de conexão: ' + e.message, 'bot');
+  }
+}
+
+function radarEnviar() {
+  const input = document.getElementById('radar-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+  radarEnviarAPI(msg, false);
+}
+
+// --- Botões no modal de alertas ---
+
+function exportarContextoRadarCompleto() {
+  const linhas = [
+    '# Contexto completo do período — Radar de Criativos',
+    '# Meio Comunicação — ' + new Date().toLocaleString('pt-BR'),
+    ''
+  ];
+  let total = 0;
+  if (typeof ALERTS !== 'undefined') {
+    Object.entries(ALERTS).forEach(([cliente, alerts]) => {
+      if (!alerts.length) return;
+      const skill = RADAR_SKILL[cliente] || 'radar-criativos';
+      const pasta = RADAR_PASTA[cliente] || cliente.toLowerCase().replace(/\s+/g, '-');
+      linhas.push(`## ${cliente}  →  skill: ${skill}`);
+      linhas.push(`cd ~/Documents/projetosclaude/${pasta} && claude`);
+      alerts.forEach(a => {
+        const nivel = a.type === 'critical' ? '🔴 CRÍTICO' : '🟡 MONITORAR';
+        linhas.push(`- [${nivel}] ${a.msg}`);
+        total++;
+      });
+      linhas.push('');
+    });
+  }
+  linhas.push('## Instruções', '- Fase 0.5 obrigatória para todos os alertas', '- Só gere criativo quando solicitar explicitamente');
+  const texto = linhas.join('\n');
+  navigator.clipboard.writeText(texto)
+    .then(() => radarToast(`✅ ${total} alerta(s) copiados!`))
+    .catch(() => alert(texto));
+}
+
+function _radarBtnHtml(clienteEnc, alertaEnc, cor) {
+  return `<div style="margin-top:7px">
+    <button onclick="radarAbrir('${clienteEnc}','${alertaEnc}')"
+      style="font-size:11px;padding:4px 11px;border-radius:6px;
+             border:1.5px solid ${cor};background:#fff;color:${cor};
+             cursor:pointer;font-weight:700">
+      🎯 Analisar com Radar
+    </button>
+  </div>`;
+}
+
+window.showAlerts = function(client) {
+  const alerts = (ALERTS[client] || []).map(a => ({...a, _client: client}));
+  document.getElementById('modal-title').textContent = client;
+  document.getElementById('modal-subtitle').textContent = alerts.length + ' alerta(s)';
+  const body = document.getElementById('modal-body');
+  if (!alerts.length) {
+    body.innerHTML = '<div style="color:#10b981;font-size:14px;padding:12px 0">✅ Nenhum alerta</div>';
+    document.getElementById('modal-overlay').classList.add('open');
+    return;
+  }
+  const s = { critical:[], warning:[] };
+  alerts.forEach(a => (s[a.type]||[]).push(a));
+  let h = '';
+  if (s.critical.length) {
+    h += '<div style="font-size:10px;font-weight:700;color:#ef4444;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">🔴 Ação Imediata</div>';
+    s.critical.forEach(a => {
+      const ce = encodeURIComponent(client), ae = encodeURIComponent(a.msg);
+      h += `<div style="padding:10px 14px;margin:5px 0;border-radius:8px;background:#fef2f2;border-left:3px solid #ef4444;font-size:13px;line-height:1.5">${a.msg}${_radarBtnHtml(ce,ae,'#ef4444')}</div>`;
+    });
+  }
+  if (s.warning.length) {
+    h += '<div style="font-size:10px;font-weight:700;color:#d97706;text-transform:uppercase;letter-spacing:.5px;margin:14px 0 8px">🟡 Monitorar</div>';
+    s.warning.forEach(a => {
+      const ce = encodeURIComponent(client), ae = encodeURIComponent(a.msg);
+      h += `<div style="padding:10px 14px;margin:5px 0;border-radius:8px;background:#fffbeb;border-left:3px solid #f59e0b;font-size:13px;line-height:1.5">${a.msg}${_radarBtnHtml(ce,ae,'#d97706')}</div>`;
+    });
+  }
+  body.innerHTML = h;
+  document.getElementById('modal-overlay').classList.add('open');
+};
+
+window.showAllAlerts = function() {
+  const all = [];
+  Object.entries(ALERTS).forEach(([client, alerts]) => {
+    alerts.filter(a => a.type === 'critical').forEach(a => all.push({...a, _client: client}));
+  });
+  document.getElementById('modal-title').textContent = '🔴 Todos os alertas críticos';
+  document.getElementById('modal-subtitle').textContent = all.length + ' alerta(s)';
+  const body = document.getElementById('modal-body');
+  if (!all.length) {
+    body.innerHTML = '<div style="color:#10b981;font-size:14px;padding:12px 0">✅ Nenhum alerta crítico</div>';
+    document.getElementById('modal-overlay').classList.add('open');
+    return;
+  }
+  let lastClient = '', h = '';
+  all.forEach(a => {
+    if (a._client !== lastClient) {
+      h += `<div style="font-size:10px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;margin:${lastClient?'16px':'0'} 0 6px">${a._client}</div>`;
+      lastClient = a._client;
+    }
+    const ce = encodeURIComponent(a._client), ae = encodeURIComponent(a.msg);
+    h += `<div style="padding:9px 13px;margin:4px 0;border-radius:8px;background:#fef2f2;border-left:3px solid #ef4444;font-size:13px;line-height:1.5">${a.msg}${_radarBtnHtml(ce,ae,'#ef4444')}</div>`;
+  });
+  h += `<div style="margin-top:20px;padding-top:14px;border-top:1px solid #f3f4f6">
+    <button onclick="exportarContextoRadarCompleto()"
+      style="width:100%;padding:10px;border-radius:8px;border:1.5px solid #f59e0b;
+             background:#fffbeb;color:#92400e;cursor:pointer;font-size:12px;font-weight:700">
+      📋 Exportar contexto completo do período para Radar
+    </button>
+  </div>`;
+  body.innerHTML = h;
+  document.getElementById('modal-overlay').classList.add('open');
+};
+
+// Enter na tela de login
+document.getElementById('radar-pass').addEventListener('keydown', e => {
+  if (e.key === 'Enter') radarLogin();
+});
+
+function radarAbrirDireto() {
+  _radarClienteAtual = '';
+  _radarHistory = [];
+
+  document.getElementById('radar-title').textContent = 'Radar de Criativos';
+  document.getElementById('radar-widget').classList.add('open');
+
+  const msgs = document.getElementById('radar-messages');
+  Array.from(msgs.children).forEach(c => { if (c.id !== 'radar-typing') c.remove(); });
+  msgs.appendChild(document.getElementById('radar-typing'));
+
+  const contextoLivre = 'Modo livre — aguardando contexto do usuário. Pergunte qual cliente, criativo e alerta ele quer analisar antes de iniciar o protocolo.';
+  window._radarContextoPendente = contextoLivre;
+
+  if (!sessionStorage.getItem('radar_auth')) {
+    document.getElementById('radar-auth').style.display = 'flex';
+    document.getElementById('radar-messages').style.display = 'none';
+    document.getElementById('radar-input-area').style.display = 'none';
+    return;
+  }
+
+  radarAbrirChat();
+  radarAddMsg('Olá! Sou o Radar de Criativos. Qual cliente e criativo você quer analisar hoje?', 'bot');
+  window._radarContextoPendente = null;
+}
+// ====== FIM RADAR CHAT LATERAL ======
+</script>
+
 </body>
 </html>
