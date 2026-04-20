@@ -118,9 +118,57 @@
         /* ── Loading spinner ─────────────────────────────────────── */
         .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.4); border-top-color: white; border-radius: 50%; animation: spin .7s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── Auth overlay ────────────────────────────────────────── */
+        #painel-auth-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); backdrop-filter:blur(4px); z-index:99999; align-items:center; justify-content:center; }
+        #painel-auth-overlay.show { display:flex; }
+        #painel-auth-box { background:#fff; border-radius:16px; padding:36px 40px; width:340px; box-shadow:0 20px 60px rgba(0,0,0,.3); }
+        #painel-auth-box h2 { font-size:18px; font-weight:800; color:#111; margin-bottom:4px; }
+        #painel-auth-box p { font-size:12px; color:#888; margin-bottom:24px; }
+        #painel-auth-box label { display:block; font-size:11px; font-weight:700; color:#555; text-transform:uppercase; letter-spacing:.5px; margin-bottom:4px; margin-top:14px; }
+        #painel-auth-box input { width:100%; padding:9px 12px; border:1px solid #e2e8f0; border-radius:8px; font-size:14px; outline:none; }
+        #painel-auth-box input:focus { border-color:#111; }
+        #painel-auth-btn { margin-top:20px; width:100%; padding:11px; background:#111; color:#fff; border:none; border-radius:8px; font-size:14px; font-weight:700; cursor:pointer; }
+        #painel-auth-btn:hover { background:#333; }
+        #painel-auth-err { display:none; margin-top:10px; color:#ef4444; font-size:12px; text-align:center; }
     </style>
 </head>
 <body>
+
+<!-- ── AUTH OVERLAY ────────────────────────────────────────────────────────── -->
+<div id="painel-auth-overlay">
+  <div id="painel-auth-box">
+    <h2>⚡ Painel de Ações</h2>
+    <p>Acesso restrito — Meio Comunicação</p>
+    <label>Usuário</label>
+    <input id="painel-auth-user" type="text" placeholder="usuário" autocomplete="username" />
+    <label>Senha</label>
+    <input id="painel-auth-pass" type="password" placeholder="••••••••" autocomplete="current-password" />
+    <button id="painel-auth-btn" onclick="painelLogin()">Entrar</button>
+    <div id="painel-auth-err">Usuário ou senha incorretos</div>
+  </div>
+</div>
+<script>
+(function() {
+  if (!sessionStorage.getItem('radar_auth')) {
+    document.getElementById('painel-auth-overlay').classList.add('show');
+  }
+})();
+function painelLogin() {
+  const u = document.getElementById('painel-auth-user').value.trim();
+  const p = document.getElementById('painel-auth-pass').value;
+  if (u === 'meio' && p === 'radar2026') {
+    sessionStorage.setItem('radar_auth', '1');
+    document.getElementById('painel-auth-overlay').classList.remove('show');
+    document.getElementById('painel-auth-err').style.display = 'none';
+  } else {
+    document.getElementById('painel-auth-err').style.display = 'block';
+  }
+}
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && document.getElementById('painel-auth-overlay').classList.contains('show')) painelLogin();
+});
+</script>
 
 <!-- ── MODAL BRIEFING ─────────────────────────────────────────────────────── -->
 <div class="modal-overlay" id="briefing-modal" onclick="closeModal(event)">
