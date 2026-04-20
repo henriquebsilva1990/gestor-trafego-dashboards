@@ -645,14 +645,15 @@ async function radarEnviarAPI(mensagem, silencioso) {
   typing.style.display = 'flex';
   document.getElementById('radar-messages').scrollTop = 99999;
 
+  const _radarUrl = 'https://web-production-c6a12.up.railway.app/radar_chat';
+  const _radarPayload = { system: 'Você é o Radar, estrategista sênior de criativos da Meio Comunicação. Siga o protocolo radar-criativos: execute a Fase 0.5 (diagnóstico do alerta), faça perguntas objetivas uma de cada vez para completar o briefing, pesquise concorrentes quando tiver os inputs necessários, e só sugira criativo quando o usuário confirmar. Seja direto e conciso. Nunca use buzzwords como alavancar, escalar, transformar, potencializar.', messages: _radarHistory };
+  console.log('RADAR_FETCH:', _radarUrl, JSON.stringify(_radarPayload).slice(0, 200));
+
   try {
-    const resp = await fetch('https://web-production-c6a12.up.railway.app/radar_chat', {
+    const resp = await fetch(_radarUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        system: 'Você é o Radar, estrategista sênior de criativos da Meio Comunicação. Siga o protocolo radar-criativos: execute a Fase 0.5 (diagnóstico do alerta), faça perguntas objetivas uma de cada vez para completar o briefing, pesquise concorrentes quando tiver os inputs necessários, e só sugira criativo quando o usuário confirmar. Seja direto e conciso. Nunca use buzzwords como alavancar, escalar, transformar, potencializar.',
-        messages: _radarHistory,
-      }),
+      body: JSON.stringify(_radarPayload),
     });
 
     const data = await resp.json();
@@ -666,8 +667,9 @@ async function radarEnviarAPI(mensagem, silencioso) {
       radarAddMsg('Erro: ' + (data.error.message || JSON.stringify(data.error)), 'bot');
     }
   } catch (e) {
+    console.error('RADAR_API_ERROR:', e);
     typing.style.display = 'none';
-    radarAddMsg('Erro de conexão com a API. Verifique a chave e tente novamente.', 'bot');
+    radarAddMsg('Erro de conexão: ' + e.message, 'bot');
   }
 }
 
